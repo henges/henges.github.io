@@ -128,8 +128,9 @@ document.addEventListener('keyup', onKeyUp, false);
 
 function update() //game logic
 {
-    controls.update(clock.getDelta());
-    if (playerUp) camera.position.y += 1.0;
+    var delta = clock.getDelta();
+    controls.update(delta);
+    if (playerUp) camera.position.y += (controls.movementSpeed * delta);
     
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
