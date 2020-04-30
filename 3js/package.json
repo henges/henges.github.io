@@ -1,0 +1,9 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "@types/three": "^0.103.2",
+    "three": "^0.115.0",
+    "typescript": "^3.8.3"
+  }
+}
