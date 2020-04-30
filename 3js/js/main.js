@@ -99,12 +99,14 @@ var clock = new THREE.Clock();
 
 var sphereUp = false;
 var sphereDown = false;
+var playerUp = false;
 
 function onKeyDown(event)
 {
     switch(event.keyCode)
     {
         case 16: controls.movementSpeed = 3.0; break;
+        case 32: playerUp = true; break;
         case 69: sphereDown = true; break;
         case 81: sphereUp = true; break;
     }
@@ -115,6 +117,7 @@ function onKeyUp(event)
     switch(event.keyCode)
     {
         case 16: controls.movementSpeed = 1.0; break;
+        case 32: playerUp = false; break;
         case 69: sphereDown = false; break;
         case 81: sphereUp = false; break;
     }
@@ -126,6 +129,7 @@ document.addEventListener('keyup', onKeyUp, false);
 function update() //game logic
 {
     controls.update(clock.getDelta());
+    if (playerUp) camera.position.y += 1.0;
     
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
