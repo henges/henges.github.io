@@ -2,8 +2,8 @@
 
 'use strict';
 	
-Physijs.scripts.worker = '/js/physijs_worker.js';
-Physijs.scripts.ammo = '/js/ammo.js';
+Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
+Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 
 var initScene, scene, camera, goal, car={};
 
@@ -93,7 +93,7 @@ initScene = function()
 	//trolley
 	var loader = new THREE.GLTFLoader();
 		
-	loader.load('../models/trolleythree.glb', function(gltf)
+	loader.load('/physicstrolley/models/trolleythree.glb', function(gltf)
 	{
 		car.body = gltf.scene;
 		//car.body.name = "body";
