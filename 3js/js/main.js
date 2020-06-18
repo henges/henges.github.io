@@ -1,5 +1,8 @@
 ///<reference path="../typings/globals/three/index.d.ts" />
 
+
+var DEGTORAD = 0.01745327;
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); //fov, aspect ratio, near clipping plane, far clipping plane
 
@@ -70,11 +73,33 @@ scene.add(soccer);
 soccer.position.set(-3, 0.5, 0);
 
 //TROLLEY
-var wrapper = {model:""};
-modelLoader('trolley', wrapper);
-// var trolley = wrapper.model.clone();
-// scene.add(trolley);
-// trolley.position.set(0,5,0);
+var trolley;
+var path = 'trolley';
+var goal;
+var trolleyOffset;
+
+var loader = new THREE.GLTFLoader();
+
+loader.load(
+    '/models/trolleythree.glb', function (gltf)
+    {
+        console.log("trolley is loading");
+        trolley = gltf.scene;
+        trolley.position.set(0,1.1,0);
+        trolley.rotateY(90 * DEGTORAD);
+
+        goal = new THREE.Object3D();
+    
+        trolley.add( goal );        
+        goal.position.set(0, 2, -2);
+        isTrolleyLoaded = true;
+        wasd = new THREE.FirstPersonControls(trolley,renderer.domElement);
+        wasd.activeLook = false;
+        wasd.movementSpeed = 2.0;
+
+        scene.add(trolley);
+    },
+    function(xhr){}, function(error){});
 
 //lights
 var ambientLight = new THREE.AmbientLight(0xff0000, 0.5);
@@ -92,23 +117,38 @@ camera.position.y = 1.5;
 camera.position.z = 5; //move camera back a bit to see cube
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
-controls.lookSpeed = 0.5;
+
+var controls = new THREE.PointerLockControls(camera, document.body);
+var wasd;
+
+// var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+// controls.lookSpeed = 0.5;
 
 var clock = new THREE.Clock();
 
 var sphereUp = false;
 var sphereDown = false;
 var playerUp = false;
+var isTrolleyLoaded = false;
+
+// var wasd_up = false;
+// var wasd_down = false;
+// var wasd_left = false;
+// var wasd_right = false;
 
 function onKeyDown(event)
 {
     switch(event.keyCode)
     {
-        case 16: controls.movementSpeed = 3.0; break;
-        case 32: playerUp = true; break;
-        case 69: sphereDown = true; break;
-        case 81: sphereUp = true; break;
+        // case 87: wasd_up = true; break;
+        // case 83: wasd_down = true; break;
+        // case 65: wasd_left = true; break;
+        // case 68: wasd_right = true; break;
+
+        // case 16: controls.movementSpeed = 3.0; break;
+        // case 32: playerUp = true; break;
+        // case 69: sphereDown = true; break;
+        // case 81: sphereUp = true; break;
     }
 }
 
@@ -116,20 +156,76 @@ function onKeyUp(event)
 {
     switch(event.keyCode)
     {
-        case 16: controls.movementSpeed = 1.0; break;
-        case 32: playerUp = false; break;
-        case 69: sphereDown = false; break;
-        case 81: sphereUp = false; break;
+        // case 87: wasd_up = false; break;
+        // case 83: wasd_down = false; break;
+        // case 65: wasd_left = false; break;
+        // case 68: wasd_right = false; break;
+        // case 16: controls.movementSpeed = 1.0; break;
+        // case 32: playerUp = false; break;
+        // case 69: sphereDown = false; break;
+        // case 81: sphereUp = false; break;
     }
 }
 
 document.addEventListener('keydown', onKeyDown, false);
 document.addEventListener('keyup', onKeyUp, false);
+document.addEventListener('click', function()
+{
+    controls.lock();
+}, false);
+
+// class EntityControls 
+// {
+//     constructor()
+//     {
+//     }
+    
+//     document.addEventListener('keydown', onKeyDown, false);
+//     document.addEventListener('keyup', onKeyUp, false);
+
+//     onKeyDown(event)
+//     {
+//         switch(event.keyCode)
+//         {
+//             // case 16: controls.movementSpeed = 3.0; break;
+//             // case 32: playerUp = true; break;
+//             // case 69: sphereDown = true; break;
+//             // case 81: sphereUp = true; break;
+//         }
+//     }
+
+//     onKeyUp(event)
+//     {
+//         switch(event.keyCode)
+//         {
+//             // case 16: controls.movementSpeed = 1.0; break;
+//             // case 32: playerUp = false; break;
+//             // case 69: sphereDown = false; break;
+//             // case 81: sphereUp = false; break;
+//         }
+//     }
+// }    
+
+var lerpLevel = 0.2;
 
 function update() //game logic
 {
     var delta = clock.getDelta();
-    controls.update(delta);
+    
+    if (isTrolleyLoaded) 
+    {
+        trolley.rotateY(90 * DEGTORAD);
+        wasd.update(delta);
+
+        var temp = new THREE.Vector3();
+        temp.setFromMatrixPosition(goal.matrixWorld);
+        camera.position.lerp(temp, lerpLevel);
+        camera.lookAt(trolley.position);
+        camera.position.y += 1;
+        // camera.rotateZ(-90 * DEGTORAD);
+
+        // camera.rotateZ(-45 * DEGTORAD);
+    }    
     if (playerUp) camera.position.y += (controls.movementSpeed * delta);
     
     cube.rotation.x += 0.01;
@@ -159,24 +255,7 @@ function modelLoader(path, obj)
 {
     // var obj;
     
-    new THREE.MTLLoader()
-        .setPath( 'models/' )
-        .load( path + '.mtl', function ( materials ) {
-
-        materials.preload();
-
-        new THREE.OBJLoader()
-            .setMaterials( materials )
-            .setPath( 'models/' )
-            .load( path + '.obj', function ( object ) {
-
-                // object.position.y = 0;
-                obj.model = object.clone();
-                scene.add( object );
-
-            }, function(xhr){}, function(error){} );
-
-    } );
+    
 
     // return obj;
 }

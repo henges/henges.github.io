@@ -3,7 +3,10 @@
   "lockfileVersion": 1,
   "dependencies": {
     "@types/three": "^0.103.2",
+    "canvas": "^2.6.1",
+    "esm": "^3.2.25",
     "three": "^0.115.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "vblob": "^1.0.2"
   }
 }
