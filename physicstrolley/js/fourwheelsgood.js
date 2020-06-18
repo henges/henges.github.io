@@ -93,7 +93,7 @@ initScene = function()
 	//trolley
 	var loader = new THREE.GLTFLoader();
 		
-	loader.load('/models/trolleythree.glb', function(gltf)
+	loader.load('../models/trolleythree.glb', function(gltf)
 	{
 		car.body = gltf.scene;
 		//car.body.name = "body";
