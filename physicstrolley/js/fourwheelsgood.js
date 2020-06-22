@@ -5,7 +5,7 @@
 Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
 Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 
-var initScene, scene, camera, goal, monobloc, car={};
+var initScene, scene, camera, goal, chair, car={};
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -20,7 +20,9 @@ function initScene()
 	initCamera();
 	initLights();
 	initSkybox();
-	monobloc = initObjects(monobloc);
+	spawnChair();
+	
+	
 		
 	requestAnimationFrame( render );
 	// scene.simuslate();
@@ -123,45 +125,62 @@ function initSkybox()
 	scene.add(skybox);
 }
 
-function initObjects(monobloc)
+function spawnChair ()
 {
-
-	var bfpx = 0;
-    var bfpy = 0.5;
-	var bfpz = 0;
-
-	monobloc = new THREE.Object3D();
-	
-	var monobloc_material = Physijs.createMaterial(
-        new THREE.MeshLambertMaterial({ color: 0xff6666 }),
-        .8, // high friction
-        .1 // low restitution
-    );
-	monobloc.frame = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 1.5, 0.1, 1.5 ),
-		monobloc_material,
-		1000
+	var box, legfl, legfr, legbr, legbl, back;
+	var box_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+	.8, // high friction
+	.1 // low restitution
 	);
-	
-	monobloc.frame.position.set( bfpx , 2, bfpz);
-	var loader = new THREE.GLTFLoader();
-        
-	loader.load('/physicstrolley/models/monobloc.glb', function(gltf)
-	{
-		
-		monobloc.body=gltf.scene;
-		monobloc.frame.add(monobloc.body);
-		monobloc.frame.visible = true;
-		//car.body.name = "body";
-		//car.body.componentOf = "car";
-		//car.body.castShadow = true;
-		//car.body.position.y = -0.2;
-		
-		//car.frame.add(car.body);
-	},
-		function(xhr){}, function(error){}
+	box = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 4, 1, 4 ),
+	box_material,
+	10
 	);
-	scene.add(monobloc.frame);
+	box.position.set (5, 10, 5);
 
-	return monobloc;
-}
+	legfl = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 4, 1 ),
+	box_material,
+	10
+	);
+	legfl.position.set (1.5, -2.5, 1.5);
+	box.add (legfl);
+
+	legfr = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 4, 1 ),
+	box_material,
+	10
+	);
+	legfr.position.set (-1.5, -2.5, 1.5);
+	box.add (legfr);
+
+	legbr = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 4, 1 ),
+	box_material,
+	10
+	);
+	legbr.position.set (1.5, -2.5, -1.5);
+	box.add (legbr);
+
+	legbl = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 4, 1 ),
+	box_material,
+	10
+	);
+	legbl.position.set (-1.5, -2.5, -1.5);
+	box.add (legbl);
+
+	back = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 4, 3.5, 1.5 ),
+	box_material,
+	10
+	);
+	back.position.set (0, 2, 1.25);
+	box.add (back);
+
+
+	scene.add (box);	
+	}
+	
