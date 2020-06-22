@@ -1,5 +1,2 @@
-
 .DS_Store
-/3js/three.js-dev/
-/3js/bus-derby/
-/3js/cannon.js-proj/
+run_server.sh
