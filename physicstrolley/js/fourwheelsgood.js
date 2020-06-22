@@ -126,7 +126,7 @@ function initSkybox()
 function initObjects(monobloc)
 {
 
-	var bfpx = 0;
+	var bfpx = -10;
     var bfpy = 0.5;
 	var bfpz = 0;
 
