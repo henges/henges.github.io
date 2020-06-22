@@ -5,7 +5,7 @@
 Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
 Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 
-var initScene, scene, camera, goal, car={};
+var initScene, scene, camera, goal, monobloc, car={};
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -20,6 +20,7 @@ function initScene()
 	initCamera();
 	initLights();
 	initSkybox();
+	monobloc = initObjects(monobloc);
 		
 	requestAnimationFrame( render );
 	// scene.simuslate();
@@ -43,7 +44,7 @@ function render()
 	curTarget.setFromMatrixPosition(goal.matrixWorld);	//goal.position is relative to the trolley - .matrixWorld tells us its 'global transform', which is to say, its offset from (0,0,0). 
 	camera.position.lerp(curTarget, lerpLevel);			//won't do anything if (vector3) camera.position == curTarget
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
-	// camera.position.y += camY; 						//manually move the camera up to get a wider view
+	camera.position.y += camY; 						//manually move the camera up to get a wider view
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
@@ -100,7 +101,7 @@ function initCamera()
 		1000
 	);
 	// car.frame.add(camera);
-	camera.position.set( 10, 10, 10 );
+	camera.position.set( 0, 0, 0 );
 	// camera.position.set(2.2711018791473263, -5.443933926576433, -0.018602354820028255); //debug position
 	camera.lookAt( scene.position );
 	scene.add(camera);
@@ -120,4 +121,47 @@ function initSkybox()
 	var skyboxGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
 	var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
 	scene.add(skybox);
+}
+
+function initObjects(monobloc)
+{
+
+	var bfpx = 0;
+    var bfpy = 0.5;
+	var bfpz = 0;
+
+	monobloc = new THREE.Object3D();
+	
+	var monobloc_material = Physijs.createMaterial(
+        new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+        .8, // high friction
+        .1 // low restitution
+    );
+	monobloc.frame = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1.5, 0.1, 1.5 ),
+		monobloc_material,
+		1000
+	);
+	
+	monobloc.frame.position.set( bfpx , 2, bfpz);
+	var loader = new THREE.GLTFLoader();
+        
+	loader.load('/physicstrolley/models/monobloc.glb', function(gltf)
+	{
+		
+		monobloc.body=gltf.scene;
+		monobloc.frame.add(monobloc.body);
+		monobloc.frame.visible = true;
+		//car.body.name = "body";
+		//car.body.componentOf = "car";
+		//car.body.castShadow = true;
+		//car.body.position.y = -0.2;
+		
+		//car.frame.add(car.body);
+	},
+		function(xhr){}, function(error){}
+	);
+	scene.add(monobloc.frame);
+
+	return monobloc;
 }

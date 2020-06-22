@@ -50,7 +50,7 @@
 			0.1,
 			1000
 		);
-		camera.position.set( 10, 10, 10 );
+		camera.position.set( 15, 15, 15 );
 		// camera.position.set(2.2711018791473263, -5.443933926576433, -0.018602354820028255); //debug position
 		camera.lookAt( scene.position );
 		scene.add( camera );

@@ -38,7 +38,7 @@ var initTrolley = function (car)
     car.frame.add( goal );
     goal.material.visible = false;        
     // goal.position.set(15, 5, 0); 	//target position for the camera
-    goal.position.set(10, 10, 0)	    //for more rotation: (20, -40, 0)
+    goal.position.set(40, -40, 0)	    //for more rotation: (20, -40, 0)
     
     //trolley
     var loader = new THREE.GLTFLoader();
@@ -60,7 +60,7 @@ var initTrolley = function (car)
     car.frame.material.visible = false;
 
     var wheel_material = Physijs.createMaterial(
-        new THREE.MeshLambertMaterial({ color: 0xffffff }),
+        new THREE.MeshLambertMaterial({ color: 0x000000 }),
         .7, // friction
         0.1 //  restitution
         );
