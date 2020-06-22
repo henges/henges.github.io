@@ -147,6 +147,9 @@ function spawnChair ()
 	);
 	legfl.position.set (1.5, -2.5, 1.5);
 	box.add (legfl);
+	var bfpx = -10;
+    var bfpy = 0.5;
+	var bfpz = 0;
 
 	legfr = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 1, 4, 1 ),
