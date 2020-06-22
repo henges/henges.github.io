@@ -39,10 +39,6 @@ var initTrolley = function (car)
     goal.material.visible = false;        
     // goal.position.set(15, 5, 0); 	//target position for the camera
     goal.position.set(10, 10, 0)	    //for more rotation: (20, -40, 0)
-
-    var cameraGaze = new THREE.Object3D();
-    car.frame.add(cameraGaze);
-    cameraGaze.position.set(0,10,0);
     
     //trolley
     var loader = new THREE.GLTFLoader();
