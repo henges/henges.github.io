@@ -1,7 +1,11 @@
 ///<reference path="../typings/globals/three/index.d.ts" />
 
 'use strict';
-	
+
+//Global constants for debugging.
+var planeSize = 170;
+var showPhysicsBoxes = false;
+
 Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
 Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 
@@ -10,6 +14,8 @@ var initScene, scene, camera, goal, chair, car={};
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 function initScene() 
 {
@@ -43,9 +49,6 @@ function render()
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
 	camera.position.y += camY; 							//manually move the camera up to get a wider view
 
-	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
@@ -56,7 +59,7 @@ function initPlatform()
 	var pr = 0;  //platform restitution
 
 	//var platform;
-	var platformDiameter = 170;
+	var platformDiameter = planeSize;
 	var platformRadiusTop = platformDiameter * 0.5;  
 	var platformRadiusBottom = platformDiameter * 0.5 + 0.2;
 	var platformHeight = 1;
@@ -75,7 +78,7 @@ function initPlatform()
 	var physiPlatform = new Physijs.CylinderMesh(platform, physiPlatformMaterial, 0 );
 	physiPlatform.name = "physicalPlatform";
 	physiPlatform.position.set(0, -0.5, 0);
-	physiPlatform.visible = false;
+	physiPlatform.visible = showPhysicsBoxes;
 	scene.add(physiPlatform);
 
 	var visiblePlatform = new THREE.Mesh( platform, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
@@ -144,7 +147,7 @@ function initSkybox()
 	scene.add(skybox);
 }
 
-function spawnChair ()
+function spawnChair()
 {
 	var box, legfl, legfr, legbr, legbl, arml, armll, armr, armrr, back;
 
@@ -152,7 +155,7 @@ function spawnChair ()
 	var box_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.1 // low restitution
+		.1  // low restitution
 	);
 	box = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 12.5, 1, 12.5 ),
@@ -264,7 +267,30 @@ function spawnChair ()
 	}
 	);
 
-	box.material.visible = false;
+	//control visibility
+	legfl.material.visible = showPhysicsBoxes;
+	legfr.material.visible = showPhysicsBoxes;
+	legbr.material.visible = showPhysicsBoxes;
+	legbl.material.visible = showPhysicsBoxes;
+	arml.material.visible = showPhysicsBoxes;
+	armll.material.visible = showPhysicsBoxes;
+	armr.material.visible = showPhysicsBoxes;
+	armrr.material.visible = showPhysicsBoxes;
+	back.material.visible = showPhysicsBoxes;
+	box.material.visible = showPhysicsBoxes;
+
+	chair = box;
 	scene.add (box);	
 }
 	
+function randomiseObjects()
+{
+	//called when the user travels past the edge of our infinite plane,
+	//or on some other as yet unknown condition
+
+	//randomise each object's scale
+	chair.scale.set(3.0,3.0,3.0);
+
+	//randomise each object's x & z coordinates
+
+}
