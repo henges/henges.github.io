@@ -1,6 +1,9 @@
 ///<reference path="../typings/globals/three/index.d.ts" />
 
 'use strict';
+
+//import { Loader } from "three";
+
 	
 Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
 Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
@@ -127,63 +130,116 @@ function initSkybox()
 
 function spawnChair ()
 {
-	var box, legfl, legfr, legbr, legbl, back;
+	var box, legfl, legfr, legbr, legbl, arml, armll, armr, armrr, back;
 	var box_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 	.8, // high friction
 	.1 // low restitution
 	);
 	box = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 4, 1, 4 ),
+		new THREE.CubeGeometry( 12.5, 1, 12.5 ),
 	box_material,
 	10
 	);
-	box.position.set (5, 10, 5);
+	box.position.set (-10, 15, -10);
 
 	legfl = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 1, 4, 1 ),
+		new THREE.CubeGeometry( 1, 10, 1 ),
 	box_material,
 	10
 	);
-	legfl.position.set (1.5, -2.5, 1.5);
+	legfl.position.set (6, -5, -4);
 	box.add (legfl);
 	var bfpx = -10;
     var bfpy = 0.5;
 	var bfpz = 0;
 
 	legfr = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 1, 4, 1 ),
+		new THREE.CubeGeometry( 1, 10, 1 ),
 	box_material,
 	10
 	);
-	legfr.position.set (-1.5, -2.5, 1.5);
+	legfr.position.set (-6, -5, -4);
 	box.add (legfr);
 
 	legbr = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 1, 4, 1 ),
+		new THREE.CubeGeometry( 1, 10, 1 ),
 	box_material,
 	10
 	);
-	legbr.position.set (1.5, -2.5, -1.5);
+	legbr.position.set (4, -5, 6);
+	legbr.rotation.x = - Math.PI / 12;
 	box.add (legbr);
 
 	legbl = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 1, 4, 1 ),
+		new THREE.CubeGeometry( 1, 10, 1 ),
 	box_material,
 	10
 	);
-	legbl.position.set (-1.5, -2.5, -1.5);
+	legbl.position.set (-4, -5, 6);
+	legbl.rotation.x = - Math.PI / 12;
 	box.add (legbl);
 
 	back = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 4, 3.5, 1.5 ),
+		new THREE.CubeGeometry( 10, 10, 0.5 ),
 	box_material,
 	10
 	);
-	back.position.set (0, 2, 1.25);
+	back.position.set (0, 5, 7.5);
+	back.rotation.x = Math.PI/14;
 	box.add (back);
 
+	arml = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 8, 1 ),
+	box_material,
+	10
+	);
+	arml.position.set (6, 2, -3);
+	//arml.rotation.x = - Math.PI / 12;
+	box.add (arml);
 
+	
+	armr = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 8, 1 ),
+	box_material,
+	10
+	);
+	armr.position.set (-6, 2, -3);
+	//arml.rotation.x = - Math.PI / 12;
+	box.add (armr);
+
+
+	//otherarmbits
+
+	armll = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 12, 1 ),
+	box_material,
+	10
+	);
+	armll.position.set (6, 7, 2.5);
+	armll.rotation.x = Math.PI / 2.3;
+	box.add (armll);
+
+	armrr = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1, 12, 1 ),
+	box_material,
+	10
+	);
+	armrr.position.set (-6, 7, 2.5);
+	armrr.rotation.x = Math.PI / 2.3;
+	box.add (armrr);
+
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/monobloc.glb', function (gltf)
+	{
+		box.monobloc = gltf.scene;
+		box.monobloc.position.set (0.2, -10, -4);
+		box.monobloc.rotation.y = Math.PI / 2;
+		box.add (box.monobloc)
+	}
+	);
+
+	box.material.visible = false;
 	scene.add (box);	
 	}
 	
