@@ -31,7 +31,7 @@ function initScene()
 	initLights();
 	initSkybox();
 	spawnChair();
-		
+	TerrainMatrix();
 	requestAnimationFrame( render );
 };
 
@@ -41,7 +41,7 @@ window.onload = initScene();
 var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
 var camY = 5;								//manually move camera upwards
-
+moveWithCamera();
 render();
 
 function render() 
@@ -56,7 +56,77 @@ function render()
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
+function TerrainMatrix(){
+   
+	this.floor = [];
+	this.tileHeight=100;
+	this.tileWidth=100;
+	this.tileRowNumber = 3;
+	 
+  }
+TerrainMatrix.prototype={
+   
+	constructor: TerrainMatrix,
+	 
+	/**
+	 * createTerrainMatrix
+	 * @TODO: create the matrix of terrains - need to add 9 bits of terrain
+	 */
+	createTerrainMatrix:function(){
+		   
+		  var xPos=0;
+		  //we want a 3 by 3 matrix
+		  for(var row = 0; row<3; row+=1){
+			if(row==0){
+			  xPos= -this.tileWidth;
+			}
+			else if(row==1){
+			  xPos= this.tileWidth;
+			}
+			else if (x==2){
+			  xPos = 0
+			}
+		   
+			//every 100px on the z axis, add a bit of ground
+			for ( var z= this.tileHeight; z > (this.tileHeight * -this.tileRowNumber); z-=this.tileHeight ) {
+		 
+			  
+			  var panelGeometry = new THREE.CubeGeometry (1000, 2, 1000);
+			  var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }) );
+			  //rotate 90 degrees around the xaxis so we can see the terrain
+			  //panel.rotation.x = -Math.PI/-2;
+			  // Then set the z position to where it is in the loop (distance of camera)
+			  panel.position.z = z;
+			  panel.position.y +=1;
+			   
+			  panel.position.x =xPos;
+	 
+			  //add the ground to the scene
+			  scene.add(panel);
+			  //finally push it to the floor array
+			  this.floor.push(panel);
+			}
 
+		  }
+	   
+	}
+}
+function moveWithCamera ()
+	   {
+    // loop through each of the 3 floors
+    for(var i=0; i<this.floor.length; i++) {
+       
+      //if the camera has moved past the entire square, move the square
+      if((this.floor[i].position.z - 100)>camera.position.z){
+         
+        this.floor[i].position.z-=200;
+      	}
+		  else if((this.floor[i].position.z + this.tileHeight)<camera.position.z){
+             
+            this.floor[i].position.z+=(this.tileHeight*2);
+          }
+		}
+	}
 function initPlatform()
 {
 	var pf = 10;  //platform friction
