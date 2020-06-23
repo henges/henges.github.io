@@ -6,10 +6,6 @@ var rotationForce, accelerationForce, targetVelocity;
 var initTrolley = function (car)
 {
     //CAR INIT
-    var bfpx = 0;
-    var bfpy = 0.5;
-    var bfpz = 0;
-
     var car_material = Physijs.createMaterial(
         new THREE.MeshLambertMaterial({ color: 0xff6666 }),
         .8, // high friction
@@ -17,20 +13,16 @@ var initTrolley = function (car)
     );
     car.frame = new Physijs.BoxMesh(
             new THREE.CubeGeometry( 1.5, 0.1, 1.5 ),
-        car_material,
-        1000
-        );
-    //car.frame.name = "frame";
-    //car.frame.componentOf = "car";
-    car.frame.position.set( bfpx , 0.2, bfpz);
+            car_material,
+            1000
+    );
+    car.frame.position.set( 0 , 0.2, 0);
     car.frame.castShadow = true;
     
     var carInteriorGeometry = new THREE.BoxGeometry( 1.5, 0.1, 1.5);
     var carInteriorMaterial = Physijs.createMaterial( new THREE.MeshStandardMaterial({ color: 0x777777 }), 50, 50 );
     car.interior = new Physijs.BoxMesh(carInteriorGeometry, carInteriorMaterial, 50 );
-    //car.interior.name = "interior";
-    car.interior.material.visible = false;  //(if visible, edges stick out from rounded frame)
-    //car.interior.componentOf = "car"; 
+    car.interior.material.visible = false;                  //(if visible, edges stick out from rounded frame)
     car.interior.position.set( 0, 2, 0 );
     car.frame.add(car.interior);
 
@@ -48,10 +40,7 @@ var initTrolley = function (car)
     loader.load('/physicstrolley/models/trolleythree.glb', function(gltf)
     {
         car.body = gltf.scene;
-        //car.body.name = "body";
-        //car.body.componentOf = "car";
         car.body.castShadow = true;
-        //car.body.position.y = -0.2;
         
         car.frame.add(car.body);
     },
@@ -67,9 +56,7 @@ var initTrolley = function (car)
         0.1 //  restitution
         );
     var wheel_geometry = new THREE.CylinderGeometry( 0.25, 0.25, 0.2, 16 );
-    // var wheel_geometry = new THREE.CylinderGeometry(0.1, 0.1, 0.05, 16); //small wheels
 
-    //original valx-s
     var valx = 1;	//maybe change these to const?
     var valy = 0.3;
     var valz = 1;
@@ -182,30 +169,34 @@ var initTrolley = function (car)
         {
             case 37:
                 // Left
-                car.wheel_fl_constraint.configureAngularMotor( 1, 0, 0, 20, 200 ); //motor 0 1 2 (x y z), low_limit, high_limit, target vel, max force
-                // car.wheel_fl_constraint.disableAngularMotor( 1 );
-                car.wheel_fr_constraint.configureAngularMotor( 1, 0, 0, 20, 200 );
-                // car.wheel_fr_constraint.disableAngularMotor( 1 );
+                car.wheel_fl_constraint.configureAngularMotor( 1, 0, 0, targetVelocity, rotationForce ); //motor 0 1 2 (x y z), low_limit, high_limit, target vel, max force
+                car.wheel_fl_constraint.enableAngularMotor( 1 );
+                car.wheel_fr_constraint.configureAngularMotor( 1, 0, 0, targetVelocity, rotationForce );
+                car.wheel_fr_constraint.enableAngularMotor( 1 );
                 break;
             
             case 39:
                 // Right
-                car.wheel_fl_constraint.configureAngularMotor( 1, 0, 0, 20, 200 );
-                // car.wheel_fl_constraint.disableAngularMotor( 1 );
-                car.wheel_fr_constraint.configureAngularMotor( 1, 0, 0, 20, 200 );
-                // car.wheel_fr_constraint.disableAngularMotor( 1 );
+                car.wheel_fl_constraint.configureAngularMotor( 1, 0, 0, -targetVelocity, rotationForce );
+                car.wheel_fl_constraint.enableAngularMotor( 1 );
+                car.wheel_fr_constraint.configureAngularMotor( 1, 0, 0, -targetVelocity, rotationForce );
+                car.wheel_fr_constraint.enableAngularMotor( 1 );
                 break;
             
             case 38:
                 // Up
-                car.wheel_bl_constraint.disableAngularMotor( 2 );
-                car.wheel_br_constraint.disableAngularMotor( 2 );
+                car.wheel_bl_constraint.configureAngularMotor( 1, 0, 0, targetVelocity, accelerationForce );
+                car.wheel_bl_constraint.enableAngularMotor( 2 );
+                car.wheel_br_constraint.configureAngularMotor( 1, 0, 0, targetVelocity, accelerationForce );
+                car.wheel_br_constraint.enableAngularMotor( 2 );
                 break;
             
             case 40:
                 // Down
-                car.wheel_bl_constraint.disableAngularMotor( 2 );
-                car.wheel_br_constraint.disableAngularMotor( 2 );
+                car.wheel_bl_constraint.configureAngularMotor( 1, 0, 0, -targetVelocity, accelerationForce );
+                car.wheel_bl_constraint.enableAngularMotor( 2 );
+                car.wheel_br_constraint.configureAngularMotor( 1, 0, 0, -targetVelocity, accelerationForce );
+                car.wheel_br_constraint.enableAngularMotor( 2 );
                 break;
         }
     });
