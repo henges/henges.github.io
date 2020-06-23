@@ -43,6 +43,13 @@ var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer t
 var camY = 5;								//manually move camera upwards
 
 render();
+gameStep();
+
+function gameStep()
+{
+	randomiseObjects();
+	setTimeout(gameStep, 1000)
+}
 
 function render() 
 {
@@ -285,7 +292,7 @@ function spawnChair()
 
 	chair = box;
 	randomiserArray.push(chair);
-	scene.add (box);	
+	scene.add (chair);	
 }
 	
 function randomiseObjects()
@@ -298,10 +305,14 @@ function randomiseObjects()
 	for (object of randomiserArray)
 	{
 		//randomise each object's x&z coordinates
-		object.position.x = (Math.random() * planeSize) % planeSize;
-		object.position.z = (Math.random() * planeSize) % planeSize;
+		// object.position.x = (Math.random() * planeSize) % planeSize;
+		// object.position.z = (Math.random() * planeSize) % planeSize;
+
+		object.position.x = Math.random() * 100;
+		object.position.z = Math.random() * 100;
 
 		//fling!
-		object.position.y += 1000;
+		object.position.y = 15;
+		object.__dirtyPosition = true;
 	}
 }
