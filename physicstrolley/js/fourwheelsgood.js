@@ -6,14 +6,21 @@ Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
 Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 
 //Global constants for debugging.
-var planeSize = 170;
+var planeSize = 50;
+var boundarySize = (planeSize/2) * 0.9;
 var showPhysicsBoxes = false;
+var boundary;
 
 //Scene constants, including player char.
 var initScene, scene, camera, goal, car={};
+var wheelsArr = [];
 //Static objects (physics-only interactions).
 var chair = {};
 var randomiserArray = [];
+//floor array is in global scope since it's accessed in multiple functions
+var floor = [];
+var tileHeight=100;
+var tileWidth=100;
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -25,13 +32,18 @@ function initScene()
 {
 	scene = new Physijs.Scene;
 	
+	var axesHelper = new THREE.AxisHelper(5);
+	scene.add(axesHelper);
+
 	initPlatform();
 	car = initTrolley(car);
 	initCamera();
 	initLights();
 	initSkybox();
 	spawnChair();
-	TerrainMatrix();
+	// TerrainMatrix();
+
+
 	requestAnimationFrame( render );
 };
 
@@ -41,14 +53,14 @@ window.onload = initScene();
 var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
 var camY = 5;								//manually move camera upwards
-moveWithCamera();
+
 render();
 gameStep();
 
 function gameStep()
 {
-	randomiseObjects();
-	setTimeout(gameStep, 1000)
+	// randomiseObjects();
+	// setTimeout(gameStep, 1000)
 }
 
 function render() 
@@ -60,80 +72,129 @@ function render()
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
 	camera.position.y += camY; 							//manually move the camera up to get a wider view
 
+	// if (car !== undefined && car !== null) moveWithCamera();
+	checkBoundary();
+
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
-function TerrainMatrix(){
-   
-	this.floor = [];
-	this.tileHeight=100;
-	this.tileWidth=100;
-	this.tileRowNumber = 3;
-	 
-  }
-TerrainMatrix.prototype={
-   
-	constructor: TerrainMatrix,
-	 
-	/**
-	 * createTerrainMatrix
-	 * @TODO: create the matrix of terrains - need to add 9 bits of terrain
-	 */
-	createTerrainMatrix:function(){
-		   
-		  var xPos=0;
-		  //we want a 3 by 3 matrix
-		  for(var row = 0; row<3; row+=1){
-			if(row==0){
-			  xPos= -this.tileWidth;
-			}
-			else if(row==1){
-			  xPos= this.tileWidth;
-			}
-			else if (x==2){
-			  xPos = 0
-			}
-		   
-			//every 100px on the z axis, add a bit of ground
-			for ( var z= this.tileHeight; z > (this.tileHeight * -this.tileRowNumber); z-=this.tileHeight ) {
-		 
-			  
-			  var panelGeometry = new THREE.CubeGeometry (1000, 2, 1000);
-			  var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }) );
-			  //rotate 90 degrees around the xaxis so we can see the terrain
-			  //panel.rotation.x = -Math.PI/-2;
-			  // Then set the z position to where it is in the loop (distance of camera)
-			  panel.position.z = z;
-			  panel.position.y +=1;
-			   
-			  panel.position.x =xPos;
-	 
-			  //add the ground to the scene
-			  scene.add(panel);
-			  //finally push it to the floor array
-			  this.floor.push(panel);
-			}
 
-		  }
-	   
+function checkBoundary()
+{
+	//in each instance we place them a little further away from the boundary
+	//so that we don't get stuck in an infinite loop
+
+	if (car.frame.position.x < -boundarySize)
+	{
+		car.frame.position.x = boundarySize - 5;
+		car.frame.__dirtyPosition = true;
+		updateWheels();
+	}
+	else if (car.frame.position.x > boundarySize)
+	{
+		car.frame.position.x = -boundarySize + 5;
+		car.frame.__dirtyPosition = true;
+		updateWheels();
+	}
+
+	if (car.frame.position.z < -boundarySize)
+	{
+		car.frame.position.z = boundarySize - 5;
+		car.frame.__dirtyPosition = true;
+		updateWheels();
+	}
+	else if (car.frame.position.z > boundarySize)
+	{
+		car.frame.position.z = -boundarySize + 5;
+		car.frame.__dirtyPosition = true;
+		updateWheels();
 	}
 }
-function moveWithCamera ()
-	   {
-    // loop through each of the 3 floors
-    for(var i=0; i<this.floor.length; i++) {
-       
-      //if the camera has moved past the entire square, move the square
-      if((this.floor[i].position.z - 100)>camera.position.z){
-         
-        this.floor[i].position.z-=200;
-      	}
-		  else if((this.floor[i].position.z + this.tileHeight)<camera.position.z){
-             
-            this.floor[i].position.z+=(this.tileHeight*2);
-          }
+
+function updateWheels()
+{
+	// for (var i = 0; i < wheelsArr.length; i++)
+	// {
+	// 	wheelsArr[i].position = car.frame.position;
+	// 	var offset = new THREE.Vector3();
+
+	// 	switch (i)
+	// 	{
+	// 		case 0: offset.set(-1, 0.3, 0.7); break;
+	// 		case 1: offset.set(-1, 0.3, -0.7); break;
+	// 		case 2: offset.set(1, 0.3, 0.95); break;
+	// 		case 3: offset.set(1, 0.3, -1); break;
+	// 	}
+
+	// 	wheelsArr[i].position.add(offset);
+	// 	wheelsArr[i].__dirtyPosition = true;
+	// }
+
+	//using this code above would have been nice, but in truth, getting this done is a massive PITA
+	//due to how wheels are implemented in physijs. 
+
+	wheelsArr[0].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, 0.7));
+	wheelsArr[0].__dirtyPosition = true;
+	wheelsArr[1].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, -0.7));
+	wheelsArr[1].__dirtyPosition = true;
+	wheelsArr[2].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, 0.95));
+	wheelsArr[2].__dirtyPosition = true;
+	wheelsArr[3].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, -1));
+	wheelsArr[3].__dirtyPosition = true;
+}
+
+function TerrainMatrix()
+{   
+	var tileRowNumber = 3;
+		   
+	var xPos=0;
+	//we want a 3 by 3 matrix
+	for (var row = 0; row<3; row++)
+	{
+		//position tiles behind, underneath, and in front of camera
+		switch (row)
+		{
+			case 0: xPos = -tileWidth; break;
+			case 1: xPos = tileWidth; break;
+			case 2: xPos = 0; break;
+		}
+
+		for (var z = tileHeight; z > (tileHeight * -tileRowNumber); z-=tileHeight ) 
+		{
+			var panelGeometry = new THREE.BoxGeometry(tileHeight, 2, tileWidth);
+			var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }) );
+			//rotate 90 degrees around the xaxis so we can see the terrain
+			//panel.rotation.x = -Math.PI/-2;
+			// Then set the z position to where it is in the loop (distance of camera)
+			panel.position.x = xPos;
+			panel.position.z = z;
+			panel.position.y += 1;
+			
+			//add the ground to the scene
+			scene.add(panel);
+			//finally push it to the floor array
+			floor.push(panel);
 		}
 	}
+}
+
+function moveWithCamera()
+{
+	// loop through each of the 3 floors
+	for(var i=0; i<floor.length; i++) 
+	{
+		//if the camera has moved past the entire square, move the square
+		if((floor[i].position.z - 100) > car.frame.position.z)
+		{		
+			floor[i].position.z-=200;
+		}
+		else if((floor[i].position.z + tileHeight) < car.frame.position.z)
+		{	
+			floor[i].position.z+=(tileHeight*2);
+		}
+	}
+}
+
 function initPlatform()
 {
 	var pf = 10;  //platform friction
@@ -146,12 +207,16 @@ function initPlatform()
 	var platformHeight = 1;
 	var platformSegments = 85;
 
-	var platform = new THREE.CylinderGeometry( 
-		platformRadiusTop, 
-		platformRadiusBottom, 
-		platformHeight, 
-		platformSegments 
-		);
+	//cylindrical platform
+	// var platform = new THREE.CylinderGeometry( 
+	// 	platformRadiusTop, 
+	// 	platformRadiusBottom, 
+	// 	platformHeight, 
+	// 	platformSegments 
+	// 	);
+
+	//rectangular platform
+	var platform = new THREE.CubeGeometry(planeSize, 1, planeSize);
 
 	var physiPlatformMaterial = Physijs.createMaterial(
 								new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('img/graham.jpg')}), 
