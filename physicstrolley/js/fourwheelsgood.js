@@ -51,6 +51,8 @@ function render()
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
 	camera.position.y += camY; 						//manually move the camera up to get a wider view
 
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
@@ -60,14 +62,14 @@ function initPlatform()
 	var pf = 10;  //platform friction
 	var pr = 0;  //platform restitution
 
-	var platform;
+	//var platform;
 	var platformDiameter = 170;
 	var platformRadiusTop = platformDiameter * 0.5;  
 	var platformRadiusBottom = platformDiameter * 0.5 + 0.2;
 	var platformHeight = 1;
 	var platformSegments = 85;
 
-	var platformGeometry = new THREE.CylinderGeometry( 
+	var platform = new THREE.CylinderGeometry( 
 		platformRadiusTop, 
 		platformRadiusBottom, 
 		platformHeight, 
@@ -77,24 +79,49 @@ function initPlatform()
 	var physiPlatformMaterial = Physijs.createMaterial(
 								new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('img/graham.jpg')}), 
 								pf, pr);
-	var physiPlatform = new Physijs.CylinderMesh(platformGeometry, physiPlatformMaterial, 0 );
+	var physiPlatform = new Physijs.CylinderMesh(platform, physiPlatformMaterial, 0 );
 	physiPlatform.name = "physicalPlatform";
 	physiPlatform.position.set(0, -0.5, 0);
-	physiPlatform.visible = true;
-	scene.add( physiPlatform );
+	physiPlatform.visible = false;
+	scene.add(physiPlatform);
+
+	var visiblePlatform = new THREE.Mesh( platform, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
+  	visiblePlatform.name = "visiblePlatform"
+  	visiblePlatform.position.set(0, -.5, 0);
+  	//visiblePlatform.rotation.y = .4;
+  	visiblePlatform.receiveShadow = true;
+  	scene.add( visiblePlatform );
 }
 
 function initLights()
 {
-	var directionalLight = new THREE.DirectionalLight( 0xffffff, 5 );
-	scene.add( directionalLight );
 
-	var light = new THREE.PointLight( 0xffffff, 10, 10 );
-	light.position.set( -5, 5, 5 );
-	scene.add( light );
 
-	var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-	scene.add(ambientLight);
+	var lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 3 );
+  lightD1.position.set( 100, 50, 50 );
+  lightD1.castShadow = true;
+ // lightD1.shadow.mapSize.width = 1000;  // default
+//lightD1.shadow.mapSize.height = 1000; // default
+//	lightD1.shadow.camera.near = 0.5;    // default
+	//lightD1.shadow.camera.far = 500;     // default
+  lightD1.shadow.camera.left = -100;
+lightD1.shadow.camera.top = -100;
+  lightD1.shadow.camera.right = 100;
+  lightD1.shadow.camera.bottom = 100;
+  lightD1.shadow.camera.near = 0.1;
+  lightD1.shadow.camera.far = 1000;
+  lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 1000;
+  scene.add( lightD1 );
+  
+	//var directionalLight = new THREE.DirectionalLight( 0xffffff, 5 );
+	//scene.add( directionalLight );
+
+	//var light = new THREE.PointLight( 0xffffff, 5, 5 );
+	//light.position.set( -5, 5, 5 );
+	//scene.add( light );
+
+	//var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+	//scene.add(ambientLight);
 }
 
 function initCamera()
@@ -235,6 +262,16 @@ function spawnChair ()
 		box.monobloc = gltf.scene;
 		box.monobloc.position.set (0.2, -10, -4);
 		box.monobloc.rotation.y = Math.PI / 2;
+		gltf.scene.traverse( function ( child ) {
+
+            if ( child.isMesh ) {
+
+                child.castShadow = true;
+                child.receiveShadow = false;
+
+            }
+
+        });
 		box.add (box.monobloc)
 	}
 	);
