@@ -2,14 +2,18 @@
 
 'use strict';
 
+Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
+Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
+
 //Global constants for debugging.
 var planeSize = 170;
 var showPhysicsBoxes = false;
 
-Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
-Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
-
-var initScene, scene, camera, goal, chair, car={};
+//Scene constants, including player char.
+var initScene, scene, camera, goal, car={};
+//Static objects (physics-only interactions).
+var chair = {};
+var randomiserArray = [];
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -280,6 +284,7 @@ function spawnChair()
 	box.material.visible = showPhysicsBoxes;
 
 	chair = box;
+	randomiserArray.push(chair);
 	scene.add (box);	
 }
 	
@@ -288,9 +293,15 @@ function randomiseObjects()
 	//called when the user travels past the edge of our infinite plane,
 	//or on some other as yet unknown condition
 
-	//randomise each object's scale
-	chair.scale.set(3.0,3.0,3.0);
+	var object;
 
-	//randomise each object's x & z coordinates
+	for (object of randomiserArray)
+	{
+		//randomise each object's x&z coordinates
+		object.position.x = (Math.random() * planeSize) % planeSize;
+		object.position.z = (Math.random() * planeSize) % planeSize;
 
+		//fling!
+		object.position.y += 1000;
+	}
 }
