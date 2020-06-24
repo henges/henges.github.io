@@ -6,7 +6,7 @@ Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
 Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 
 //Global constants for debugging.
-var planeSize = 50;
+var planeSize = 500;
 var boundarySize = (planeSize/2) * 0.9;
 var showPhysicsBoxes = false;
 var boundary;
@@ -31,7 +31,7 @@ var renderer = new THREE.WebGLRenderer({ antialias: true });
 function initScene() 
 {
 	scene = new Physijs.Scene;
-	//scene.setGravity (new THREE.Vector3(0, 0, 0));
+	scene.setGravity (new THREE.Vector3(0, -30, 0));
 	var axesHelper = new THREE.AxisHelper(5);
 	scene.add(axesHelper);
 
@@ -41,6 +41,7 @@ function initScene()
 	initLights();
 	initSkybox();
 	spawnChair();
+	spawnVend ();
 	// TerrainMatrix();
 
 
@@ -52,8 +53,8 @@ window.onload = initScene();
 //the position we want our camera in on each frame
 //var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 //var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
-var camY = 40;								//manually move camera upwards
-var camZ = 40;
+var camY = 50;								//manually move camera upwards
+var camZ = 50;
 var camX = 20;
 //scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
@@ -449,7 +450,42 @@ function spawnChair()
 	randomiserArray.push(chair);
 	scene.add (chair);	
 }
-	
+function spawnVend ()
+{
+	var vBox;
+
+	//initialise master physics box
+	var vBox_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.1  // low restitution
+	);
+	vBox = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 14.8, 23.4, 14.8 ),
+		vBox_material,
+		10
+	);
+	vBox.position.set (50, 25, 50);
+
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/vend3.glb', function (gltf)
+	{
+		vBox.vend = gltf.scene;
+		vBox.vend.position.set (0.4, -15, 0);
+		vBox.vend.rotation.y = Math.PI / 2;
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		vBox.add (vBox.vend)
+		scene.add (vBox);
+	}
+	);
+	vBox.material.visible = showPhysicsBoxes;
+}
 function randomiseObjects()
 {
 	//called when the user travels past the edge of our infinite plane,

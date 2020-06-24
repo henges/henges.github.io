@@ -44,6 +44,13 @@ var initTrolley = function (car)
         car.body.castShadow = true;
         
         car.frame.add(car.body);
+        gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
     },
         function(xhr){}, function(error){}
     );
@@ -131,7 +138,7 @@ var initTrolley = function (car)
 
     rotationForce = 100;
     accelerationForce = 200;
-    stopForce = 10;
+    stopForce = 5;
     targetVelocity = 35;
     stopVelocity = 0;
 
@@ -199,17 +206,17 @@ var initTrolley = function (car)
             case 38:
                 // Up
                 wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
-                wheel_bl_constraint.enableAngularMotor( 2 );
+                wheel_bl_constraint.disableAngularMotor( 2 );
                 wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
-                wheel_br_constraint.enableAngularMotor( 2 );
+                wheel_br_constraint.disableAngularMotor( 2 );
                 break;
             
             case 40:
                 // Down
                 wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
-                wheel_bl_constraint.enableAngularMotor( 2 );
+                wheel_bl_constraint.disableAngularMotor( 2 );
                wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
-                wheel_br_constraint.enableAngularMotor( 2 );
+                wheel_br_constraint.disableAngularMotor( 2 );
                 break;
         }
     });
