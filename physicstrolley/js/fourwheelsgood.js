@@ -53,7 +53,7 @@ window.onload = initScene();
 var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
 var camY = 5;								//manually move camera upwards
-
+scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
 gameStep();
 
@@ -162,7 +162,7 @@ function TerrainMatrix()
 		for (var z = tileHeight; z > (tileHeight * -tileRowNumber); z-=tileHeight ) 
 		{
 			var panelGeometry = new THREE.BoxGeometry(tileHeight, 2, tileWidth);
-			var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }) );
+			var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff, shading:THREE.FlatShading}) );
 			//rotate 90 degrees around the xaxis so we can see the terrain
 			//panel.rotation.x = -Math.PI/-2;
 			// Then set the z position to where it is in the loop (distance of camera)
