@@ -50,10 +50,11 @@ function initScene()
 window.onload = initScene();
 
 //the position we want our camera in on each frame
-var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
-var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
-var camY = 5;								//manually move camera upwards
-var camZ = 5;
+//var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
+//var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
+var camY = 40;								//manually move camera upwards
+var camZ = 40;
+var camX = 20;
 //scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
 gameStep();
@@ -68,12 +69,15 @@ function render()
 {
 	scene.simulate(); // get state of physics simulation
 
-	curTarget.setFromMatrixPosition(goal.matrixWorld);	//goal.position is relative to the trolley - .matrixWorld tells us its 'global transform', which is to say, its offset from (0,0,0). 
-	camera.position.lerp(curTarget, lerpLevel);			//won't do anything if (vector3) camera.position == curTarget
+	goal.add (camera);
+	//curTarget.setFromMatrixPosition(goal.matrixWorld);	//goal.position is relative to the trolley - .matrixWorld tells us its 'global transform', which is to say, its offset from (0,0,0). 
+	//camera.position.setToMatrixPosition(goal.matrixWorld);
+	//camera.position.lerp(curTarget, lerpLevel);			//won't do anything if (vector3) camera.position == curTarget
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
-	camera.position.y += camY; 							//manually move the camera up to get a wider view
-	camera.position.z += camZ;
-
+	camera.position.y = camY; 							//manually move the camera up to get a wider view
+	camera.position.z = camZ;
+	camera.position.x = camX;
+	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
 
@@ -137,7 +141,7 @@ function updateWheels()
 
 	wheelsArr[0].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, 0.7));
 	wheelsArr[0].__dirtyPosition = true;
-	wheelsArr[1].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, -0.7));
+	wheelsArr[1].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3 -0.7));
 	wheelsArr[1].__dirtyPosition = true;
 	wheelsArr[2].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, 0.95));
 	wheelsArr[2].__dirtyPosition = true;
@@ -213,7 +217,7 @@ function moveWithCamera()
 function initPlatform()
 {
 	var pf = 10;  //platform friction
-	var pr = 0;  //platform restitution
+	var pr = 3;  //platform restitution
 
 	//var platform;
 	var platformDiameter = planeSize;
@@ -232,6 +236,7 @@ function initPlatform()
 
 	//rectangular platform
 	var platform = new THREE.CubeGeometry(planeSize, 1, planeSize);
+	var bigger = new THREE.CubeGeometry(planeSize*4, 1, planeSize*4);
 
 	var physiPlatformMaterial = Physijs.createMaterial(
 								new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('img/graham.jpg')}), 
@@ -242,7 +247,7 @@ function initPlatform()
 	physiPlatform.visible = showPhysicsBoxes;
 	scene.add(physiPlatform);
 
-	var visiblePlatform = new THREE.Mesh( platform, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
+	var visiblePlatform = new THREE.Mesh( bigger, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
   	visiblePlatform.name = "visiblePlatform"
   	visiblePlatform.position.set(0, -0.5, 0);
   	//visiblePlatform.rotation.y = .4;
