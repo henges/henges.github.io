@@ -34,7 +34,7 @@ var initTrolley = function (car)
     goal.material.visible = false;        
     // goal.position.set(15, 5, 0); 	//target position for the camera
     goal.position.set(0, 0, 0)	    //for more rotation: (20, -40, 0)
-    
+
     //trolley
     var loader = new THREE.GLTFLoader();
         
@@ -135,7 +135,11 @@ var initTrolley = function (car)
 
     function getPos(side)
     {
-        return (side === 'fl') ? 2 : (side === 'fr') ? 3 : (side === 'bl') ? 4 : (side === 'br') ? 5 : 0;
+        return (side === 'fl') ? 2 : 
+               (side === 'fr') ? 3 : 
+               (side === 'bl') ? 4 : 
+               (side === 'br') ? 5 : 
+               0;
     }
 
     rotationForce = 100;
@@ -199,7 +203,7 @@ var initTrolley = function (car)
             
             case 39:
                 // Right
-               wheel_fl_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, rotationForce );
+                wheel_fl_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, rotationForce );
                 wheel_fl_constraint.disableAngularMotor( 1 );
                 wheel_fr_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, rotationForce );
                 wheel_fr_constraint.disableAngularMotor( 1 );
@@ -217,7 +221,7 @@ var initTrolley = function (car)
                 // Down
                 wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
                 wheel_bl_constraint.disableAngularMotor( 2 );
-               wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
+                wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
                 wheel_br_constraint.disableAngularMotor( 2 );
                 break;
         }

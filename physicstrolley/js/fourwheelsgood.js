@@ -38,6 +38,8 @@ function initScene()
 	initPlatform();
 	car = initTrolley(car);
 	initCamera();
+	goal.add(camera);
+    camera.position.set(50, 50, 25);
 	initLights();
 	initSkybox();
 	spawnChair();
@@ -65,22 +67,21 @@ gameStep();
 
 function gameStep()
 {
-	// randomiseObjects();
-	// setTimeout(gameStep, 1000)
+	randomiseObjects();
+	setTimeout(gameStep, 1000)
 }
 
 function render() 
 {
 	scene.simulate(); // get state of physics simulation
 
-	goal.add (camera);
 	//curTarget.setFromMatrixPosition(goal.matrixWorld);	//goal.position is relative to the trolley - .matrixWorld tells us its 'global transform', which is to say, its offset from (0,0,0). 
 	//camera.position.setToMatrixPosition(goal.matrixWorld);
 	//camera.position.lerp(curTarget, lerpLevel);			//won't do anything if (vector3) camera.position == curTarget
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
-	camera.position.y = camY; 							//manually move the camera up to get a wider view
-	camera.position.z = camZ;
-	camera.position.x = camX;
+	// camera.position.y = camY; 							//manually move the camera up to get a wider view
+	// camera.position.z = camZ;
+	// camera.position.x = camX;
 	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
@@ -275,9 +276,9 @@ function initLights()
   	lightD1.shadow.camera.near = 0.1;
   	lightD1.shadow.camera.far = 400;
   	lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 5000;
-	  scene.add( lightD1 );
+	scene.add( lightD1 );
 	  
-	  var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
+	var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
 	scene.add( hemlight );
   
 	//var directionalLight = new THREE.DirectionalLight( 0xffffff, 5 );
@@ -303,6 +304,16 @@ function initCamera()
 	// camera.position.set(2.2711018791473263, -5.443933926576433, -0.018602354820028255); //debug position
 	camera.lookAt( scene.position );
 	scene.add(camera);
+
+	document.addEventListener('keydown', function( ev )
+	{
+		//81 Q
+		switch (ev.keyCode)
+		{
+			case 69: camera.position.y += 1; break;
+			case 81: camera.position.y -= 1; break;
+		}
+	})
 }
 
 function initSkybox()
@@ -456,7 +467,8 @@ function spawnChair()
 	randomiserArray.push(chair);
 	scene.add (chair);	
 }
-function spawnVend ()
+
+function spawnVend()
 {
 	var vBox;
 
@@ -488,6 +500,7 @@ function spawnVend ()
         });
 		vBox.add (vBox.vend);
 		scene.add (vBox);
+		randomiserArray.push(vBox);
 	}
 	);
 	vBox.material.visible = showPhysicsBoxes;
@@ -526,11 +539,10 @@ function spawnCup ()
         });
 		Cup.add (Cup.coffee);
 		scene.add (Cup);
+		randomiserArray.push(Cup);
 	}
 	);
 	Cup.material.visible=showPhysicsBoxes;
-	//scene.add (Cup);
-	//Cup.material.visible = showPhysicsBoxes;
 }
 function spawnCan ()
 {
@@ -566,11 +578,10 @@ function spawnCan ()
         });
 		Can.add (Can.coke);
 		scene.add (Can);
+		randomiserArray.push(Can);
 	}
 	);
 	Can.material.visible=showPhysicsBoxes;
-	//scene.add (Cup);
-	//Cup.material.visible = showPhysicsBoxes;
 }
 function spawnStraw ()
 {
@@ -622,6 +633,7 @@ function spawnStraw ()
         });
 		Straw.add (Straw.bend);
 		scene.add (Straw);
+		randomiserArray.push(Straw);
 	}
 	);
 	Straw.material.visible=showPhysicsBoxes;
@@ -637,11 +649,9 @@ function randomiseObjects()
 	for (object of randomiserArray)
 	{
 		//randomise each object's x&z coordinates
-		// object.position.x = (Math.random() * planeSize) % planeSize;
-		// object.position.z = (Math.random() * planeSize) % planeSize;
 
-		object.position.x = Math.random() * 100;
-		object.position.z = Math.random() * 100;
+		object.position.x = (Math.random() * planeSize) - planeSize/2;
+		object.position.z = (Math.random() * planeSize) - planeSize/2;
 
 		//fling!
 		object.position.y = 15;
