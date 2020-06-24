@@ -31,7 +31,7 @@ var renderer = new THREE.WebGLRenderer({ antialias: true });
 function initScene() 
 {
 	scene = new Physijs.Scene;
-	
+	//scene.setGravity (new THREE.Vector3(0, 0, 0));
 	var axesHelper = new THREE.AxisHelper(5);
 	scene.add(axesHelper);
 
@@ -53,7 +53,8 @@ window.onload = initScene();
 var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
 var camY = 5;								//manually move camera upwards
-scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
+var camZ = 5;
+//scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
 gameStep();
 
@@ -71,6 +72,7 @@ function render()
 	camera.position.lerp(curTarget, lerpLevel);			//won't do anything if (vector3) camera.position == curTarget
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
 	camera.position.y += camY; 							//manually move the camera up to get a wider view
+	camera.position.z += camZ;
 
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
@@ -143,7 +145,7 @@ function updateWheels()
 	wheelsArr[3].__dirtyPosition = true;
 }
 
-function TerrainMatrix()
+/*function TerrainMatrix()
 {   
 	var tileRowNumber = 3;
 		   
@@ -160,7 +162,19 @@ function TerrainMatrix()
 		}
 
 		for (var z = tileHeight; z > (tileHeight * -tileRowNumber); z-=tileHeight ) 
-		{
+		{	var pff =10;
+			var prr=0;
+			var physPlatGeo = new THREE.BoxGeometry(tileHeight, 2, tileWidth);
+			var physPlatformMaterial = Physijs.createMaterial(
+				new THREE.MeshStandardMaterial({ color: 0xffffff, shading:THREE.FlatShading}), 
+				pff, prr);
+			var physPlatform = new Physijs.BoxMesh(physPlatGeo, physPlatformMaterial, 0 );
+			physPlatform.position.x = xPos;
+			physPlatform.position.z = z;
+			physPlatform.position.y -= 1;
+			scene.add(physPlatform);
+			floor.push (physPlatform);
+/*
 			var panelGeometry = new THREE.BoxGeometry(tileHeight, 2, tileWidth);
 			var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff, shading:THREE.FlatShading}) );
 			//rotate 90 degrees around the xaxis so we can see the terrain
@@ -168,12 +182,13 @@ function TerrainMatrix()
 			// Then set the z position to where it is in the loop (distance of camera)
 			panel.position.x = xPos;
 			panel.position.z = z;
-			panel.position.y += 1;
+			panel.position.y -= 0.9;
 			
 			//add the ground to the scene
 			scene.add(panel);
 			//finally push it to the floor array
 			floor.push(panel);
+			
 		}
 	}
 }
@@ -194,7 +209,7 @@ function moveWithCamera()
 		}
 	}
 }
-
+*/
 function initPlatform()
 {
 	var pf = 10;  //platform friction
@@ -221,7 +236,7 @@ function initPlatform()
 	var physiPlatformMaterial = Physijs.createMaterial(
 								new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('img/graham.jpg')}), 
 								pf, pr);
-	var physiPlatform = new Physijs.CylinderMesh(platform, physiPlatformMaterial, 0 );
+	var physiPlatform = new Physijs.BoxMesh(platform, physiPlatformMaterial, 0 );
 	physiPlatform.name = "physicalPlatform";
 	physiPlatform.position.set(0, -0.5, 0);
 	physiPlatform.visible = showPhysicsBoxes;
@@ -400,7 +415,7 @@ function spawnChair()
 	loader.load ('/physicstrolley/models/monobloc.glb', function (gltf)
 	{
 		box.monobloc = gltf.scene;
-		box.monobloc.position.set (0.2, -10, -4);
+		box.monobloc.position.set (0.2, -9.9, -4);
 		box.monobloc.rotation.y = Math.PI / 2;
 		gltf.scene.traverse( function ( child ) 
 		{
