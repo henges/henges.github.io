@@ -26,6 +26,7 @@ var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 	renderer.shadowMap.enabled = true;
+	renderer.shadowMapSoft = true;
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 function initScene() 
@@ -42,6 +43,7 @@ function initScene()
 	initSkybox();
 	spawnChair();
 	spawnVend ();
+	spawnCup ();
 	// TerrainMatrix();
 
 
@@ -270,9 +272,12 @@ function initLights()
   	lightD1.shadow.camera.right = 100;
   	lightD1.shadow.camera.bottom = 100;
   	lightD1.shadow.camera.near = 0.1;
-  	lightD1.shadow.camera.far = 1000;
-  	lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 1000;
-  	scene.add( lightD1 );
+  	lightD1.shadow.camera.far = 400;
+  	lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 5000;
+	  scene.add( lightD1 );
+	  
+	  var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
+	scene.add( hemlight );
   
 	//var directionalLight = new THREE.DirectionalLight( 0xffffff, 5 );
 	//scene.add( directionalLight );
@@ -485,6 +490,46 @@ function spawnVend ()
 	}
 	);
 	vBox.material.visible = showPhysicsBoxes;
+}
+function spawnCup ()
+{
+	var Cup;
+
+	//initialise master physics box
+	var Cup_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.1  // low restitution
+	);
+	Cup = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 11, 9, 26, 8 ),
+		Cup_material,
+		10
+	);
+	
+	Cup.position.set (0, 25, 0);
+
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/coffeecup.glb', function (gltf)
+	{
+		Cup.coffee = gltf.scene;
+		Cup.coffee.position.set (0, -11.8, 0);
+		Cup.coffee.rotation.y = Math.PI / 2;
+		Cup.coffee.scale.set (8, 8, 8);
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		Cup.add (Cup.coffee)
+		scene.add (Cup);
+	}
+	);
+	Cup.material.visible=showPhysicsBoxes;
+	//scene.add (Cup);
+	//Cup.material.visible = showPhysicsBoxes;
 }
 function randomiseObjects()
 {

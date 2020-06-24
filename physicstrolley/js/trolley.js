@@ -44,6 +44,7 @@ var initTrolley = function (car)
         car.body.castShadow = true;
         
         car.frame.add(car.body);
+        
         gltf.scene.traverse( function ( child ) 
 		{
             if ( child.isMesh ) {
@@ -57,7 +58,8 @@ var initTrolley = function (car)
     scene.add( car.frame );
 
     car.frame.material.visible = false;
-
+    car.frame.castShadow = true;
+    car.frame.receiveShadow = false;
     var wheel_material = Physijs.createMaterial(
         new THREE.MeshLambertMaterial({ color: 0x000000 }),
         .7, // friction
