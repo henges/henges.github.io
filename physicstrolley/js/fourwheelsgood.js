@@ -74,14 +74,7 @@ function gameStep()
 function render() 
 {
 	scene.simulate(); // get state of physics simulation
-
-	//curTarget.setFromMatrixPosition(goal.matrixWorld);	//goal.position is relative to the trolley - .matrixWorld tells us its 'global transform', which is to say, its offset from (0,0,0). 
-	//camera.position.setToMatrixPosition(goal.matrixWorld);
-	//camera.position.lerp(curTarget, lerpLevel);			//won't do anything if (vector3) camera.position == curTarget
 	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
-	// camera.position.y = camY; 							//manually move the camera up to get a wider view
-	// camera.position.z = camZ;
-	// camera.position.x = camX;
 	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
@@ -92,8 +85,8 @@ function render()
 
 function checkBoundary()
 {
-	//in each instance we place them a little further away from the boundary
-	//so that we don't get stuck in an infinite loop
+	//in each instance we place teleport the player a little further away from the boundary
+	//so that they don't immediately trigger this function again
 
 	if (car.frame.position.x < -boundarySize)
 	{
@@ -124,26 +117,8 @@ function checkBoundary()
 
 function updateWheels()
 {
-	// for (var i = 0; i < wheelsArr.length; i++)
-	// {
-	// 	wheelsArr[i].position = car.frame.position;
-	// 	var offset = new THREE.Vector3();
-
-	// 	switch (i)
-	// 	{
-	// 		case 0: offset.set(-1, 0.3, 0.7); break;
-	// 		case 1: offset.set(-1, 0.3, -0.7); break;
-	// 		case 2: offset.set(1, 0.3, 0.95); break;
-	// 		case 3: offset.set(1, 0.3, -1); break;
-	// 	}
-
-	// 	wheelsArr[i].position.add(offset);
-	// 	wheelsArr[i].__dirtyPosition = true;
-	// }
-
-	//using this code above would have been nice, but in truth, getting this done is a massive PITA
-	//due to how wheels are implemented in physijs. 
-
+	//manually access the array elements, because it doesn't seem to work in a loop!
+	//the values of each vector are derived from their offsets, seen in trolley.js wheelConstructor().	
 	wheelsArr[0].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, 0.7));
 	wheelsArr[0].__dirtyPosition = true;
 	wheelsArr[1].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3 -0.7));
@@ -226,18 +201,6 @@ function initPlatform()
 
 	//var platform;
 	var platformDiameter = planeSize;
-	var platformRadiusTop = platformDiameter * 0.5;  
-	var platformRadiusBottom = platformDiameter * 0.5 + 0.2;
-	var platformHeight = 1;
-	var platformSegments = 85;
-
-	//cylindrical platform
-	// var platform = new THREE.CylinderGeometry( 
-	// 	platformRadiusTop, 
-	// 	platformRadiusBottom, 
-	// 	platformHeight, 
-	// 	platformSegments 
-	// 	);
 
 	//rectangular platform
 	var platform = new THREE.CubeGeometry(planeSize, 1, planeSize);
@@ -265,10 +228,6 @@ function initLights()
 	var lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 3 );
   	lightD1.position.set( 100, 50, 50 );
   	lightD1.castShadow = true;
-	// lightD1.shadow.mapSize.width = 1000;  // default
-	// lightD1.shadow.mapSize.height = 1000; // default
-	// lightD1.shadow.camera.near = 0.5;    // default
-	// lightD1.shadow.camera.far = 500;     // default
   	lightD1.shadow.camera.left = -100;
 	lightD1.shadow.camera.top = -100;
   	lightD1.shadow.camera.right = 100;
@@ -280,16 +239,6 @@ function initLights()
 	  
 	var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
 	scene.add( hemlight );
-  
-	//var directionalLight = new THREE.DirectionalLight( 0xffffff, 5 );
-	//scene.add( directionalLight );
-
-	//var light = new THREE.PointLight( 0xffffff, 5, 5 );
-	//light.position.set( -5, 5, 5 );
-	//scene.add( light );
-
-	//var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-	//scene.add(ambientLight);
 }
 
 function initCamera()
@@ -301,7 +250,6 @@ function initCamera()
 		1000
 	);
 	camera.position.set( 0, 0, 0 );
-	// camera.position.set(2.2711018791473263, -5.443933926576433, -0.018602354820028255); //debug position
 	camera.lookAt( scene.position );
 	scene.add(camera);
 
@@ -649,12 +597,15 @@ function randomiseObjects()
 	for (object of randomiserArray)
 	{
 		//randomise each object's x&z coordinates
+		//subtracting half the planeSize normalises the coordinates to the negative and positive axes
 
 		object.position.x = (Math.random() * planeSize) - planeSize/2;
 		object.position.z = (Math.random() * planeSize) - planeSize/2;
 
 		//fling!
 		object.position.y = 15;
+		//this internal flag instructs physijs to update this object's position from within THREE,
+		//rather than from physijs' simulation.
 		object.__dirtyPosition = true;
 	}
 }
