@@ -1,15 +1,15 @@
 ///<reference path="../typings/globals/three/index.d.ts" />
 'use strict';
 
-var rotationForce, accelerationForce, targetVelocity, stopVelocity;
+var rotationForce, accelerationForce, targetVelocity, stopVelocity, stopForce;
 
 var initTrolley = function (car)
 {
     //CAR INIT
     var car_material = Physijs.createMaterial(
         new THREE.MeshLambertMaterial({ color: 0xff6666 }),
-        .9, // high friction
-        .5 // low restitution
+        .8, // high friction
+        .1 // low restitution
     );
     car.frame = new Physijs.BoxMesh(
             new THREE.CubeGeometry( 1.5, 0.1, 1.5 ),
@@ -53,7 +53,7 @@ var initTrolley = function (car)
 
     var wheel_material = Physijs.createMaterial(
         new THREE.MeshLambertMaterial({ color: 0x000000 }),
-        .9, // friction
+        .7, // friction
         0.1 //  restitution
         );
     var wheel_geometry = new THREE.CylinderGeometry( 0.25, 0.25, 0.2, 16 );
@@ -131,6 +131,7 @@ var initTrolley = function (car)
 
     rotationForce = 100;
     accelerationForce = 200;
+    stopForce = 10;
     targetVelocity = 35;
     stopVelocity = 0;
 
@@ -197,18 +198,18 @@ var initTrolley = function (car)
             
             case 38:
                 // Up
-                wheel_bl_constraint.configureAngularMotor( 1, 0, 0, stopVelocity, accelerationForce );
-                wheel_bl_constraint.disableAngularMotor( 2 );
-                wheel_br_constraint.configureAngularMotor( 1, 0, 0, stopVelocity, accelerationForce );
-                wheel_br_constraint.disableAngularMotor( 2 );
+                wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
+                wheel_bl_constraint.enableAngularMotor( 2 );
+                wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
+                wheel_br_constraint.enableAngularMotor( 2 );
                 break;
             
             case 40:
                 // Down
-                wheel_bl_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, accelerationForce );
-                wheel_bl_constraint.disableAngularMotor( 2 );
-               wheel_br_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, accelerationForce );
-                wheel_br_constraint.disableAngularMotor( 2 );
+                wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
+                wheel_bl_constraint.enableAngularMotor( 2 );
+               wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
+                wheel_br_constraint.enableAngularMotor( 2 );
                 break;
         }
     });
