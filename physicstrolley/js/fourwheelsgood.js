@@ -26,7 +26,6 @@ var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 	renderer.shadowMap.enabled = true;
-	renderer.shadowMapSoft = true;
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 function initScene() 
@@ -44,6 +43,7 @@ function initScene()
 	spawnChair();
 	spawnVend ();
 	spawnCup ();
+	spawnCan ();
 	// TerrainMatrix();
 
 
@@ -485,7 +485,7 @@ function spawnVend ()
                 child.receiveShadow = false;
             }
         });
-		vBox.add (vBox.vend)
+		vBox.add (vBox.vend);
 		scene.add (vBox);
 	}
 	);
@@ -507,7 +507,7 @@ function spawnCup ()
 		10
 	);
 	
-	Cup.position.set (0, 25, 0);
+	Cup.position.set (25, 25, -25);
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/coffeecup.glb', function (gltf)
@@ -523,11 +523,51 @@ function spawnCup ()
                 child.receiveShadow = false;
             }
         });
-		Cup.add (Cup.coffee)
+		Cup.add (Cup.coffee);
 		scene.add (Cup);
 	}
 	);
 	Cup.material.visible=showPhysicsBoxes;
+	//scene.add (Cup);
+	//Cup.material.visible = showPhysicsBoxes;
+}
+function spawnCan ()
+{
+	var Can;
+
+	//initialise master physics box
+	var Can_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.1  // low restitution
+	);
+	Can = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 5, 5, 14.5, 8 ),
+		Can_material,
+		10
+	);
+	
+	Can.position.set (-20, 25, 20);
+
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/can1.glb', function (gltf)
+	{
+		Can.coke = gltf.scene;
+		Can.coke.position.set (0, -7, 0);
+		Can.coke.rotation.y = Math.PI / 2;
+		Can.coke.scale.set (1, 1, 1);
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		Can.add (Can.coke);
+		scene.add (Can);
+	}
+	);
+	Can.material.visible=showPhysicsBoxes;
 	//scene.add (Cup);
 	//Cup.material.visible = showPhysicsBoxes;
 }
