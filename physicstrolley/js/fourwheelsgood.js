@@ -44,6 +44,7 @@ function initScene()
 	spawnVend ();
 	spawnCup ();
 	spawnCan ();
+	spawnStraw ();
 	// TerrainMatrix();
 
 
@@ -57,7 +58,7 @@ window.onload = initScene();
 //var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
 var camY = 50;								//manually move camera upwards
 var camZ = 50;
-var camX = 20;
+var camX = 25;
 //scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
 gameStep();
@@ -570,6 +571,61 @@ function spawnCan ()
 	Can.material.visible=showPhysicsBoxes;
 	//scene.add (Cup);
 	//Cup.material.visible = showPhysicsBoxes;
+}
+function spawnStraw ()
+{
+	var Straw, Bit, Lip;
+
+	//initialise master physics box
+	var Straw_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.1  // low restitution
+	);
+	Straw = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 0.5, 0.5, 46, 8 ),
+		Straw_material,
+		10
+	);
+	Bit = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 0.5, 0.5, 5, 8 ),
+		Straw_material,
+		10
+	);
+	Lip = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 0.5, 0.5,15, 8 ),
+		Straw_material,
+		10
+	);
+	Straw.position.set (75, 27, 0);
+	Straw.rotation.x=-Math.PI/2;
+	Bit.position.set (0, 26, -0.8);
+	Bit.rotation.x=-Math.PI/9;
+	Straw.add (Bit);
+	Lip.position.set (0, 33, -6.6);
+	Lip.rotation.x=-Math.PI/4;
+	Straw.add (Lip);
+	var loader = new THREE.GLTFLoader();
+
+	loader.load ('/physicstrolley/models/straw1.glb', function (gltf)
+	{
+		Straw.bend = gltf.scene;
+		Straw.bend.position.set (0, -23, 0);
+		Straw.bend.rotation.y = Math.PI / 2;
+		Straw.bend.scale.set (0.5, 0.5, 0.5);
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		Straw.add (Straw.bend);
+		scene.add (Straw);
+	}
+	);
+	Straw.material.visible=showPhysicsBoxes;
+	
 }
 function randomiseObjects()
 {
