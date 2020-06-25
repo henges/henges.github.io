@@ -39,7 +39,7 @@ function initScene()
 	car = initTrolley(car);
 	initCamera();
 	goal.add(camera);
-    camera.position.set(50, 10, 25);
+    camera.position.set(50, 50, 25);
 	initLights();
 	initSkybox();
 	spawnChair();
@@ -47,8 +47,9 @@ function initScene()
 	spawnCup ();
 	spawnCan ();
 	spawnStraw ();
+	spawnCapsule ();
 	// TerrainMatrix();
-
+	spawnAcid();
 
 	requestAnimationFrame( render );
 };
@@ -58,9 +59,9 @@ window.onload = initScene();
 //the position we want our camera in on each frame
 //var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 //var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
-var camY = 10;								//manually move camera upwards
-var camZ = 200;
-var camX = 25;
+//var camY = 10;								//manually move camera upwards
+//var camZ = 200;
+//var camX = 25;
 //scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
 gameStep();
@@ -196,8 +197,8 @@ function moveWithCamera()
 */
 function initPlatform()
 {
-	var pf = 10;  //platform friction
-	var pr = 3;  //platform restitution
+	var pf = 0.8;  //platform friction
+	var pr = 0.9;  //platform restitution
 
 	//var platform;
 	var platformDiameter = planeSize;
@@ -287,7 +288,7 @@ function spawnChair()
 	var box_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.4  // low restitution
+		.2  // low restitution
 	);
 	box = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 12.5, 1, 12.5 ),
@@ -424,7 +425,7 @@ function spawnVend()
 	var vBox_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.4  // low restitution
+		.2  // low restitution
 	);
 	vBox = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 14.8, 23.4, 14.8 ),
@@ -461,10 +462,10 @@ function spawnCup ()
 	var Cup_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.4  // low restitution
+		.2  // low restitution
 	);
 	Cup = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 11, 9, 26, 8 ),
+		new THREE.CylinderGeometry( 11, 9, 26, 8, 4 ),
 		Cup_material,
 		10
 	);
@@ -500,7 +501,7 @@ function spawnCan ()
 	var Can_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.4  // low restitution
+		.2  // low restitution
 	);
 	Can = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 5, 5, 14.5, 8 ),
@@ -539,7 +540,7 @@ function spawnStraw ()
 	var Straw_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.4  // low restitution
+		.2  // low restitution
 	);
 	Straw = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 0.5, 0.5, 46, 8 ),
@@ -586,6 +587,77 @@ function spawnStraw ()
 	);
 	Straw.material.visible=showPhysicsBoxes;
 	
+}
+function spawnCapsule ()
+{
+	var capsule, capsulendone, capsulendtwo;
+
+	//initialise master physics box
+	var capsule_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.2, // high friction
+		1  // low restitution
+	);
+	capsule = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry (1.5, 1.5, 8, 8),
+		capsule_material,
+		1
+	);
+	/*capsulendone = new Physijs.CylinderMesh (
+		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
+		capsule_material,
+		1
+	);
+	capsulendtwo = new Physijs.SphereMesh (
+		new THREE.CylinderGeometry (1.5, 0.5, 1, 8),
+		capsule_material,
+		1
+	);*/
+	scene.add (capsule);
+	capsule.position.y= Math.random() * 25 + 25;
+	capsule.position.x = Math.random() * 50 - 25;
+			capsule.position.z = Math.random() * 50 - 25;
+			
+			capsule.rotation.set(
+				Math.random() * Math.PI * 2,
+				Math.random() * Math.PI * 2,
+				Math.random() * Math.PI * 2);
+	//capsule.position.set (10, 10, 3);
+	//capsule.rotation.x = Math.PI/12;
+	//capsulendone.position.set (0, 3, 0);
+	//capsulendtwo.position.set (0, -3, 0 )
+	//capsule.add (capsulendone);
+	//capsule.add (capsulendtwo);
+		
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/pillpill.glb', function (gltf)
+	{
+		capsule.cap = gltf.scene;
+		capsule.cap.position.set (0, 0, 0);
+		capsule.cap.rotation.y = Math.PI / 2;
+		capsule.cap.scale.set (1.7, 1.7, 1.7);
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		capsule.add (capsule.cap);
+		scene.add (capsule);
+		randomiserArray.push(capsule);
+	}
+	);
+	
+	capsule.material.visible=showPhysicsBoxes;
+	
+}
+function spawnAcid ()
+{
+	for (var i = 0; i < 10; i++){
+		spawnCapsule();
+		
+	}
 }
 function randomiseObjects()
 {
