@@ -39,7 +39,7 @@ function initScene()
 	car = initTrolley(car);
 	initCamera();
 	goal.add(camera);
-    camera.position.set(50, 50, 25);
+    camera.position.set(50, 10, 25);
 	initLights();
 	initSkybox();
 	spawnChair();
@@ -58,8 +58,8 @@ window.onload = initScene();
 //the position we want our camera in on each frame
 //var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
 //var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
-var camY = 50;								//manually move camera upwards
-var camZ = 50;
+var camY = 10;								//manually move camera upwards
+var camZ = 200;
 var camX = 25;
 //scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
 render();
@@ -67,8 +67,8 @@ gameStep();
 
 function gameStep()
 {
-	randomiseObjects();
-	setTimeout(gameStep, 1000)
+	//randomiseObjects();
+	//setTimeout(gameStep, 1000)
 }
 
 function render() 
@@ -287,7 +287,7 @@ function spawnChair()
 	var box_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.1  // low restitution
+		.4  // low restitution
 	);
 	box = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 12.5, 1, 12.5 ),
@@ -424,7 +424,7 @@ function spawnVend()
 	var vBox_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.1  // low restitution
+		.4  // low restitution
 	);
 	vBox = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 14.8, 23.4, 14.8 ),
@@ -461,7 +461,7 @@ function spawnCup ()
 	var Cup_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.1  // low restitution
+		.4  // low restitution
 	);
 	Cup = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 11, 9, 26, 8 ),
@@ -500,7 +500,7 @@ function spawnCan ()
 	var Can_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.1  // low restitution
+		.4  // low restitution
 	);
 	Can = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 5, 5, 14.5, 8 ),
@@ -539,7 +539,7 @@ function spawnStraw ()
 	var Straw_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.1  // low restitution
+		.4  // low restitution
 	);
 	Straw = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 0.5, 0.5, 46, 8 ),
