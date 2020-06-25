@@ -111,6 +111,7 @@ function initOrbitControls()
 	controls.maxPolarAngle = Math.PI/2; // radians
 	controls.minAzimuthAngle = 0; // radians
 	controls.maxAzimuthAngle = Math.PI; // radians
+	controls.enablePan = false;
 
 	orbitControlsEnabled = true;
 }

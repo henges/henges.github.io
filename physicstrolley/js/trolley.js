@@ -152,8 +152,8 @@ var initTrolley = function (car)
     {
         switch( ev.keyCode ) 
         {
-            case 37:
-                // Left
+            case 37: case 65:
+                // Left or A
                 //which motor, low angle limit, high angle limit, target velocity, maximum force
                 wheel_fl_constraint.configureAngularMotor( 1, -Math.PI / 4, Math.PI / 4, targetVelocity, rotationForce );
                 wheel_fl_constraint.enableAngularMotor( 1 );
@@ -161,24 +161,24 @@ var initTrolley = function (car)
                 wheel_fr_constraint.enableAngularMotor( 1 );
                 break;
             
-            case 39:
-                // Right
+            case 39: case 68:
+                // Right or D
                 wheel_fl_constraint.configureAngularMotor( 1, -Math.PI / 4, Math.PI / 4, -targetVelocity, rotationForce );
                 wheel_fl_constraint.enableAngularMotor( 1 );
                 wheel_fr_constraint.configureAngularMotor( 1, -Math.PI / 4, Math.PI / 4, -targetVelocity, rotationForce );
                 wheel_fr_constraint.enableAngularMotor( 1 );
                 break;
             
-            case 38:
-                // Up
+            case 38: case 87:
+                // Up or W
                 wheel_bl_constraint.configureAngularMotor( 2, 1, 0, targetVelocity, accelerationForce );
                 wheel_bl_constraint.enableAngularMotor( 2 );
                 wheel_br_constraint.configureAngularMotor( 2, 1, 0, targetVelocity, accelerationForce );
                 wheel_br_constraint.enableAngularMotor( 2 );
                 break;
             
-            case 40:
-                // Down
+            case 40: case 83:
+                // Down or S
                 wheel_bl_constraint.configureAngularMotor( 2, 1, 0, -targetVelocity, accelerationForce );
                 wheel_br_constraint.enableAngularMotor( 2 );
                 wheel_br_constraint.configureAngularMotor( 2, 1, 0, -targetVelocity, accelerationForce );
@@ -193,32 +193,32 @@ var initTrolley = function (car)
     {
         switch( ev.keyCode ) 
         {
-            case 37:
-                // Left
+            case 37: case 65:
+                // Left or A
                 wheel_fl_constraint.configureAngularMotor( 1, 0, 0, stopVelocity, rotationForce ); //motor 0 1 2 (x y z), low_limit, high_limit, target vel, max force
                 wheel_fl_constraint.disableAngularMotor( 1 );
                 wheel_fr_constraint.configureAngularMotor( 1, 0, 0, stopVelocity, rotationForce );
                 wheel_fr_constraint.disableAngularMotor( 1 );
                 break;
             
-            case 39:
-                // Right
+            case 39: case 68:
+                // Right or D
                 wheel_fl_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, rotationForce );
                 wheel_fl_constraint.disableAngularMotor( 1 );
                 wheel_fr_constraint.configureAngularMotor( 1, 0, 0, -stopVelocity, rotationForce );
                 wheel_fr_constraint.disableAngularMotor( 1 );
                 break;
             
-            case 38:
-                // Up
+            case 38: case 87:
+                // Up or W
                 wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
                 wheel_bl_constraint.disableAngularMotor( 2 );
                 wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
                 wheel_br_constraint.disableAngularMotor( 2 );
                 break;
             
-            case 40:
-                // Down
+            case 40: case 83:
+                // Down or S
                 wheel_bl_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
                 wheel_bl_constraint.disableAngularMotor( 2 );
                 wheel_br_constraint.configureAngularMotor( 2, 0, 0, stopVelocity, stopForce );
