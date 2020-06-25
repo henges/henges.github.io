@@ -25,6 +25,8 @@ var tileWidth=100;
 var textDisplaying = false;
 var textId = "message";
 
+var controls, fakeCamera, orbitControlsEnabled;
+
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -54,6 +56,8 @@ function initScene()
 	spawnCig();
 	// TerrainMatrix();
 	spawnAcid();
+
+	initOrbitControls()
 
 	drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
@@ -86,9 +90,30 @@ function render()
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
 
+	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
+	//so we can copy its position/rotation/quaternion, which will automatically apply it to
+	//the real camera relative to the trolley.
+	if (orbitControlsEnabled) camera.copy(fakeCamera);
+
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
+
+function initOrbitControls()
+{
+	//you can totally use OrbitControls to do this!
+	//first create a copy of the camera that isn't parented to the trolley
+	fakeCamera = camera.clone();
+	//attach OrbitControls to it, then get coordinates from OC in render()
+	controls = new THREE.OrbitControls(fakeCamera, renderer.domElement);
+	controls.enableKeys = false;
+	controls.minPolarAngle = 0; // radians
+	controls.maxPolarAngle = Math.PI/2; // radians
+	controls.minAzimuthAngle = 0; // radians
+	controls.maxAzimuthAngle = Math.PI; // radians
+
+	orbitControlsEnabled = true;
+}
 
 function checkBoundary()
 {
