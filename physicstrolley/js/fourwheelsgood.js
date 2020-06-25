@@ -48,6 +48,8 @@ function initScene()
 	spawnCan ();
 	spawnStraw ();
 	spawnCapsule ();
+	spawnBottlecap ();
+	spawnCig();
 	// TerrainMatrix();
 	spawnAcid();
 
@@ -652,10 +654,145 @@ function spawnCapsule ()
 	capsule.material.visible=showPhysicsBoxes;
 	
 }
+function spawnCig ()
+{
+	var cig;
+
+	//initialise master physics box
+	var cig_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.2, // high friction
+		1  // low restitution
+	);
+	cig = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry (1.5, 1.5, 10, 8),
+		cig_material,
+		1
+	);
+	/*capsulendone = new Physijs.CylinderMesh (
+		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
+		capsule_material,
+		1
+	);
+	capsulendtwo = new Physijs.SphereMesh (
+		new THREE.CylinderGeometry (1.5, 0.5, 1, 8),
+		capsule_material,
+		1
+	);*/
+	scene.add (cig);
+	
+	cig.position.y= Math.random() * 25 + 25;
+	cig.position.x = Math.random() * 50 - 25;
+			cig.position.z = Math.random() * 50 - 25;
+			
+			cig.rotation.set(
+				Math.random() * Math.PI * 2,
+				Math.random() * Math.PI * 2,
+				Math.random() * Math.PI * 2);
+				
+	//cig.position.set (10, 10, 3);
+	//capsule.rotation.x = Math.PI/12;
+	//capsulendone.position.set (0, 3, 0);
+	//capsulendtwo.position.set (0, -3, 0 )
+	//capsule.add (capsulendone);
+	//capsule.add (capsulendtwo);
+		
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/cig.glb', function (gltf)
+	{
+		cig.lid = gltf.scene;
+		cig.lid.position.set (0, -5, 0);
+		cig.lid.rotation.y = Math.PI / 2;
+		cig.lid.scale.set (1.5, 1.5, 1.5);
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		cig.add (cig.lid);
+		scene.add (cig);
+		randomiserArray.push(cig);
+	}
+	);
+	
+	cig.material.visible=showPhysicsBoxes;
+	
+}
+function spawnBottlecap ()
+{
+	var cap;
+
+	//initialise master physics box
+	var cap_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.2, // high friction
+		1  // low restitution
+	);
+	cap = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry (3.5, 3, 1.5, 8),
+		cap_material,
+		1
+	);
+	/*
+	capsulendone = new Physijs.CylinderMesh (
+		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
+		capsule_material,
+		1
+	);
+	capsulendtwo = new Physijs.SphereMesh (
+		new THREE.CylinderGeometry (1.5, 0.5, 1, 8),
+		capsule_material,
+		1
+	);*/
+	scene.add (cap);
+	
+	cap.position.y= Math.random() * 25 + 25;
+	cap.position.x = Math.random() * 50 - 25;
+			cap.position.z = Math.random() * 50 - 25;
+			
+			cap.rotation.set(
+				Math.random() * Math.PI * 2,
+				Math.random() * Math.PI * 2,
+				Math.random() * Math.PI * 2);
+				
+	//cap.position.set (10, 10, 3);
+	//capsule.rotation.x = Math.PI/12;
+	//capsulendone.position.set (0, 3, 0);
+	//capsulendtwo.position.set (0, -3, 0 )
+	//capsule.add (capsulendone);
+	//capsule.add (capsulendtwo);
+		
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/bottlecap.glb', function (gltf)
+	{
+		cap.top = gltf.scene;
+		cap.top.position.set (0, -0.75, 0);
+		cap.top.rotation.y = Math.PI / 2;
+		cap.top.scale.set (0.5, 0.5, 0.5);
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		cap.add (cap.top);
+		scene.add (cap);
+		randomiserArray.push(cap);
+	}
+	);
+	
+	cap.material.visible=showPhysicsBoxes;
+	
+}
 function spawnAcid ()
 {
-	for (var i = 0; i < 10; i++){
+	for (var i = 0; i < 5; i++){
 		spawnCapsule();
+		spawnBottlecap ();
+		spawnCig();
 		
 	}
 }
