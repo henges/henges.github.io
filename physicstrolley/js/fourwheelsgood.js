@@ -22,6 +22,9 @@ var floor = [];
 var tileHeight=100;
 var tileWidth=100;
 
+var textDisplaying = false;
+var textId = "message";
+
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -32,16 +35,15 @@ function initScene()
 {
 	scene = new Physijs.Scene;
 	scene.setGravity (new THREE.Vector3(0, -30, 0));
-	var axesHelper = new THREE.AxisHelper(5);
-	scene.add(axesHelper);
+	// var axesHelper = new THREE.AxisHelper(5);
+	// scene.add(axesHelper);
 
 	initPlatform();
 	car = initTrolley(car);
 	initCamera();
-	goal.add(camera);
-    camera.position.set(50, 50, 25);
 	initLights();
 	initSkybox();
+	initTextListeners();
 	spawnChair();
 	spawnVend ();
 	spawnCup ();
@@ -50,6 +52,8 @@ function initScene()
 	spawnCapsule ();
 	// TerrainMatrix();
 	spawnAcid();
+
+	drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
 	requestAnimationFrame( render );
 };
@@ -235,7 +239,7 @@ function initLights()
   	lightD1.shadow.camera.bottom = 100;
   	lightD1.shadow.camera.near = 0.1;
   	lightD1.shadow.camera.far = 400;
-  	lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 5000;
+  	lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 1000;
 	scene.add( lightD1 );
 	  
 	var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
@@ -253,6 +257,10 @@ function initCamera()
 	camera.position.set( 0, 0, 0 );
 	camera.lookAt( scene.position );
 	scene.add(camera);
+
+	//attach to the trolley
+	car.frame.add(camera);
+    camera.position.set(50, 50, 25);
 
 	document.addEventListener('keydown', function( ev )
 	{
@@ -652,11 +660,11 @@ function spawnCapsule ()
 	capsule.material.visible=showPhysicsBoxes;
 	
 }
-function spawnAcid ()
+function spawnAcid()
 {
-	for (var i = 0; i < 10; i++){
+	for (var i = 0; i < 10; i++)
+	{
 		spawnCapsule();
-		
 	}
 }
 function randomiseObjects()
@@ -680,4 +688,44 @@ function randomiseObjects()
 		//rather than from physijs' simulation.
 		object.__dirtyPosition = true;
 	}
+}
+
+function initTextListeners()
+{
+	document.addEventListener('keydown', function( ev )
+	{
+		switch (ev.keyCode)
+		{
+			case 32: if (textDisplaying) clearText(); break;
+		}
+	})	
+}
+
+function drawText(message)
+{
+	if (textDisplaying) clearText();
+	
+	var text = document.createElement('div');
+
+	text.style.position = 'absolute';
+	text.style.textAlign = "center";
+	text.innerHTML = "<p>" + message + "</p>";
+	text.style.backgroundColor = "black";
+	text.style.fontFamily = "courier";
+	text.style.color = "white";
+	text.style.padding = "5px";
+	text.style.borderRadius = "5px";
+  	text.style.left = "50%";
+  	text.style.bottom = "20px";
+	text.style.transform = "translateX(-50%)";
+	text.id = textId;
+
+	document.body.appendChild(text);
+	textDisplaying = true;
+}
+
+function clearText()
+{
+	document.getElementById(textId).remove(); 
+	!textDisplaying;
 }
