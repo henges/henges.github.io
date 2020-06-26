@@ -146,6 +146,87 @@ function checkBoundary()
 		car.frame.__dirtyPosition = true;
 		updateWheels();
 	}
+	
+/*
+	//pills 
+	if (capsule.position.x < -boundarySize)
+	{
+		capsule.position.x = boundarySize - 5;
+		capsule.__dirtyPosition = true;
+		
+	}
+	else if (capsule.position.x > boundarySize)
+	{
+		capsule.position.x = -boundarySize + 5;
+		capsule.__dirtyPosition = true;
+		
+	}
+
+	if (capsule.position.z < -boundarySize)
+	{
+		capsule.position.z = boundarySize - 5;
+		capsule.__dirtyPosition = true;
+		
+	}
+	else if (capsule.position.z > boundarySize)
+	{
+		capsule.position.z = -boundarySize + 5;
+		capsule.__dirtyPosition = true;
+		
+	}
+	//cig
+	if (cig.position.x < -boundarySize)
+	{
+		cig.position.x = boundarySize - 5;
+		cig.__dirtyPosition = true;
+		
+	}
+	else if (cig.position.x > boundarySize)
+	{
+		cig.position.x = -boundarySize + 5;
+		cig.__dirtyPosition = true;
+		
+	}
+
+	if (cig.position.z < -boundarySize)
+	{
+		cig.position.z = boundarySize - 5;
+		cig.__dirtyPosition = true;
+		
+	}
+	else if (cig.position.z > boundarySize)
+	{
+		cig.position.z = -boundarySize + 5;
+		cig.__dirtyPosition = true;
+		
+	}
+	//bottcap
+	if (cap.position.x < -boundarySize)
+	{
+		cap.position.x = boundarySize - 5;
+		cap.__dirtyPosition = true;
+		
+	}
+	else if (cap.position.x > boundarySize)
+	{
+		cap.position.x = -boundarySize + 5;
+		cap.__dirtyPosition = true;
+		
+	}
+
+	if (cap.position.z < -boundarySize)
+	{
+		cap.position.z = boundarySize - 5;
+		cap.__dirtyPosition = true;
+		
+	}
+	else if (cap.position.z > boundarySize)
+	{
+		cap.position.z = -boundarySize + 5;
+		cap.__dirtyPosition = true;
+		
+	}
+	*/
 }
 
 function updateWheels()
