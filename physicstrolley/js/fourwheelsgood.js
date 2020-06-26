@@ -12,7 +12,7 @@ var showPhysicsBoxes = false;
 var boundary;
 
 //Scene constants, including player char.
-var initScene, scene, camera, goal, car={};
+var initScene, scene, camera, goal, car={}, cap, capsule, cig;
 var wheelsArr = [];
 //Static objects (physics-only interactions).
 var chair = {};
@@ -51,9 +51,9 @@ function initScene()
 	spawnCup ();
 	spawnCan ();
 	spawnStraw ();
-	spawnCapsule ();
-	spawnBottlecap ();
-	spawnCig();
+	capsule=spawnCapsule ();
+	cap=spawnBottlecap ();
+	cig=spawnCig();
 	// TerrainMatrix();
 	spawnAcid();
 
@@ -150,7 +150,7 @@ function checkBoundary()
 		updateWheels();
 	}
 	
-/*
+
 	//pills 
 	if (capsule.position.x < -boundarySize)
 	{
@@ -229,7 +229,7 @@ function checkBoundary()
 		cap.__dirtyPosition = true;
 		
 	}
-	*/
+	
 }
 
 function updateWheels()
@@ -356,6 +356,7 @@ function initLights()
 	  
 	var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
 	scene.add( hemlight );
+	
 }
 
 function initCamera()
@@ -770,7 +771,7 @@ function spawnCapsule ()
 	);
 	
 	capsule.material.visible=showPhysicsBoxes;
-	
+	return capsule;
 }
 function spawnCig ()
 {
@@ -836,7 +837,7 @@ function spawnCig ()
 	);
 	
 	cig.material.visible=showPhysicsBoxes;
-	
+	return cig;
 }
 function spawnBottlecap ()
 {
@@ -900,10 +901,11 @@ function spawnBottlecap ()
 		scene.add (cap);
 		randomiserArray.push(cap);
 	}
+
 	);
 	
 	cap.material.visible=showPhysicsBoxes;
-	
+	return cap;
 }
 function spawnAcid ()
 {
