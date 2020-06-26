@@ -89,7 +89,10 @@ function render()
 	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
-
+	/*var target = new THREE.Vector3;
+	car.frame.getWorldPosition (target);
+	lightD1.position.x = (target.x+100);
+	lightD1.position.z = (target.z+50);*/
 	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
 	//so we can copy its position/rotation/quaternion, which will automatically apply it to
 	//the real camera relative to the trolley.
@@ -358,13 +361,13 @@ function initLights()
 function initCamera()
 {
 	camera = new THREE.PerspectiveCamera(
-		35,
+		70,
 		window.innerWidth / window.innerHeight,
 		0.1,
 		1000
 	);
 	camera.position.set( 0, 0, 0 );
-	camera.lookAt( scene.position );
+	//camera.lookAt( scene.position );
 	scene.add(camera);
 
 	//attach to the trolley
