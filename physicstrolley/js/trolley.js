@@ -3,9 +3,10 @@
 
 var rotationForce, accelerationForce, targetVelocity, stopVelocity, stopForce;
 
-var initTrolley = function (car)
+var initTrolley = function ()
 {
     //CAR INIT
+
     var car_material = Physijs.createMaterial(
         new THREE.MeshLambertMaterial({ color: 0xff6666 }),
         .8, // high friction
@@ -18,22 +19,14 @@ var initTrolley = function (car)
     );
     car.frame.position.set( 0 , 0.2, 0);
     car.frame.castShadow = true;
+    // car.frame.material.visible = true;
     
-    var carInteriorGeometry = new THREE.BoxGeometry( 1.5, 0.1, 1.5);
+    var carInteriorGeometry = new THREE.BoxGeometry( 3, 3, 1.5);
     var carInteriorMaterial = Physijs.createMaterial( new THREE.MeshStandardMaterial({ color: 0x777777 }), 0.8, 0.1 );
     car.interior = new Physijs.BoxMesh(carInteriorGeometry, carInteriorMaterial, 50 );
     car.interior.material.visible = false;                  //(if visible, edges stick out from rounded frame)
-    car.interior.position.set( 0, 2, 0 );
+    car.interior.position.set( -0.10, 2, 0 );
     car.frame.add(car.interior);
-
-        
-    var goalGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    var goalMat = Physijs.createMaterial( new THREE.MeshStandardMaterial({ color: 0x777777 }), 0, 0 );
-    goal = new Physijs.BoxMesh(goalGeo, goalMat, 0.1);
-    car.frame.add( goal );
-    goal.material.visible = false;        
-    // goal.position.set(15, 5, 0); 	//target position for the camera
-    goal.position.set(0, 0, 0)	    //for more rotation: (20, -40, 0)
 
     //trolley
     var loader = new THREE.GLTFLoader();
@@ -53,7 +46,8 @@ var initTrolley = function (car)
             }
         });
 
-        car.frame.addEventListener('collision', handleCollision)
+        car.interior.addEventListener('collision', handleCollision);
+        car.frame.addEventListener('collision', handleCollision);
     },
         function(xhr){}, function(error){}
     );
@@ -81,15 +75,6 @@ var initTrolley = function (car)
     var wheel_bl_constraint = constraintConstructor(wheel_bl, car.frame, 'bl');
     var wheel_br = wheelConstructor('br');
     var wheel_br_constraint = constraintConstructor(wheel_br, car.frame, 'br');
-
-    // car.wheel_fl = wheelConstructor('fl');
-    // car.wheel_fl_constraint = constraintConstructor(car.wheel_fl, car.frame, 'fl');
-    // car.wheel_fr = wheelConstructor('fr');
-    // car.wheel_fr_constraint = constraintConstructor(car.wheel_fr, car.frame, 'fr');
-    // car.wheel_bl = wheelConstructor('bl');
-    // car.wheel_bl_constraint = constraintConstructor(car.wheel_bl, car.frame, 'bl');
-    // car.wheel_br = wheelConstructor('br');
-    // car.wheel_br_constraint = constraintConstructor(car.wheel_br, car.frame, 'br');
 
     function wheelConstructor(side)
     {
@@ -228,6 +213,4 @@ var initTrolley = function (car)
                 break;
         }
     });
-
-    return car;
 }

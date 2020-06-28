@@ -9,22 +9,22 @@ Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
 var planeSize = 500;
 var boundarySize = (planeSize/2) * 0.9;
 var showPhysicsBoxes = false;
-var boundary;
 
 //Scene constants, including player char.
-var initScene, scene, camera, goal, car={}, cap, pill ={}, cig, light ={};
+var initScene, scene, camera, goal, car={}, cap, pill ={}, cig, light={}, chair={};
 var wheelsArr = [];
-//Static objects (physics-only interactions).
-var chair = {};
-var objectsArray = [];
-//floor array is in global scope since it's accessed in multiple functions
-var floor = [];
-var tileHeight=100;
-var tileWidth=100;
 
+//Static objects (physics-only interactions).
+var objectsArray = [];
+
+//text stuff
 var textDisplaying = false;
 var textId = "message";
+var allowSameModelTalk = true;
+var allowNewModelTalk = true;
+var last_collided = "nothing";
 
+//for duping OrbitControls into letting us rotate around the trolley
 var controls, fakeCamera, orbitControlsEnabled;
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -37,50 +37,35 @@ function initScene()
 {
 	scene = new Physijs.Scene;
 	scene.setGravity (new THREE.Vector3(0, -30, 0));
-	// var axesHelper = new THREE.AxisHelper(5);
-	// scene.add(axesHelper);
 
 	initPlatform();
-	car = initTrolley(car);
+	initTrolley();
 	initCamera();
 	initLights();
 	initSkybox();
 	initTextListeners();
 	spawnChair();
-	spawnVend ();
-	spawnCup ();
-	spawnCan ();
-	spawnStraw ();
+	spawnVend();
+	spawnCup();
+	spawnCan();
+	spawnStraw();
 	spawnPill();
-	cap=spawnBottlecap ();
-	cig=spawnCig();
-	// TerrainMatrix();
+	spawnBottlecap();
+	spawnCig();
+
 	spawnAcid();
 
 	initOrbitControls()
 
-	drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
+	// drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
 	requestAnimationFrame( render );
 };
 
 window.onload = initScene();
 
-//the position we want our camera in on each frame
-//var curTarget = new THREE.Vector3(0,0,0);	//initialise in global scope to avoid unnecessary reallocations
-//var lerpLevel = 0.1;						//the rate of lerping, i.e. 0.1 will move 10% closer to the goal each time 
-//var camY = 10;								//manually move camera upwards
-//var camZ = 200;
-//var camX = 25;
 // scene.fog = new THREE.FogExp2( 0xff4666, 0.005 );
 render();
-gameStep();
-
-function gameStep()
-{
-	//randomiseObjects();
-	//setTimeout(gameStep, 1000)
-}
 
 function render() 
 {
@@ -93,6 +78,7 @@ function render()
 	car.frame.getWorldPosition(target);
 	light.lightD1.position.x = (target.x+100);
 	light.lightD1.position.z = (target.z+50);
+
 	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
 	//so we can copy its position/rotation/quaternion, which will automatically apply it to
 	//the real camera relative to the trolley.
@@ -198,9 +184,6 @@ function initPlatform()
 	var pf = 0.8;  //platform friction
 	var pr = 0.9;  //platform restitution
 
-	//var platform;
-	var platformDiameter = planeSize;
-
 	//rectangular platform
 	var platform = new THREE.CubeGeometry(planeSize, 1, planeSize);
 	var bigger = new THREE.CubeGeometry(planeSize*4, 1, planeSize*4);
@@ -257,16 +240,6 @@ function initCamera()
 	//attach to the trolley
 	car.frame.add(camera);
     camera.position.set(50, 50, 25);
-
-	document.addEventListener('keydown', function( ev )
-	{
-		//81 Q
-		switch (ev.keyCode)
-		{
-			case 69: camera.position.y += 1; break;
-			case 81: camera.position.y -= 1; break;
-		}
-	})
 }
 
 function initSkybox()
@@ -615,8 +588,8 @@ function spawnPill()
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/pillpill.glb', function (gltf)
 	{
-		//first setup shadow properties of the model, since this is the same
-		//for every pill
+		//first setup shadow properties of the model, since this will be copied
+		//for every pill later on
 		gltf.scene.traverse( function ( child ) 
 		{
 			if ( child.isMesh ) {
@@ -630,7 +603,7 @@ function spawnPill()
 			//we need a new copy of both the material and the geometry for each pill's mesh
 			//so we create these in the loop
 			var localPill = new Physijs.CylinderMesh(
-				new THREE.CylinderGeometry(1.5, 1.5, 8, 8), 
+				new THREE.CylinderGeometry(0.9, 0.9, 4.25, 8), 
 				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .2, 1));
 
 
@@ -661,34 +634,20 @@ function spawnPill()
 }
 function spawnCig ()
 {
-	var cig;
-
-	//initialise master physics box
 	var cig_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.2, // high friction
 		1  // low restitution
 	);
-	cig = new Physijs.CylinderMesh(
+	var cig = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry (1.5, 1.5, 10, 8),
 		cig_material,
 		1
 	);
 
 	cig.model = 'cig';
-	/*capsulendone = new Physijs.CylinderMesh (
-		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
-		capsule_material,
-		1
-	);
-	capsulendtwo = new Physijs.SphereMesh (
-		new THREE.CylinderGeometry (1.5, 0.5, 1, 8),
-		capsule_material,
-		1
-	);*/
-	scene.add (cig);
 	
-	cig.position.y= Math.random() * 25 + 25;
+	cig.position.y = Math.random() * 25 + 25;
 	cig.position.x = Math.random() * 50 - 25;
 	cig.position.z = Math.random() * 50 - 25;
 	
@@ -696,13 +655,6 @@ function spawnCig ()
 		Math.random() * Math.PI * 2,
 		Math.random() * Math.PI * 2,
 		Math.random() * Math.PI * 2);
-				
-	//cig.position.set (10, 10, 3);
-	//capsule.rotation.x = Math.PI/12;
-	//capsulendone.position.set (0, 3, 0);
-	//capsulendtwo.position.set (0, -3, 0 )
-	//capsule.add (capsulendone);
-	//capsule.add (capsulendtwo);
 		
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/cig.glb', function (gltf)
@@ -717,15 +669,15 @@ function spawnCig ()
                 child.castShadow = true;
                 child.receiveShadow = false;
             }
-        });
+		});
+		
 		cig.add (cig.lid);
+		cig.material.visible=showPhysicsBoxes;
+
 		scene.add (cig);
 		objectsArray.push(cig);
 	}
 	);
-	
-	cig.material.visible=showPhysicsBoxes;
-	return cig;
 }
 function spawnBottlecap ()
 {
@@ -744,18 +696,6 @@ function spawnBottlecap ()
 	);
 
 	cap.model = 'cap';
-	/*
-	capsulendone = new Physijs.CylinderMesh (
-		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
-		capsule_material,
-		1
-	);
-	capsulendtwo = new Physijs.SphereMesh (
-		new THREE.CylinderGeometry (1.5, 0.5, 1, 8),
-		capsule_material,
-		1
-	);*/
-	scene.add (cap);
 	
 	cap.position.y= Math.random() * 25 + 25;
 	cap.position.x = Math.random() * 50 - 25;
@@ -765,14 +705,7 @@ function spawnBottlecap ()
 		Math.random() * Math.PI * 2,
 		Math.random() * Math.PI * 2,
 		Math.random() * Math.PI * 2);
-				
-	//cap.position.set (10, 10, 3);
-	//capsule.rotation.x = Math.PI/12;
-	//capsulendone.position.set (0, 3, 0);
-	//capsulendtwo.position.set (0, -3, 0 )
-	//capsule.add (capsulendone);
-	//capsule.add (capsulendtwo);
-		
+
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/bottlecap.glb', function (gltf)
 	{
@@ -786,16 +719,13 @@ function spawnBottlecap ()
                 child.castShadow = true;
                 child.receiveShadow = false;
             }
-        });
+		});
 		cap.add (cap.top);
+		cap.material.visible=showPhysicsBoxes;
 		scene.add (cap);
 		objectsArray.push(cap);
 	}
-
 	);
-	
-	cap.material.visible=showPhysicsBoxes;
-	return cap;
 }
 function spawnAcid ()
 {
@@ -806,6 +736,7 @@ function spawnAcid ()
 		
 	}
 }
+
 function randomiseObjects()
 {
 	//called when the user travels past the edge of our infinite plane,
@@ -871,9 +802,28 @@ function clearText()
 
 function handleCollision(collided_with)
 {
-	if (typeof collided_with.model != 'undefined') console.log("" + collided_with.model);
-	// switch (collided_with)
-	// {
-	// 	case 
-	// }
+	if (typeof collided_with.model != 'undefined')
+	{
+		// console.log("" + collided_with.id);
+		if (!allowSameModelTalk && collided_with.model === last_collided) return;
+		if (!allowNewModelTalk) return;
+
+		switch (collided_with.model)
+		{
+			case 'chair': drawText("i am the chair"); break;
+			case 'pill': drawText("i am the pill"); break;
+			case 'cap': drawText("i am the cap"); break;
+			case 'vending': drawText("i am the vending machine"); break;
+			case 'cig': drawText("i am cig, destroyer of worlds"); break;
+			case 'cup': drawText("i suppose at the bottom of it all,<br>i am a cup, but cannot i be more?"); break;
+			case 'straw': drawText("i'm not strawmanning it's just how i am :P"); break;
+			case 'can': drawText("man, why is it that most of these items are<br>three letter words starting with c?<br> ain't that strange, chief?"); break;
+		}
+		allowSameModelTalk = false;
+		allowNewModelTalk = false;
+
+		last_collided = collided_with.model;
+		setTimeout(function(){allowSameModelTalk = true;}, 5000);
+		setTimeout(function(){allowNewModelTalk = true;}, 2000);
+	}
 }
