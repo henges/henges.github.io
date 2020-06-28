@@ -610,35 +610,32 @@ function spawnStraw ()
 	Straw.material.visible=showPhysicsBoxes;
 	
 }
-function spawnPill ()
+function spawnPill()
 {
-		
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/pillpill.glb', function (gltf)
 	{
+		//first setup shadow properties of the model, since this is the same
+		//for every pill
+		gltf.scene.traverse( function ( child ) 
+		{
+			if ( child.isMesh ) {
+				child.castShadow = true;
+				child.receiveShadow = false;
+			}
+		});
+
 		for (var i = 0; i < 5; i++)
 		{
-			var pillModel = gltf.scene.clone();
-			pillModel.traverse( function ( child ) 
-			{
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = false;
-				}
-			});
-			
+			//we need a new copy of both the material and the geometry for each pill's mesh
+			//so we create these in the loop
 			var localPill = new Physijs.CylinderMesh(
-				new THREE.CylinderGeometry (1.5, 1.5, 8, 8), 
+				new THREE.CylinderGeometry(1.5, 1.5, 8, 8), 
 				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .2, 1));
 
-			localPill.material.visible = showPhysicsBoxes;
-			// localPill.position.set (0, 0, 0);
-			// localPill.rotation.y = Math.PI / 2;
-			localPill.scale.set (1.7, 1.7, 1.7);
-			localPill.model = 'pill';
-			localPill.add(pillModel);
 
-			localPill.position.y= Math.random() * 25 + 25;
+			//position, rotation, and scale setup
+			localPill.position.y = Math.random() * 25 + 25;
 			localPill.position.x = Math.random() * 50 - 25;
 			localPill.position.z = Math.random() * 50 - 25;
 
@@ -646,18 +643,21 @@ function spawnPill ()
 					Math.random() * Math.PI * 2,
 					Math.random() * Math.PI * 2,
 					Math.random() * Math.PI * 2);
+			localPill.scale.set (1.7, 1.7, 1.7);
+
+			//misc setup
+			localPill.model = 'pill';
+			localPill.material.visible = showPhysicsBoxes;
 			
-			scene.add (localPill);
+			//add a unique copy of the model to the physi mesh
+			localPill.add(gltf.scene.clone());
+
+			//add to scene and global array
+			scene.add(localPill);
 			objectsArray.push(localPill);
 		}
 	}
 	);
-	
-	// pill.shape.material.visible=showPhysicsBoxes;
-
-	// var pillClone;
-
-	// return pill;
 }
 function spawnCig ()
 {
