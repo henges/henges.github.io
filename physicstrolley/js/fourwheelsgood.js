@@ -810,11 +810,11 @@ function handleCollision(collided_with)
 
 		switch (collided_with.model)
 		{
-			case 'chair': drawText("i am the chair"); break;
+			case 'chair': iterativeScript(); break;
 			case 'pill': drawText("i am the pill"); break;
 			case 'cap': drawText("i am the cap"); break;
 			case 'vending': drawText("i am the vending machine"); break;
-			case 'cig': drawText("i am cig, destroyer of worlds"); break;
+			case 'cig': randomFragments(); break;
 			case 'cup': drawText("i suppose at the bottom of it all,<br>i am a cup, but cannot i be more?"); break;
 			case 'straw': drawText("i'm not strawmanning it's just how i am :P"); break;
 			case 'can': drawText("man, why is it that most of these items are<br>three letter words starting with c?<br> ain't that strange, chief?"); break;
@@ -827,3 +827,32 @@ function handleCollision(collided_with)
 		setTimeout(function(){allowNewModelTalk = true;}, 2000);
 	}
 }
+
+//isn't this wacky lookin syntax? it's called a 'self-invoking function'
+//it's run when the program launches, and it outputs another function, which iterativeScript() becomes
+var iterativeScript = (function() 
+{
+	var scriptIterator = 0;
+	var script = ["in this approach", "text displays in a linear", 
+				  "and furthermore looping", "fashion", "and also",
+				  "you can fill in the script array like this and it still works, which is nice"];
+
+	//the bit iterativeScript() actually runs is in this second function
+	return function() 
+	{
+		drawText(script[scriptIterator]);
+		scriptIterator = (scriptIterator+1)%script.length;
+	}
+})();
+
+//similar deal here
+var randomFragments = (function()
+{
+	var fragments = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'phi', 'omega'];
+
+	return function()
+	{
+		//pick a random one to display
+		drawText(fragments[Math.floor(Math.random() * fragments.length)]);
+	}
+})();
