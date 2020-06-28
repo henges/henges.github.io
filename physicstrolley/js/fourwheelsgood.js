@@ -72,7 +72,7 @@ window.onload = initScene();
 //var camY = 10;								//manually move camera upwards
 //var camZ = 200;
 //var camX = 25;
-//scene.fog = new THREE.FogExp2( 0xffffff, 0.03 );
+// scene.fog = new THREE.FogExp2( 0xff4666, 0.005 );
 render();
 gameStep();
 
@@ -177,86 +177,6 @@ function checkBoundary()
 			object.__dirtyPosition = true;
 		}
 	}
-
-	//pills 
-	// if (pillClone.position.x < -boundarySize)
-	// {
-	// 	pillClone.position.x = boundarySize - 5;
-	// 	pillClone.__dirtyPosition = true;
-		
-	// }
-	// else if (pillClone.position.x > boundarySize)
-	// {
-	// 	pillClone.position.x = -boundarySize + 5;
-	// 	pillClone.__dirtyPosition = true;
-		
-	// }
-
-	// if (pillClone.position.z < -boundarySize)
-	// {
-	// 	pillClone.position.z = boundarySize - 5;
-	// 	pillClone.__dirtyPosition = true;
-		
-	// }
-	// else if (pillClone.position.z > boundarySize)
-	// {
-	// 	pillClone.position.z = -boundarySize + 5;
-	// 	pillClone.__dirtyPosition = true;
-		
-	// }
-	// //cig
-	// if (cig.position.x < -boundarySize)
-	// {
-	// 	cig.position.x = boundarySize - 5;
-	// 	cig.__dirtyPosition = true;
-		
-	// }
-	// else if (cig.position.x > boundarySize)
-	// {
-	// 	cig.position.x = -boundarySize + 5;
-	// 	cig.__dirtyPosition = true;
-		
-	// }
-
-	// if (cig.position.z < -boundarySize)
-	// {
-	// 	cig.position.z = boundarySize - 5;
-	// 	cig.__dirtyPosition = true;
-		
-	// }
-	// else if (cig.position.z > boundarySize)
-	// {
-	// 	cig.position.z = -boundarySize + 5;
-	// 	cig.__dirtyPosition = true;
-		
-	// }
-	// //bottcap
-	// if (cap.position.x < -boundarySize)
-	// {
-	// 	cap.position.x = boundarySize - 5;
-	// 	cap.__dirtyPosition = true;
-		
-	// }
-	// else if (cap.position.x > boundarySize)
-	// {
-	// 	cap.position.x = -boundarySize + 5;
-	// 	cap.__dirtyPosition = true;
-		
-	// }
-
-	// if (cap.position.z < -boundarySize)
-	// {
-	// 	cap.position.z = boundarySize - 5;
-	// 	cap.__dirtyPosition = true;
-		
-	// }
-	// else if (cap.position.z > boundarySize)
-	// {
-	// 	cap.position.z = -boundarySize + 5;
-	// 	cap.__dirtyPosition = true;
-		
-	// }
-	
 }
 
 function updateWheels()
@@ -292,6 +212,7 @@ function initPlatform()
 	physiPlatform.name = "physicalPlatform";
 	physiPlatform.position.set(0, -0.5, 0);
 	physiPlatform.visible = showPhysicsBoxes;
+	physiPlatform.model = 'the fucking ground';
 	scene.add(physiPlatform);
 
 	var visiblePlatform = new THREE.Mesh( bigger, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
@@ -378,6 +299,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	box.model = 'chair';
 	box.position.set (-10, 15, -10);
 
 	//legs (front & back, left & right)
@@ -386,6 +308,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	legfl.model = 'chair';
 	legfl.position.set (6, -5, -4);
 	box.add (legfl);
 
@@ -394,6 +317,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	legfr.model = 'chair';
 	legfr.position.set (-6, -5, -4);
 	box.add (legfr);
 
@@ -402,6 +326,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	legbr.model = 'chair';
 	legbr.position.set (4, -5, 6);
 	legbr.rotation.x = - Math.PI / 12;
 	box.add (legbr);
@@ -411,6 +336,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	legbl.model = 'chair';
 	legbl.position.set (-4, -5, 6);
 	legbl.rotation.x = - Math.PI / 12;
 	box.add (legbl);
@@ -421,6 +347,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	back.model = 'chair';
 	back.position.set(0, 5, 7.5);
 	back.rotation.x = Math.PI/14;
 	box.add (back);
@@ -431,6 +358,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	arml.model = 'chair';
 	arml.position.set (6, 2, -3);
 	//arml.rotation.x = - Math.PI / 12;
 	box.add (arml);
@@ -441,6 +369,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	armr.model = 'chair';
 	armr.position.set (-6, 2, -3);
 	//arml.rotation.x = - Math.PI / 12;
 	box.add (armr);
@@ -452,6 +381,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	armll.model = 'chair';
 	armll.position.set (6, 7, 2.5);
 	armll.rotation.x = Math.PI / 2.3;
 	box.add (armll);
@@ -461,6 +391,7 @@ function spawnChair()
 		box_material,
 		10
 	);
+	armrr.model = 'chair';
 	armrr.position.set (-6, 7, 2.5);
 	armrr.rotation.x = Math.PI / 2.3;
 	box.add (armrr);
@@ -515,6 +446,7 @@ function spawnVend()
 		vBox_material,
 		10
 	);
+	vBox.model = 'vending';
 	vBox.position.set (50, 25, 50);
 
 	var loader = new THREE.GLTFLoader();
@@ -553,6 +485,8 @@ function spawnCup ()
 		10
 	);
 	
+	Cup.model = 'cup';
+
 	Cup.position.set (25, 25, -25);
 
 	var loader = new THREE.GLTFLoader();
@@ -591,6 +525,8 @@ function spawnCan ()
 		Can_material,
 		10
 	);
+
+	Can.model = 'can';
 	
 	Can.position.set (-20, 25, 20);
 
@@ -630,16 +566,19 @@ function spawnStraw ()
 		Straw_material,
 		10
 	);
+	Straw.model = 'straw';
 	Bit = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 0.5, 0.5, 5, 8 ),
 		Straw_material,
 		10
 	);
+	Bit.model = 'straw';
 	Lip = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 0.5, 0.5,15, 8 ),
 		Straw_material,
 		10
 	);
+	Lip.model = 'straw';
 	Straw.position.set (75, 27, 0);
 	Straw.rotation.x=-Math.PI/2;
 	Bit.position.set (0, 26, -0.8);
@@ -673,72 +612,48 @@ function spawnStraw ()
 }
 function spawnPill ()
 {
-	
-
-	//initialise master physics box
-	var pill_material = Physijs.createMaterial(
-		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
-		.2, // high friction
-		1  // low restitution
-	);
-	pill.shape = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry (1.5, 1.5, 8, 8),
-		pill_material,
-		1
-	);
-	/*capsulendone = new Physijs.CylinderMesh (
-		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
-		capsule_material,
-		1
-	);
-	capsulendtwo = new Physijs.SphereMesh (
-		new THREE.CylinderGeometry (1.5, 0.5, 1, 8),
-		capsule_material,
-		1
-	);*/
-	
-	
-	//capsule.position.set (10, 10, 3);
-	//capsule.rotation.x = Math.PI/12;
-	//capsulendone.position.set (0, 3, 0);
-	//capsulendtwo.position.set (0, -3, 0 )
-	//capsule.add (capsulendone);
-	//capsule.add (capsulendtwo);
 		
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/pillpill.glb', function (gltf)
 	{
-		pill.drug = gltf.scene;
-		pill.drug.position.set (0, 0, 0);
-		pill.drug.rotation.y = Math.PI / 2;
-		pill.drug.scale.set (1.7, 1.7, 1.7);
-		gltf.scene.traverse( function ( child ) 
+		for (var i = 0; i < 5; i++)
 		{
-            if ( child.isMesh ) {
-                child.castShadow = true;
-                child.receiveShadow = false;
-            }
-        });
-		pill.shape.add (pill.drug);
+			var pillModel = gltf.scene.clone();
+			pillModel.traverse( function ( child ) 
+			{
+				if ( child.isMesh ) {
+					child.castShadow = true;
+					child.receiveShadow = false;
+				}
+			});
+			
+			var localPill = new Physijs.CylinderMesh(
+				new THREE.CylinderGeometry (1.5, 1.5, 8, 8), 
+				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .2, 1));
 
-		for (var i = 0; i < 5; i++){
-			var pillClone = pill.shape.clone();
-			pillClone.position.y= Math.random() * 25 + 25;
-			pillClone.position.x = Math.random() * 50 - 25;
-			pillClone.position.z = Math.random() * 50 - 25;
-				
-			pillClone.rotation.set(
+			localPill.material.visible = showPhysicsBoxes;
+			// localPill.position.set (0, 0, 0);
+			// localPill.rotation.y = Math.PI / 2;
+			localPill.scale.set (1.7, 1.7, 1.7);
+			localPill.model = 'pill';
+			localPill.add(pillModel);
+
+			localPill.position.y= Math.random() * 25 + 25;
+			localPill.position.x = Math.random() * 50 - 25;
+			localPill.position.z = Math.random() * 50 - 25;
+
+			localPill.rotation.set(
 					Math.random() * Math.PI * 2,
 					Math.random() * Math.PI * 2,
 					Math.random() * Math.PI * 2);
 			
-			scene.add (pillClone);
-			objectsArray.push(pillClone);
+			scene.add (localPill);
+			objectsArray.push(localPill);
 		}
 	}
 	);
 	
-	pill.shape.material.visible=showPhysicsBoxes;
+	// pill.shape.material.visible=showPhysicsBoxes;
 
 	// var pillClone;
 
@@ -759,6 +674,8 @@ function spawnCig ()
 		cig_material,
 		1
 	);
+
+	cig.model = 'cig';
 	/*capsulendone = new Physijs.CylinderMesh (
 		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
 		capsule_material,
@@ -773,12 +690,12 @@ function spawnCig ()
 	
 	cig.position.y= Math.random() * 25 + 25;
 	cig.position.x = Math.random() * 50 - 25;
-			cig.position.z = Math.random() * 50 - 25;
-			
-			cig.rotation.set(
-				Math.random() * Math.PI * 2,
-				Math.random() * Math.PI * 2,
-				Math.random() * Math.PI * 2);
+	cig.position.z = Math.random() * 50 - 25;
+	
+	cig.rotation.set(
+		Math.random() * Math.PI * 2,
+		Math.random() * Math.PI * 2,
+		Math.random() * Math.PI * 2);
 				
 	//cig.position.set (10, 10, 3);
 	//capsule.rotation.x = Math.PI/12;
@@ -825,6 +742,8 @@ function spawnBottlecap ()
 		cap_material,
 		1
 	);
+
+	cap.model = 'cap';
 	/*
 	capsulendone = new Physijs.CylinderMesh (
 		new THREE.CylinderGeometry (0.5, 1.5, 1, 8),
@@ -948,4 +867,13 @@ function clearText()
 {
 	document.getElementById(textId).remove(); 
 	textDisplaying = false;
+}
+
+function handleCollision(collided_with)
+{
+	if (typeof collided_with.model != 'undefined') console.log("" + collided_with.model);
+	// switch (collided_with)
+	// {
+	// 	case 
+	// }
 }

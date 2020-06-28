@@ -52,6 +52,8 @@ var initTrolley = function (car)
                 child.receiveShadow = false;
             }
         });
+
+        car.frame.addEventListener('collision', handleCollision)
     },
         function(xhr){}, function(error){}
     );
