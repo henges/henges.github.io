@@ -12,11 +12,11 @@ var showPhysicsBoxes = false;
 var boundary;
 
 //Scene constants, including player char.
-var initScene, scene, camera, goal, car={}, cap, pill ={}, cig;
+var initScene, scene, camera, goal, car={}, cap, pill ={}, cig, light ={};
 var wheelsArr = [];
 //Static objects (physics-only interactions).
 var chair = {};
-var randomiserArray = [];
+var objectsArray = [];
 //floor array is in global scope since it's accessed in multiple functions
 var floor = [];
 var tileHeight=100;
@@ -89,10 +89,10 @@ function render()
 	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
-	/*var target = new THREE.Vector3;
-	car.frame.getWorldPosition (target);
-	lightD1.position.x = (target.x+100);
-	lightD1.position.z = (target.z+50);*/
+	var target = new THREE.Vector3();
+	car.frame.getWorldPosition(target);
+	light.lightD1.position.x = (target.x+100);
+	light.lightD1.position.z = (target.z+50);
 	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
 	//so we can copy its position/rotation/quaternion, which will automatically apply it to
 	//the real camera relative to the trolley.
@@ -149,86 +149,113 @@ function checkBoundary()
 		car.frame.__dirtyPosition = true;
 		updateWheels();
 	}
-	
+
+	var object;
+
+	for (object of objectsArray)
+	{
+		if (object.position.x < -boundarySize)
+		{
+			object.position.x = boundarySize - 5;
+			object.__dirtyPosition = true;
+		}
+		else if (object.position.x > boundarySize)
+		{
+			object.position.x = -boundarySize + 5;
+			object.__dirtyPosition = true;
+		}
+
+		if (object.position.z < -boundarySize)
+		{
+			object.position.z = boundarySize - 5;
+			object.__dirtyPosition = true;
+		}
+		
+		else if (object.position.z > boundarySize)
+		{
+			object.position.z = -boundarySize + 5;
+			object.__dirtyPosition = true;
+		}
+	}
 
 	//pills 
-	if (pill.shape.position.x < -boundarySize)
-	{
-		pill.shape.position.x = boundarySize - 5;
-		pill.shape.__dirtyPosition = true;
+	// if (pillClone.position.x < -boundarySize)
+	// {
+	// 	pillClone.position.x = boundarySize - 5;
+	// 	pillClone.__dirtyPosition = true;
 		
-	}
-	else if (pill.shape.position.x > boundarySize)
-	{
-		pill.shape.position.x = -boundarySize + 5;
-		pill.shape.__dirtyPosition = true;
+	// }
+	// else if (pillClone.position.x > boundarySize)
+	// {
+	// 	pillClone.position.x = -boundarySize + 5;
+	// 	pillClone.__dirtyPosition = true;
 		
-	}
+	// }
 
-	if (pill.shape.position.z < -boundarySize)
-	{
-		pill.shape.position.z = boundarySize - 5;
-		pill.shape.__dirtyPosition = true;
+	// if (pillClone.position.z < -boundarySize)
+	// {
+	// 	pillClone.position.z = boundarySize - 5;
+	// 	pillClone.__dirtyPosition = true;
 		
-	}
-	else if (pill.shape.position.z > boundarySize)
-	{
-		pill.shape.position.z = -boundarySize + 5;
-		pill.shape.__dirtyPosition = true;
+	// }
+	// else if (pillClone.position.z > boundarySize)
+	// {
+	// 	pillClone.position.z = -boundarySize + 5;
+	// 	pillClone.__dirtyPosition = true;
 		
-	}
-	//cig
-	if (cig.position.x < -boundarySize)
-	{
-		cig.position.x = boundarySize - 5;
-		cig.__dirtyPosition = true;
+	// }
+	// //cig
+	// if (cig.position.x < -boundarySize)
+	// {
+	// 	cig.position.x = boundarySize - 5;
+	// 	cig.__dirtyPosition = true;
 		
-	}
-	else if (cig.position.x > boundarySize)
-	{
-		cig.position.x = -boundarySize + 5;
-		cig.__dirtyPosition = true;
+	// }
+	// else if (cig.position.x > boundarySize)
+	// {
+	// 	cig.position.x = -boundarySize + 5;
+	// 	cig.__dirtyPosition = true;
 		
-	}
+	// }
 
-	if (cig.position.z < -boundarySize)
-	{
-		cig.position.z = boundarySize - 5;
-		cig.__dirtyPosition = true;
+	// if (cig.position.z < -boundarySize)
+	// {
+	// 	cig.position.z = boundarySize - 5;
+	// 	cig.__dirtyPosition = true;
 		
-	}
-	else if (cig.position.z > boundarySize)
-	{
-		cig.position.z = -boundarySize + 5;
-		cig.__dirtyPosition = true;
+	// }
+	// else if (cig.position.z > boundarySize)
+	// {
+	// 	cig.position.z = -boundarySize + 5;
+	// 	cig.__dirtyPosition = true;
 		
-	}
-	//bottcap
-	if (cap.position.x < -boundarySize)
-	{
-		cap.position.x = boundarySize - 5;
-		cap.__dirtyPosition = true;
+	// }
+	// //bottcap
+	// if (cap.position.x < -boundarySize)
+	// {
+	// 	cap.position.x = boundarySize - 5;
+	// 	cap.__dirtyPosition = true;
 		
-	}
-	else if (cap.position.x > boundarySize)
-	{
-		cap.position.x = -boundarySize + 5;
-		cap.__dirtyPosition = true;
+	// }
+	// else if (cap.position.x > boundarySize)
+	// {
+	// 	cap.position.x = -boundarySize + 5;
+	// 	cap.__dirtyPosition = true;
 		
-	}
+	// }
 
-	if (cap.position.z < -boundarySize)
-	{
-		cap.position.z = boundarySize - 5;
-		cap.__dirtyPosition = true;
+	// if (cap.position.z < -boundarySize)
+	// {
+	// 	cap.position.z = boundarySize - 5;
+	// 	cap.__dirtyPosition = true;
 		
-	}
-	else if (cap.position.z > boundarySize)
-	{
-		cap.position.z = -boundarySize + 5;
-		cap.__dirtyPosition = true;
+	// }
+	// else if (cap.position.z > boundarySize)
+	// {
+	// 	cap.position.z = -boundarySize + 5;
+	// 	cap.__dirtyPosition = true;
 		
-	}
+	// }
 	
 }
 
@@ -246,71 +273,6 @@ function updateWheels()
 	wheelsArr[3].__dirtyPosition = true;
 }
 
-/*function TerrainMatrix()
-{   
-	var tileRowNumber = 3;
-		   
-	var xPos=0;
-	//we want a 3 by 3 matrix
-	for (var row = 0; row<3; row++)
-	{
-		//position tiles behind, underneath, and in front of camera
-		switch (row)
-		{
-			case 0: xPos = -tileWidth; break;
-			case 1: xPos = tileWidth; break;
-			case 2: xPos = 0; break;
-		}
-
-		for (var z = tileHeight; z > (tileHeight * -tileRowNumber); z-=tileHeight ) 
-		{	var pff =10;
-			var prr=0;
-			var physPlatGeo = new THREE.BoxGeometry(tileHeight, 2, tileWidth);
-			var physPlatformMaterial = Physijs.createMaterial(
-				new THREE.MeshStandardMaterial({ color: 0xffffff, shading:THREE.FlatShading}), 
-				pff, prr);
-			var physPlatform = new Physijs.BoxMesh(physPlatGeo, physPlatformMaterial, 0 );
-			physPlatform.position.x = xPos;
-			physPlatform.position.z = z;
-			physPlatform.position.y -= 1;
-			scene.add(physPlatform);
-			floor.push (physPlatform);
-/*
-			var panelGeometry = new THREE.BoxGeometry(tileHeight, 2, tileWidth);
-			var panel = new THREE.Mesh( panelGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff, shading:THREE.FlatShading}) );
-			//rotate 90 degrees around the xaxis so we can see the terrain
-			//panel.rotation.x = -Math.PI/-2;
-			// Then set the z position to where it is in the loop (distance of camera)
-			panel.position.x = xPos;
-			panel.position.z = z;
-			panel.position.y -= 0.9;
-			
-			//add the ground to the scene
-			scene.add(panel);
-			//finally push it to the floor array
-			floor.push(panel);
-			
-		}
-	}
-}
-
-function moveWithCamera()
-{
-	// loop through each of the 3 floors
-	for(var i=0; i<floor.length; i++) 
-	{
-		//if the camera has moved past the entire square, move the square
-		if((floor[i].position.z - 100) > car.frame.position.z)
-		{		
-			floor[i].position.z-=200;
-		}
-		else if((floor[i].position.z + tileHeight) < car.frame.position.z)
-		{	
-			floor[i].position.z+=(tileHeight*2);
-		}
-	}
-}
-*/
 function initPlatform()
 {
 	var pf = 0.8;  //platform friction
@@ -342,17 +304,17 @@ function initPlatform()
 
 function initLights()
 {
-	var lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 3 );
-  	lightD1.position.set( 100, 50, 50 );
-  	lightD1.castShadow = true;
-  	lightD1.shadow.camera.left = -100;
-	lightD1.shadow.camera.top = -100;
-  	lightD1.shadow.camera.right = 100;
-  	lightD1.shadow.camera.bottom = 100;
-  	lightD1.shadow.camera.near = 0.1;
-  	lightD1.shadow.camera.far = 400;
-  	lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 1000;
-	scene.add( lightD1 );
+	light.lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 3 );
+  	light.lightD1.position.set( 100, 50, 50 );
+  	light.lightD1.castShadow = true;
+  	light.lightD1.shadow.camera.left = -100;
+	light.lightD1.shadow.camera.top = -100;
+  	light.lightD1.shadow.camera.right = 100;
+  	light.lightD1.shadow.camera.bottom = 100;
+  	light.lightD1.shadow.camera.near = 0.1;
+  	light.lightD1.shadow.camera.far = 400;
+  	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
+	scene.add( light.lightD1 );
 	  
 	var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
 	scene.add( hemlight );
@@ -534,7 +496,7 @@ function spawnChair()
 	box.material.visible = showPhysicsBoxes;
 
 	chair = box;
-	randomiserArray.push(chair);
+	objectsArray.push(chair);
 	scene.add (chair);	
 }
 
@@ -570,7 +532,7 @@ function spawnVend()
         });
 		vBox.add (vBox.vend);
 		scene.add (vBox);
-		randomiserArray.push(vBox);
+		objectsArray.push(vBox);
 	}
 	);
 	vBox.material.visible = showPhysicsBoxes;
@@ -609,7 +571,7 @@ function spawnCup ()
         });
 		Cup.add (Cup.coffee);
 		scene.add (Cup);
-		randomiserArray.push(Cup);
+		objectsArray.push(Cup);
 	}
 	);
 	Cup.material.visible=showPhysicsBoxes;
@@ -648,7 +610,7 @@ function spawnCan ()
         });
 		Can.add (Can.coke);
 		scene.add (Can);
-		randomiserArray.push(Can);
+		objectsArray.push(Can);
 	}
 	);
 	Can.material.visible=showPhysicsBoxes;
@@ -703,7 +665,7 @@ function spawnStraw ()
         });
 		Straw.add (Straw.bend);
 		scene.add (Straw);
-		randomiserArray.push(Straw);
+		objectsArray.push(Straw);
 	}
 	);
 	Straw.material.visible=showPhysicsBoxes;
@@ -735,14 +697,7 @@ function spawnPill ()
 		1
 	);*/
 	
-	pill.shape.position.y= Math.random() * 25 + 25;
-	pill.shape.position.x = Math.random() * 50 - 25;
-	pill.shape.position.z = Math.random() * 50 - 25;
-			
-	pill.shape.rotation.set(
-				Math.random() * Math.PI * 2,
-				Math.random() * Math.PI * 2,
-				Math.random() * Math.PI * 2);
+	
 	//capsule.position.set (10, 10, 3);
 	//capsule.rotation.x = Math.PI/12;
 	//capsulendone.position.set (0, 3, 0);
@@ -765,13 +720,29 @@ function spawnPill ()
             }
         });
 		pill.shape.add (pill.drug);
-		scene.add (pill.shape);
-		randomiserArray.push(pill.shape);
+
+		for (var i = 0; i < 5; i++){
+			var pillClone = pill.shape.clone();
+			pillClone.position.y= Math.random() * 25 + 25;
+			pillClone.position.x = Math.random() * 50 - 25;
+			pillClone.position.z = Math.random() * 50 - 25;
+				
+			pillClone.rotation.set(
+					Math.random() * Math.PI * 2,
+					Math.random() * Math.PI * 2,
+					Math.random() * Math.PI * 2);
+			
+			scene.add (pillClone);
+			objectsArray.push(pillClone);
+		}
 	}
 	);
 	
 	pill.shape.material.visible=showPhysicsBoxes;
-	return pill;
+
+	// var pillClone;
+
+	// return pill;
 }
 function spawnCig ()
 {
@@ -832,7 +803,7 @@ function spawnCig ()
         });
 		cig.add (cig.lid);
 		scene.add (cig);
-		randomiserArray.push(cig);
+		objectsArray.push(cig);
 	}
 	);
 	
@@ -869,12 +840,12 @@ function spawnBottlecap ()
 	
 	cap.position.y= Math.random() * 25 + 25;
 	cap.position.x = Math.random() * 50 - 25;
-			cap.position.z = Math.random() * 50 - 25;
-			
-			cap.rotation.set(
-				Math.random() * Math.PI * 2,
-				Math.random() * Math.PI * 2,
-				Math.random() * Math.PI * 2);
+	cap.position.z = Math.random() * 50 - 25;
+	
+	cap.rotation.set(
+		Math.random() * Math.PI * 2,
+		Math.random() * Math.PI * 2,
+		Math.random() * Math.PI * 2);
 				
 	//cap.position.set (10, 10, 3);
 	//capsule.rotation.x = Math.PI/12;
@@ -899,7 +870,7 @@ function spawnBottlecap ()
         });
 		cap.add (cap.top);
 		scene.add (cap);
-		randomiserArray.push(cap);
+		objectsArray.push(cap);
 	}
 
 	);
@@ -910,7 +881,7 @@ function spawnBottlecap ()
 function spawnAcid ()
 {
 	for (var i = 0; i < 5; i++){
-		spawnPill();
+		// spawnPill ();
 		spawnBottlecap ();
 		spawnCig();
 		
@@ -923,7 +894,7 @@ function randomiseObjects()
 
 	var object;
 
-	for (object of randomiserArray)
+	for (object of objectsArray)
 	{
 		//randomise each object's x&z coordinates
 		//subtracting half the planeSize normalises the coordinates to the negative and positive axes
@@ -976,5 +947,5 @@ function drawText(message)
 function clearText()
 {
 	document.getElementById(textId).remove(); 
-	!textDisplaying;
+	textDisplaying = false;
 }
