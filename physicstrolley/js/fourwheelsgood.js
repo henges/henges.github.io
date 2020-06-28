@@ -12,7 +12,7 @@ var showPhysicsBoxes = false;
 var boundary;
 
 //Scene constants, including player char.
-var initScene, scene, camera, goal, car={}, cap, capsule, cig;
+var initScene, scene, camera, goal, car={}, cap, pill ={}, cig;
 var wheelsArr = [];
 //Static objects (physics-only interactions).
 var chair = {};
@@ -51,7 +51,7 @@ function initScene()
 	spawnCup ();
 	spawnCan ();
 	spawnStraw ();
-	capsule=spawnCapsule ();
+	spawnPill();
 	cap=spawnBottlecap ();
 	cig=spawnCig();
 	// TerrainMatrix();
@@ -152,29 +152,29 @@ function checkBoundary()
 	
 
 	//pills 
-	if (capsule.position.x < -boundarySize)
+	if (pill.shape.position.x < -boundarySize)
 	{
-		capsule.position.x = boundarySize - 5;
-		capsule.__dirtyPosition = true;
+		pill.shape.position.x = boundarySize - 5;
+		pill.shape.__dirtyPosition = true;
 		
 	}
-	else if (capsule.position.x > boundarySize)
+	else if (pill.shape.position.x > boundarySize)
 	{
-		capsule.position.x = -boundarySize + 5;
-		capsule.__dirtyPosition = true;
+		pill.shape.position.x = -boundarySize + 5;
+		pill.shape.__dirtyPosition = true;
 		
 	}
 
-	if (capsule.position.z < -boundarySize)
+	if (pill.shape.position.z < -boundarySize)
 	{
-		capsule.position.z = boundarySize - 5;
-		capsule.__dirtyPosition = true;
+		pill.shape.position.z = boundarySize - 5;
+		pill.shape.__dirtyPosition = true;
 		
 	}
-	else if (capsule.position.z > boundarySize)
+	else if (pill.shape.position.z > boundarySize)
 	{
-		capsule.position.z = -boundarySize + 5;
-		capsule.__dirtyPosition = true;
+		pill.shape.position.z = -boundarySize + 5;
+		pill.shape.__dirtyPosition = true;
 		
 	}
 	//cig
@@ -709,19 +709,19 @@ function spawnStraw ()
 	Straw.material.visible=showPhysicsBoxes;
 	
 }
-function spawnCapsule ()
+function spawnPill ()
 {
-	var capsule, capsulendone, capsulendtwo;
+	
 
 	//initialise master physics box
-	var capsule_material = Physijs.createMaterial(
+	var pill_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.2, // high friction
 		1  // low restitution
 	);
-	capsule = new Physijs.CylinderMesh(
+	pill.shape = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry (1.5, 1.5, 8, 8),
-		capsule_material,
+		pill_material,
 		1
 	);
 	/*capsulendone = new Physijs.CylinderMesh (
@@ -734,12 +734,12 @@ function spawnCapsule ()
 		capsule_material,
 		1
 	);*/
-	scene.add (capsule);
-	capsule.position.y= Math.random() * 25 + 25;
-	capsule.position.x = Math.random() * 50 - 25;
-			capsule.position.z = Math.random() * 50 - 25;
+	
+	pill.shape.position.y= Math.random() * 25 + 25;
+	pill.shape.position.x = Math.random() * 50 - 25;
+	pill.shape.position.z = Math.random() * 50 - 25;
 			
-			capsule.rotation.set(
+	pill.shape.rotation.set(
 				Math.random() * Math.PI * 2,
 				Math.random() * Math.PI * 2,
 				Math.random() * Math.PI * 2);
@@ -753,10 +753,10 @@ function spawnCapsule ()
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/pillpill.glb', function (gltf)
 	{
-		capsule.cap = gltf.scene;
-		capsule.cap.position.set (0, 0, 0);
-		capsule.cap.rotation.y = Math.PI / 2;
-		capsule.cap.scale.set (1.7, 1.7, 1.7);
+		pill.drug = gltf.scene;
+		pill.drug.position.set (0, 0, 0);
+		pill.drug.rotation.y = Math.PI / 2;
+		pill.drug.scale.set (1.7, 1.7, 1.7);
 		gltf.scene.traverse( function ( child ) 
 		{
             if ( child.isMesh ) {
@@ -764,14 +764,14 @@ function spawnCapsule ()
                 child.receiveShadow = false;
             }
         });
-		capsule.add (capsule.cap);
-		scene.add (capsule);
-		randomiserArray.push(capsule);
+		pill.shape.add (pill.drug);
+		scene.add (pill.shape);
+		randomiserArray.push(pill.shape);
 	}
 	);
 	
-	capsule.material.visible=showPhysicsBoxes;
-	return capsule;
+	pill.shape.material.visible=showPhysicsBoxes;
+	return pill;
 }
 function spawnCig ()
 {
@@ -910,7 +910,7 @@ function spawnBottlecap ()
 function spawnAcid ()
 {
 	for (var i = 0; i < 5; i++){
-		spawnCapsule();
+		spawnPill();
 		spawnBottlecap ();
 		spawnCig();
 		
