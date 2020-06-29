@@ -84,13 +84,18 @@ var initTrolley = function ()
                     wheel_material,
                     500);
         wheel.rotation.x = Math.PI / 2;
-        wheel.position.set( 
-                    (pos < 4) ? -valx : valx, 
-                    valy, 
-                    (pos % 2 === 1) ? -valz : valz);
-        if (pos === 2) wheel.position.z -= 0.3;
-        if (pos === 3) wheel.position.z += 0.3;
-        if (pos === 4) wheel.position.z -= 0.05;
+
+        var wheelPosition;
+
+        switch (pos)
+        {
+            case 1: wheelPosition = new THREE.Vector3(-1, 0.3, 0.7); break; //front left
+            case 2: wheelPosition = new THREE.Vector3(-1, 0.3, -0.7); break; //front right
+            case 3: wheelPosition = new THREE.Vector3(1, 0.3, 0.95); break; //back left
+            case 4: wheelPosition = new THREE.Vector3(1, 0.3, -1); break;   //back
+        }
+
+        wheel.position.copy(wheelPosition);
         wheel.receiveShadow = wheel.castShadow = true;
         scene.add( wheel );
         wheelsArr.push(wheel);
@@ -101,20 +106,23 @@ var initTrolley = function ()
     function constraintConstructor(wheel, car, side)
     {
         var pos = getPos(side);
-        var constrVector = new THREE.Vector3( 
-                    (pos < 4) ? -valx : valx, 
-                    valy, 
-                    (pos % 2 === 1) ? -valz : valz);
-        if (pos === 2) constrVector.setZ(valz - 0.3);
-        if (pos === 3) constrVector.setZ(-valz + 0.3);
-        if (pos === 4) constrVector.setZ(valz - 0.05);
+
+        var constrVector;
+
+        switch (pos)
+        {
+            case 1: constrVector = new THREE.Vector3(-1, 0.3, 0.7); break; //front left
+            case 2: constrVector = new THREE.Vector3(-1, 0.3, -0.7); break; //front right
+            case 3: constrVector = new THREE.Vector3(1, 0.3, 0.95); break; //back left
+            case 4: constrVector = new THREE.Vector3(1, 0.3, -1); break;   //back
+        }
 
         var constraint = new Physijs.DOFConstraint(
                         wheel, 
                         car, 
                         constrVector);
         scene.addConstraint( constraint );
-        constraint.setAngularLowerLimit({ x: 0, y: 0, z: (pos < 4) ? 0.5 : 0 });
+        constraint.setAngularLowerLimit({ x: 0, y: 0, z: (pos < 3) ? 0.5 : 0 });
         constraint.setAngularUpperLimit({ x: 0, y: 0, z: 0 });
         
         return constraint;
@@ -122,10 +130,10 @@ var initTrolley = function ()
 
     function getPos(side)
     {
-        return (side === 'fl') ? 2 : 
-               (side === 'fr') ? 3 : 
-               (side === 'bl') ? 4 : 
-               (side === 'br') ? 5 : 
+        return (side === 'fl') ? 1 : 
+               (side === 'fr') ? 2 : 
+               (side === 'bl') ? 3 : 
+               (side === 'br') ? 4 : 
                0;
     }
 
