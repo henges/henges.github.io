@@ -52,6 +52,7 @@ function initScene()
 	spawnPill();
 	spawnBottlecap();
 	spawnCig();
+	spawnBottle();
 
 	spawnAcid();
 
@@ -503,7 +504,7 @@ function spawnCan ()
 
 	Can.model = 'can';
 	
-	Can.position.set (-20, 25, 20);
+	Can.position.set (-50, 25, 70);
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/can2.glb', function (gltf)
@@ -525,6 +526,65 @@ function spawnCan ()
 	}
 	);
 	Can.material.visible=showPhysicsBoxes;
+}
+function spawnBottle ()
+{
+	var Bottle;
+
+	//initialise master physics box
+	var Bottle_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.5  // low restitution
+	);
+	Bottle = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 4.8, 5, 22, 8 ),
+		Bottle_material,
+		10
+	);
+	Bottle.cline = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 2.5, 4.9, 5, 8 ),
+		Bottle_material,
+		10
+	);
+	Bottle.cline.position.set (0,13,0);
+	Bottle.add (Bottle.cline);
+
+	Bottle.spout = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 1.4, 1.4, 11.2, 8 ),
+		Bottle_material,
+		10
+	);
+	Bottle.spout.position.set (0,20,0);
+	Bottle.add (Bottle.spout);
+	Bottle.model = 'bottle';
+	
+	Bottle.position.set (-20, 25, 20);
+
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/bottlething.glb', function (gltf)
+	{
+		Bottle.coke = gltf.scene;
+		Bottle.coke.position.set (0, -11, 0);
+		Bottle.coke.rotation.y = Math.PI / 2;
+		Bottle.coke.scale.set (4.9, 4.9, 4.9);
+		Bottle.coke.transparent = true;
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+				child.material.opacity = 0.4;
+				child.material.transparent = true;
+				
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		Bottle.add (Bottle.coke);
+		scene.add (Bottle);
+		objectsArray.push(Bottle);
+	}
+	);
+	Bottle.material.visible=showPhysicsBoxes;
 }
 function spawnStraw ()
 {
