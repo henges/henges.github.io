@@ -65,14 +65,6 @@ var initTrolley = function ()
         );
     var wheel_geometry = new THREE.CylinderGeometry( 0.25, 0.25, 0.2, 16 );
 
-    var valx = 1;	//maybe change these to const?
-    var valy = 0.3;
-    var valz = 1;
-    var wheel_fl_vector = new THREE.Vector3(-1, 0.3, 0.7);
-    var wheel_fr_vector = new THREE.Vector3(-1, 0.3, -0.7);
-    var wheel_bl_vector = new THREE.Vector3(1, 0.3, 1);
-    var wheel_br_vector = new THREE.Vector3(1, 0.3, -1);
-
     var wheel_fl = wheelConstructor('fl');
     var wheel_fl_constraint = constraintConstructor(wheel_fl, car.frame, 'fl');
     var wheel_fr = wheelConstructor('fr');

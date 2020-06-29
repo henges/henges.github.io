@@ -30,6 +30,13 @@ var audioListener, hitSound;
 //for duping OrbitControls into letting us rotate around the trolley
 var controls, fakeCamera, orbitControlsEnabled;
 
+//static vectors representing wheel positions
+var wheel_fl_vector = new THREE.Vector3(-1, 0.3, 0.7);
+var wheel_fr_vector = new THREE.Vector3(-1, 0.3, -0.7);
+var wheel_bl_vector = new THREE.Vector3(1, 0.3, 1);
+var wheel_br_vector = new THREE.Vector3(1, 0.3, -1);
+
+
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -174,13 +181,13 @@ function updateWheels()
 {
 	//manually access the array elements, because it doesn't seem to work in a loop!
 	//the values of each vector are derived from their offsets, seen in trolley.js wheelConstructor().	
-	wheelsArr[0].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, 0.7));
+	wheelsArr[0].position.addVectors(car.frame.position, wheel_fl_vector);
 	wheelsArr[0].__dirtyPosition = true;
-	wheelsArr[1].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3 -0.7));
+	wheelsArr[1].position.addVectors(car.frame.position, wheel_fr_vector);
 	wheelsArr[1].__dirtyPosition = true;
-	wheelsArr[2].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, 0.95));
+	wheelsArr[2].position.addVectors(car.frame.position, wheel_bl_vector);
 	wheelsArr[2].__dirtyPosition = true;
-	wheelsArr[3].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, -1));
+	wheelsArr[3].position.addVectors(car.frame.position, wheel_br_vector);
 	wheelsArr[3].__dirtyPosition = true;
 }
 
