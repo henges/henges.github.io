@@ -64,7 +64,7 @@ function initScene()
 
 window.onload = initScene();
 
-// scene.fog = new THREE.FogExp2( 0xff4666, 0.005 );
+//scene.fog = new THREE.FogExp2( 0xff4666, 0.02 );
 render();
 
 function render() 
@@ -181,8 +181,8 @@ function updateWheels()
 
 function initPlatform()
 {
-	var pf = 0.8;  //platform friction
-	var pr = 0.9;  //platform restitution
+	var pf = 0.7;  //platform friction
+	var pr = 0.8;  //platform restitution
 
 	//rectangular platform
 	var platform = new THREE.CubeGeometry(planeSize, 1, planeSize);
@@ -208,16 +208,16 @@ function initPlatform()
 
 function initLights()
 {
-	light.lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 3 );
+	light.lightD1 = new THREE.DirectionalLight( 0x7676FF, 1 );   //0xFFFFFF
   	light.lightD1.position.set( 100, 50, 50 );
   	light.lightD1.castShadow = true;
-  	light.lightD1.shadow.camera.left = -50;
-	light.lightD1.shadow.camera.top = -50;
-  	light.lightD1.shadow.camera.right = 50;
-  	light.lightD1.shadow.camera.bottom = 50;
-  	light.lightD1.shadow.camera.near = 0.1;
-  	light.lightD1.shadow.camera.far = 400;
-	  light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
+  	light.lightD1.shadow.camera.left = -100;
+	light.lightD1.shadow.camera.top = -100;
+  	light.lightD1.shadow.camera.right = 100;
+  	light.lightD1.shadow.camera.bottom = 100;
+  	light.lightD1.shadow.camera.near = 1;
+  	light.lightD1.shadow.camera.far = 100;
+	  light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 5000;
 	  light.lightD1.target=car.frame;
 	scene.add( light.lightD1 );
 	scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
@@ -266,7 +266,7 @@ function spawnChair()
 	var box_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.2  // low restitution
+		.3  // low restitution
 	);
 	box = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 12.5, 1, 12.5 ),
@@ -413,7 +413,7 @@ function spawnVend()
 	var vBox_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.2  // low restitution
+		.3  // low restitution
 	);
 	vBox = new Physijs.BoxMesh(
 		new THREE.CubeGeometry( 14.8, 23.4, 14.8 ),
@@ -451,7 +451,7 @@ function spawnCup ()
 	var Cup_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.2  // low restitution
+		.3  // low restitution
 	);
 	Cup = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 11, 9, 26, 8, 4 ),
@@ -492,7 +492,7 @@ function spawnCan ()
 	var Can_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.2  // low restitution
+		.3  // low restitution
 	);
 	Can = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 5, 5, 14.5, 8 ),
@@ -533,7 +533,7 @@ function spawnStraw ()
 	var Straw_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.8, // high friction
-		.2  // low restitution
+		.3  // low restitution
 	);
 	Straw = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 0.5, 0.5, 46, 8 ),
@@ -599,19 +599,19 @@ function spawnPill()
 			}
 		});
 
-		for (var i = 0; i < 5; i++)
+		for (var i = 0; i < 10; i++)
 		{
 			//we need a new copy of both the material and the geometry for each pill's mesh
 			//so we create these in the loop
 			var localPill = new Physijs.CylinderMesh(
 				new THREE.CylinderGeometry(0.9, 0.9, 4.25, 8), 
-				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .2, 1));
+				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, 1.25), 1);
 
 
 			//position, rotation, and scale setup
-			localPill.position.y = Math.random() * 25 + 25;
-			localPill.position.x = Math.random() * 50 - 25;
-			localPill.position.z = Math.random() * 50 - 25;
+			localPill.position.y = Math.random() * 50 + 25;
+			localPill.position.x = Math.random() * planeSize /2;
+			localPill.position.z = Math.random() * planeSize /2;
 
 			localPill.rotation.set(
 					Math.random() * Math.PI * 2,
@@ -637,8 +637,8 @@ function spawnCig ()
 {
 	var cig_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
-		.2, // high friction
-		1  // low restitution
+		.5, // high friction
+		1.25  // low restitution
 	);
 	var cig = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry (1.5, 1.5, 10, 8),
@@ -649,8 +649,8 @@ function spawnCig ()
 	cig.model = 'cig';
 	
 	cig.position.y = Math.random() * 25 + 25;
-	cig.position.x = Math.random() * 50 - 25;
-	cig.position.z = Math.random() * 50 - 25;
+	cig.position.x = Math.random() * planeSize /2;
+	cig.position.z = Math.random() * planeSize /2;
 	
 	cig.rotation.set(
 		Math.random() * Math.PI * 2,
@@ -687,8 +687,8 @@ function spawnBottlecap ()
 	//initialise master physics box
 	var cap_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
-		.2, // high friction
-		1  // low restitution
+		.5, // high friction
+		1.25  // low restitution
 	);
 	cap = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry (3.5, 3, 1.5, 8),
@@ -699,8 +699,8 @@ function spawnBottlecap ()
 	cap.model = 'cap';
 	
 	cap.position.y= Math.random() * 25 + 25;
-	cap.position.x = Math.random() * 50 - 25;
-	cap.position.z = Math.random() * 50 - 25;
+	cap.position.x = Math.random() * planeSize /2;
+	cap.position.z = Math.random() * planeSize /2;
 	
 	cap.rotation.set(
 		Math.random() * Math.PI * 2,
@@ -730,7 +730,7 @@ function spawnBottlecap ()
 }
 function spawnAcid ()
 {
-	for (var i = 0; i < 5; i++){
+	for (var i = 0; i < 10; i++){
 		// spawnPill ();
 		spawnBottlecap ();
 		spawnCig();
