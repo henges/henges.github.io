@@ -10,7 +10,7 @@ var initTrolley = function ()
     var car_material = Physijs.createMaterial(
         new THREE.MeshLambertMaterial({ color: 0xff6666 }),
         .8, // high friction
-        .1 // low restitution
+        5 // low restitution
     );
     car.frame = new Physijs.BoxMesh(
             new THREE.CubeGeometry( 1.5, 0.1, 1.5 ),
