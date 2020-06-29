@@ -196,9 +196,9 @@ var initTrolley = function ()
         {
             case 39: case 68: case 37: case 65: 
                 // Left or A, and Right or D
-                wheel_fl_constraint.configureAngularMotor( 1, 0, 0, stopVelocity, rotationForce ); //motor 0 1 2 (x y z), low_limit, high_limit, target vel, max force
+                wheel_fl_constraint.configureAngularMotor( 1, 0, 0, 10, accelerationForce ); //motor 0 1 2 (x y z), low_limit, high_limit, target vel, max force
                 wheel_fl_constraint.enableAngularMotor( 1 );
-                wheel_fr_constraint.configureAngularMotor( 1, 0, 0, stopVelocity, rotationForce );
+                wheel_fr_constraint.configureAngularMotor( 1, 0, 0, 10, accelerationForce );
                 wheel_fr_constraint.enableAngularMotor( 1 );
                 // wheel_fl_constraint.disableAngularMotor( 1 );
                 // wheel_fr_constraint.disableAngularMotor( 1 );

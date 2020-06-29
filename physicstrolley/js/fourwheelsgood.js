@@ -218,7 +218,7 @@ function initLights()
   	light.lightD1.shadow.camera.bottom = 100;
   	light.lightD1.shadow.camera.near = 1;
   	light.lightD1.shadow.camera.far = 500;
-	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 100;
+	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
 	light.lightD1.target=car.frame;
 	scene.add( light.lightD1 );
 	scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
