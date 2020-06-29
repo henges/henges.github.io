@@ -74,10 +74,10 @@ function render()
 	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
-	var target = new THREE.Vector3();
-	car.frame.getWorldPosition(target);
-	light.lightD1.position.x = (target.x+100);
-	light.lightD1.position.z = (target.z+50);
+	//var target = new THREE.Vector3();
+	//car.frame.getWorldPosition(target);
+	light.lightD1.position.x = car.frame.position.x;
+	light.lightD1.position.z = car.frame.position.z;
 
 	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
 	//so we can copy its position/rotation/quaternion, which will automatically apply it to
@@ -211,15 +211,16 @@ function initLights()
 	light.lightD1 = new THREE.DirectionalLight( 0xFFFFFF, 3 );
   	light.lightD1.position.set( 100, 50, 50 );
   	light.lightD1.castShadow = true;
-  	light.lightD1.shadow.camera.left = -100;
-	light.lightD1.shadow.camera.top = -100;
-  	light.lightD1.shadow.camera.right = 100;
-  	light.lightD1.shadow.camera.bottom = 100;
+  	light.lightD1.shadow.camera.left = -50;
+	light.lightD1.shadow.camera.top = -50;
+  	light.lightD1.shadow.camera.right = 50;
+  	light.lightD1.shadow.camera.bottom = 50;
   	light.lightD1.shadow.camera.near = 0.1;
   	light.lightD1.shadow.camera.far = 400;
-  	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
+	  light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
+	  light.lightD1.target=car.frame;
 	scene.add( light.lightD1 );
-	  
+	scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
 	var hemlight = new THREE.HemisphereLight( 0xffffff, 0x080820, 0.2 );
 	scene.add( hemlight );
 	
