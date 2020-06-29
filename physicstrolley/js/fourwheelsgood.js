@@ -24,6 +24,9 @@ var allowSameModelTalk = true;
 var allowNewModelTalk = true;
 var last_collided = "nothing";
 
+//audio
+var audioListener, hitSound;
+
 //for duping OrbitControls into letting us rotate around the trolley
 var controls, fakeCamera, orbitControlsEnabled;
 
@@ -44,6 +47,7 @@ function initScene()
 	initLights();
 	initSkybox();
 	initTextListeners();
+	initAudio();
 	spawnChair();
 	spawnVend();
 	spawnCup();
@@ -870,6 +874,8 @@ function handleCollision(collided_with)
 		if (!allowSameModelTalk && collided_with.model === last_collided) return;
 		if (!allowNewModelTalk) return;
 
+		// hitSound.play();
+
 		switch (collided_with.model)
 		{
 			case 'chair': iterativeScript(); break;
@@ -918,3 +924,17 @@ var randomFragments = (function()
 		drawText(fragments[Math.floor(Math.random() * fragments.length)]);
 	}
 })();
+
+function initAudio()
+{
+	// audioListener = new THREE.AudioListener();
+	// camera.add(audioListener);
+	
+	// hitSound = new THREE.Audio(audioListener);
+	// var audioLoader = new THREE.AudioLoader();
+	// audioLoader.load('./sound/hit.ogg', function(audioBuffer)
+	// {
+	// 	hitSound.setBuffer(audioBuffer);
+	// 	hitSound.setVolume(0.5);
+	// });
+}

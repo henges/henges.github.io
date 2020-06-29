@@ -26,7 +26,7 @@ var initTrolley = function ()
     // var carInteriorGeometry = new THREE.BoxGeometry( 3, 3, 1.5);
     var carInteriorMaterial = Physijs.createMaterial( new THREE.MeshStandardMaterial({ color: 0x777777 }), 0.8, 0.1 );
     car.interior = new Physijs.BoxMesh(carInteriorGeometry, carInteriorMaterial, 50 );
-    car.interior.material.visible = true;                  //(if visible, edges stick out from rounded frame)
+    car.interior.material.visible = false;                  //(if visible, edges stick out from rounded frame)
     car.frame.add(car.interior);
     car.interior.position.set( 0, 2, 0 );
     // car.interior.mass = 0;
@@ -41,7 +41,7 @@ var initTrolley = function ()
         car.body.castShadow = true;
         
         car.frame.add(car.body);
-        car.body.visible = false;
+        car.body.visible = true;
         
         gltf.scene.traverse( function ( child ) 
 		{
