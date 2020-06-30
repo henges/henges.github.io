@@ -27,6 +27,9 @@ var last_collided = "nothing";
 //audio
 var audioListener, hitSound;
 
+//raycaster for setting object transparency
+var raycaster;
+
 //for duping OrbitControls into letting us rotate around the trolley
 var controls, fakeCamera, orbitControlsEnabled;
 
@@ -55,6 +58,8 @@ function initScene()
 	initSkybox();
 	initTextListeners();
 	initAudio();
+	// raycaster = new THREE.Raycaster();
+
 	spawnChair();
 	spawnVend();
 	spawnCup(1);
@@ -98,9 +103,45 @@ function render()
 	//the real camera relative to the trolley.
 	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
+	// raycast();
+
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
+
+// var intersects = {};
+// var lastIntersected = {};
+
+// function raycast()
+// {
+// 	if (typeof lastIntersected != 'undefined')
+// 	{
+// 		for (var i = 0; i < lastIntersected.length; i++)
+// 		{
+// 			lastIntersected[i].object.material.transparent = false;
+// 			lastIntersected[i].object.material.opacity = 1.0;
+// 		}
+// 	}
+
+// 	raycaster.set(camera.position, car.frame.position);
+
+// 	intersects = raycaster.intersectObjects(scene.children, true).slice();
+
+// 	for (var i = 0; i < intersects.length; i++)
+// 	{
+// 		if (typeof intersects[i] != 'undefined')
+// 		{
+// 			intersects[i].object.material.transparent = true;
+// 			intersects[i].object.material.opacity = 0.5;
+// 			if (intersects[i].object.parent != scene)
+// 			{
+
+// 			}
+// 		}
+// 	}
+// 	lastIntersected = intersects.slice();
+// };
+
 
 function initOrbitControls()
 {
@@ -804,7 +845,7 @@ function spawnPill()
 			//so we create these in the loop
 			var localPill = new Physijs.CylinderMesh(
 				new THREE.CylinderGeometry(0.9, 0.9, 4.25, 8), 
-				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, 1.3), 1);
+				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, Math.random()), 1);
 
 
 			//position, rotation, and scale setup
@@ -1005,7 +1046,7 @@ function handleCollision(collided_with)
 	if (typeof collided_with.model != 'undefined')
 	{
 		// console.log("" + collided_with.id);
-		if (!allowSameModelTalk && collided_with.model === last_collided) return;
+		if (!allowSameModelTalk && collided_with.model === last_collided.model) return;
 		if (!allowNewModelTalk) return;
 
 		// hitSound.play();
@@ -1014,8 +1055,8 @@ function handleCollision(collided_with)
 		{
 			case 'spray': drawText("me am spray bottel"); break;
 			case 'bottle': drawText("i am glaas bottalle"); break;
-			case 'chair': iterativeScript(); break;
-			case 'pill': drawText("i am the pill"); break;
+			case 'chair': drawText("chair"); break;
+			case 'pill': iterativeScript(); break;
 			case 'cap': drawText("i am the cap"); break;
 			case 'vending': drawText("i am the vending machine"); break;
 			case 'cig': randomFragments(); break;
@@ -1026,9 +1067,29 @@ function handleCollision(collided_with)
 		allowSameModelTalk = false;
 		allowNewModelTalk = false;
 
-		last_collided = collided_with.model;
-		setTimeout(function(){allowSameModelTalk = true;}, 5000);
+		var trolleyTouches = car.frame._physijs.touches.slice();
+		last_collided = collided_with;
+
+		setTimeout(forceRecheckCollision, 5000, trolleyTouches);
 		setTimeout(function(){allowNewModelTalk = true;}, 2000);
+	}
+}
+
+function forceRecheckCollision(trolleyTouches)
+{
+	allowSameModelTalk = true;
+
+	//compare the last known touches array with its current touches array
+	//if they have the same physijs id numbers, treat it like a new collision
+	if (trolleyTouches.length < 1) return;
+
+	var currentTouch = car.frame._physijs.touches[0];
+	var oldTouch = trolleyTouches[0];
+
+	if (currentTouch === oldTouch) 
+	{
+		// trolley.dispatchEvent( 'collision', last_collided, 0, 0, 0 );
+		handleCollision(last_collided);
 	}
 }
 
@@ -1041,11 +1102,24 @@ var iterativeScript = (function()
 				  "and furthermore looping", "fashion", "and also",
 				  "you can fill in the script array like this and it still works, which is nice"];
 
+	var ajPill = ['patron of the concealment that hides vacuity', 
+	'materials in states whose forms betray nothing',
+	'in the garb of ash or as something ash-like', 
+	'limbless infiltrator of the limbic',
+	'and so slowly does the corpus habituate',
+	'then all at once it is as if it were of its brood,',
+	'and no more is this meagre compensation',
+	'turf wars in the upper ganglia', 
+	'under heat and light nerves shatter', 
+	'a bloom of laryngeal carmine',
+	'and puncture-struck and supine monitored', 
+	'chemister\'s ballast to prevent a capsize']
+
 	//the bit iterativeScript() actually runs is in this second function
 	return function() 
 	{
-		drawText(script[scriptIterator]);
-		scriptIterator = (scriptIterator+1)%script.length;
+		drawText(ajPill[scriptIterator]);
+		scriptIterator = (scriptIterator+1)%ajPill.length;
 	}
 })();
 
