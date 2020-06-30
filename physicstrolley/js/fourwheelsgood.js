@@ -79,18 +79,17 @@ function initScene()
 
 window.onload = initScene();
 
-scene.fog = new THREE.Fog( 0xff2666, -30, 100 );
+var redFog = 0xff2666;
+var niceTurquoise = 0x6fc9af;
+var blackFog = 0x000000;
+
+scene.fog = new THREE.Fog( redFog, -30, 100 );
 render();
 
 function render() 
 {
 	scene.simulate(); // get state of physics simulation
-	// camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
-	
-	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
-	//var target = new THREE.Vector3();
-	//car.frame.getWorldPosition(target);
 	light.lightD1.position.x = car.frame.position.x-50;
 	light.lightD1.position.z = car.frame.position.z-50;
 
@@ -215,6 +214,8 @@ function initPlatform()
 	physiPlatform.model = 'the fucking ground';
 	scene.add(physiPlatform);
 
+	var oldColour = 0xff6666;
+
 	var visiblePlatform = new THREE.Mesh( bigger, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
   	visiblePlatform.name = "visiblePlatform"
   	visiblePlatform.position.set(0, -0.5, 0);
@@ -237,7 +238,7 @@ function initLights()
 	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
 	light.lightD1.target=car.frame;
 	scene.add( light.lightD1 );
-	scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
+	// scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
 	var hemlight = new THREE.HemisphereLight( 0xEB92A7, 0x080820, 1 );
 	scene.add( hemlight );
 	var glow = new THREE.AmbientLight( 0x404040 );
@@ -979,7 +980,7 @@ function drawText(message)
 	text.style.position = 'absolute';
 	text.style.textAlign = "center";
 	text.innerHTML = "<p>" + message + "</p>";
-	text.style.backgroundColor = "#ff4656";
+	text.style.backgroundColor = "#ff3646";
 	text.style.fontFamily = "courier";
 	text.style.color = "white";
 	text.style.padding = "5px";
@@ -1011,6 +1012,8 @@ function handleCollision(collided_with)
 
 		switch (collided_with.model)
 		{
+			case 'spray': drawText("me am spray bottel"); break;
+			case 'bottle': drawText("i am glaas bottalle"); break;
 			case 'chair': iterativeScript(); break;
 			case 'pill': drawText("i am the pill"); break;
 			case 'cap': drawText("i am the cap"); break;
