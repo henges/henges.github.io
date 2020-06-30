@@ -24,8 +24,18 @@ var allowSameModelTalk = true;
 var allowNewModelTalk = true;
 var last_collided = "nothing";
 
+//audio
+var audioListener, hitSound;
+
 //for duping OrbitControls into letting us rotate around the trolley
 var controls, fakeCamera, orbitControlsEnabled;
+
+//static vectors representing wheel positions
+var wheel_fl_vector = new THREE.Vector3(-1, 0.3, 0.7);
+var wheel_fr_vector = new THREE.Vector3(-1, 0.3, -0.7);
+var wheel_bl_vector = new THREE.Vector3(1, 0.3, 1);
+var wheel_br_vector = new THREE.Vector3(1, 0.3, -1);
+
 
 var renderer = new THREE.WebGLRenderer({ antialias: true });
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -44,6 +54,7 @@ function initScene()
 	initLights();
 	initSkybox();
 	initTextListeners();
+	initAudio();
 	spawnChair();
 	spawnVend();
 	spawnCup();
@@ -170,13 +181,13 @@ function updateWheels()
 {
 	//manually access the array elements, because it doesn't seem to work in a loop!
 	//the values of each vector are derived from their offsets, seen in trolley.js wheelConstructor().	
-	wheelsArr[0].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3, 0.7));
+	wheelsArr[0].position.addVectors(car.frame.position, wheel_fl_vector);
 	wheelsArr[0].__dirtyPosition = true;
-	wheelsArr[1].position.addVectors(car.frame.position, new THREE.Vector3(-1, 0.3 -0.7));
+	wheelsArr[1].position.addVectors(car.frame.position, wheel_fr_vector);
 	wheelsArr[1].__dirtyPosition = true;
-	wheelsArr[2].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, 0.95));
+	wheelsArr[2].position.addVectors(car.frame.position, wheel_bl_vector);
 	wheelsArr[2].__dirtyPosition = true;
-	wheelsArr[3].position.addVectors(car.frame.position, new THREE.Vector3(1, 0.3, -1));
+	wheelsArr[3].position.addVectors(car.frame.position, wheel_br_vector);
 	wheelsArr[3].__dirtyPosition = true;
 }
 
@@ -218,8 +229,8 @@ function initLights()
   	light.lightD1.shadow.camera.bottom = 100;
   	light.lightD1.shadow.camera.near = 1;
   	light.lightD1.shadow.camera.far = 500;
-	  light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
-	  light.lightD1.target=car.frame;
+	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
+	light.lightD1.target=car.frame;
 	scene.add( light.lightD1 );
 	scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
 	var hemlight = new THREE.HemisphereLight( 0xEB92A7, 0x080820, 1 );
@@ -870,6 +881,8 @@ function handleCollision(collided_with)
 		if (!allowSameModelTalk && collided_with.model === last_collided) return;
 		if (!allowNewModelTalk) return;
 
+		// hitSound.play();
+
 		switch (collided_with.model)
 		{
 			case 'chair': iterativeScript(); break;
@@ -918,3 +931,17 @@ var randomFragments = (function()
 		drawText(fragments[Math.floor(Math.random() * fragments.length)]);
 	}
 })();
+
+function initAudio()
+{
+	// audioListener = new THREE.AudioListener();
+	// camera.add(audioListener);
+	
+	// hitSound = new THREE.Audio(audioListener);
+	// var audioLoader = new THREE.AudioLoader();
+	// audioLoader.load('./sound/hit.ogg', function(audioBuffer)
+	// {
+	// 	hitSound.setBuffer(audioBuffer);
+	// 	hitSound.setVolume(0.5);
+	// });
+}
