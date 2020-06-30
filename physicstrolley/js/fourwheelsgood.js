@@ -1081,16 +1081,16 @@ function forceRecheckCollision(trolleyTouches)
 
 	//compare the last known touches array with its current touches array
 	//if they have the same physijs id numbers, treat it like a new collision
-	if (trolleyTouches.length < 1) return;
+	if (car.frame._physijs.touches.length < 1) return;
 
-	var currentTouch = car.frame._physijs.touches[0];
-	var oldTouch = trolleyTouches[0];
+	var currentTouches = car.frame._physijs.touches.slice();
 
-	if (currentTouch === oldTouch) 
+	for (var i = 0; i < trolleyTouches.length; i++)
 	{
-		// trolley.dispatchEvent( 'collision', last_collided, 0, 0, 0 );
-		handleCollision(last_collided);
+		if (currentTouches[i] != trolleyTouches[i]) return;
 	}
+
+	handleCollision(last_collided);
 }
 
 //isn't this wacky lookin syntax? it's called a 'self-invoking function'
