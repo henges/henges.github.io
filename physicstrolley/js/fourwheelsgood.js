@@ -79,13 +79,13 @@ function initScene()
 
 window.onload = initScene();
 
-//scene.fog = new THREE.FogExp2( 0xff4666, 0.02 );
+scene.fog = new THREE.Fog( 0xff2666, -30, 100 );
 render();
 
 function render() 
 {
 	scene.simulate(); // get state of physics simulation
-	camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
+	// camera.lookAt(car.frame.position);					//angle the camera back at the trolley if new curTarget
 	
 	// if (car !== undefined && car !== null) moveWithCamera();
 	checkBoundary();
@@ -97,7 +97,7 @@ function render()
 	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
 	//so we can copy its position/rotation/quaternion, which will automatically apply it to
 	//the real camera relative to the trolley.
-	if (orbitControlsEnabled) camera.copy(fakeCamera);
+	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
@@ -113,9 +113,11 @@ function initOrbitControls()
 	controls.enableKeys = false;
 	controls.minPolarAngle = 0; // radians
 	controls.maxPolarAngle = Math.PI/2; // radians
-	controls.minAzimuthAngle = 0; // radians
-	controls.maxAzimuthAngle = Math.PI; // radians
+	// controls.minAzimuthAngle = 0; // radians
+	// controls.maxAzimuthAngle = Math.PI; // radians
 	controls.enablePan = false;
+	controls.enableDamping = true;
+	controls.dampingFactor = 0.07;
 
 	orbitControlsEnabled = true;
 }
@@ -977,7 +979,7 @@ function drawText(message)
 	text.style.position = 'absolute';
 	text.style.textAlign = "center";
 	text.innerHTML = "<p>" + message + "</p>";
-	text.style.backgroundColor = "black";
+	text.style.backgroundColor = "#ff4656";
 	text.style.fontFamily = "courier";
 	text.style.color = "white";
 	text.style.padding = "5px";
