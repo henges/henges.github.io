@@ -1081,9 +1081,11 @@ function forceRecheckCollision(trolleyTouches)
 
 	//compare the last known touches array with its current touches array
 	//if they have the same physijs id numbers, treat it like a new collision
-	if (car.frame._physijs.touches.length < 1) return;
 
 	var currentTouches = car.frame._physijs.touches.slice();
+	
+	if (currentTouches.length < 1) return;
+	if (currentTouches.length != trolleyTouches.length) return;
 
 	for (var i = 0; i < trolleyTouches.length; i++)
 	{
