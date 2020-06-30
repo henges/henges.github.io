@@ -64,6 +64,7 @@ function initScene()
 	spawnBottlecap();
 	spawnCig();
 	spawnBottle();
+	spawnSpray();
 
 	spawnAcid();
 
@@ -570,7 +571,7 @@ function spawnBottle ()
 	Bottle.add (Bottle.spout);
 	Bottle.model = 'bottle';
 	
-	Bottle.position.set (-20, 25, 20);
+	Bottle.position.set (-70, 25, 20);
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/bottlething.glb', function (gltf)
@@ -596,6 +597,127 @@ function spawnBottle ()
 	}
 	);
 	Bottle.material.visible=showPhysicsBoxes;
+}
+function spawnSpray ()
+{
+	var Spray;
+
+	//initialise master physics box
+	var Spray_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.5  // low restitution
+	);
+	Spray = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 20, 45, 10 ),
+		Spray_material,
+		10
+	);
+	Spray.cone = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 6, 7, 12, 8 ),
+		Spray_material,
+		1
+	);
+	Spray.cone.position.set (2,25,0);
+	Spray.cone.rotation.z = Math.PI/4;
+	Spray.add (Spray.cone);
+
+	Spray.disp = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 25, 6, 6),
+		Spray_material,
+		1
+	);
+	Spray.disp.position.set (4,63.5,0);
+	
+	Spray.add (Spray.disp);
+	Spray.disp2 = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 3, 1, 6, 8),
+		Spray_material,
+		1
+	);
+	Spray.disp2.position.set (-10,63.5,0);
+	Spray.disp2.rotation.z = Math.PI/10;
+	
+	Spray.add (Spray.disp2);
+
+	Spray.disp3 = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 10, 20, 8),
+		Spray_material,
+		1
+	);
+	Spray.disp3.position.set (-3, 52,0);
+	Spray.disp3.rotation.z= -Math.PI/12;
+	
+	Spray.add (Spray.disp3);
+
+	Spray.disp4 = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 13.2, 12, 9),
+		Spray_material,
+		1
+	);
+	Spray.disp4.position.set (-1.7, 42 ,0);
+	Spray.disp4.rotation.z= Math.PI/7;
+	
+	Spray.add (Spray.disp4);
+
+	Spray.disp5 = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 13.2, 12, 9),
+		Spray_material,
+		1
+	);
+	Spray.disp5.position.set (0, 36 ,0);
+	Spray.disp5.rotation.z= -Math.PI/6;
+	
+	Spray.add (Spray.disp5);
+
+	Spray.disp6 = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 13.2, 12, 9),
+		Spray_material,
+		1
+	);
+	Spray.disp6.position.set (-4, 26 ,0);
+	//Spray.disp6.rotation.z= -Math.PI/15;
+	
+	Spray.add (Spray.disp6);
+
+	Spray.trigger = new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 1.3, 14, 4),
+		Spray_material,
+		1
+	);
+	Spray.trigger.position.set (8, 54.3 ,0);
+	Spray.trigger.rotation.z= Math.PI/28;
+	
+	Spray.add (Spray.trigger);
+
+	Spray.model = 'spray';
+	
+	Spray.position.set (-20, 25, 20);
+
+	var loader = new THREE.GLTFLoader();
+	loader.load ('/physicstrolley/models/spraybottle.glb', function (gltf)
+	{
+		Spray.image = gltf.scene;
+		Spray.image.position.set (-2, -24, 0);
+		Spray.image.rotation.y = Math.PI / 2;
+		Spray.image.scale.set (4.9, 4.9, 4.9);
+		//Spray.image.transparent = true;
+		gltf.scene.traverse( function ( child ) 
+		{
+            if ( child.isMesh ) {
+				//child.material.opacity = 0.4;
+				//child.material.transparent = true;
+				
+                child.castShadow = true;
+                child.receiveShadow = false;
+            }
+        });
+		Spray.add (Spray.image);
+		scene.add (Spray);
+		objectsArray.push(Spray);
+	}
+	);
+	Spray.material.visible=showPhysicsBoxes;
 }
 function spawnStraw ()
 {
