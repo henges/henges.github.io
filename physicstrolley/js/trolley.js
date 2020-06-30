@@ -98,7 +98,8 @@ var initTrolley = function ()
         scene.add( wheel );
         wheelsArr.push(wheel);
 
-        wheel.setDamping(0.5, 0.5);
+        //https://github.com/chandlerprall/Physijs/issues/32#issuecomment-6576714
+        wheel.setDamping(0.5, 0.8);
         
         return wheel;
     }

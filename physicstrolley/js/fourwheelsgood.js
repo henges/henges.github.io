@@ -57,8 +57,10 @@ function initScene()
 	initAudio();
 	spawnChair();
 	spawnVend();
-	spawnCup();
-	spawnCan();
+	spawnCup(1);
+	spawnCup(0.5);
+	spawnCan(1);
+	spawnCan(0.5);
 	spawnStraw();
 	spawnPill();
 	spawnBottlecap();
@@ -457,7 +459,7 @@ function spawnVend()
 	);
 	vBox.material.visible = showPhysicsBoxes;
 }
-function spawnCup ()
+function spawnCup (scaleVar)
 {
 	var Cup;
 
@@ -468,23 +470,23 @@ function spawnCup ()
 		.5  // low restitution
 	);
 	Cup = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 11, 9, 26, 8, 4 ),
+		new THREE.CylinderGeometry( 11 * scaleVar, 9 * scaleVar, 26 * scaleVar, 8, 4 ),
 		Cup_material,
 		10
 	);
 	
 	Cup.model = 'cup';
 
-	Cup.position.set (25, 25, -25);
+	Cup.position.set (25 * Math.random(), 25, -25 * Math.random());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/coffeecup.glb', function (gltf)
 	{
 		Cup.coffee = gltf.scene;
-		Cup.coffee.position.set (0, -11.8, 0);
+		Cup.coffee.position.set (0 * scaleVar, -11.8 * scaleVar, 0 * scaleVar);
 		Cup.coffee.rotation.y = Math.PI / 2;
-		Cup.coffee.scale.set (8, 8, 8);
-		gltf.scene.traverse( function ( child ) 
+		Cup.coffee.scale.set (8 * scaleVar, 8 * scaleVar, 8 * scaleVar);
+		Cup.coffee.traverse( function ( child ) 
 		{
             if ( child.isMesh ) {
                 child.castShadow = true;
@@ -498,7 +500,7 @@ function spawnCup ()
 	);
 	Cup.material.visible=showPhysicsBoxes;
 }
-function spawnCan ()
+function spawnCan (scaleVar)
 {
 	var Can;
 
@@ -509,22 +511,22 @@ function spawnCan ()
 		.5  // low restitution
 	);
 	Can = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 5, 5, 14.5, 8 ),
+		new THREE.CylinderGeometry( 5 * scaleVar, 5 * scaleVar, 14.5 * scaleVar, 8 ),
 		Can_material,
 		10
 	);
 
 	Can.model = 'can';
 	
-	Can.position.set (-50, 25, 70);
+	Can.position.set (-50 * Math.random(), 25, 70 * Math.random());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/can2.glb', function (gltf)
 	{
 		Can.coke = gltf.scene;
-		Can.coke.position.set (0, -7, 0);
+		Can.coke.position.set (0 * scaleVar, -7 * scaleVar, 0 * scaleVar);
 		Can.coke.rotation.y = Math.PI / 2;
-		Can.coke.scale.set (1, 1, 1);
+		Can.coke.scale.set (1 * scaleVar, 1 * scaleVar, 1 * scaleVar);
 		gltf.scene.traverse( function ( child ) 
 		{
             if ( child.isMesh ) {
