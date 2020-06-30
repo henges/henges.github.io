@@ -666,7 +666,7 @@ function spawnPill()
 			//so we create these in the loop
 			var localPill = new Physijs.CylinderMesh(
 				new THREE.CylinderGeometry(0.9, 0.9, 4.25, 8), 
-				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, 1.25), 1);
+				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, 1.3), 1);
 
 
 			//position, rotation, and scale setup
@@ -699,7 +699,7 @@ function spawnCig ()
 	var cig_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.5, // high friction
-		1.25  // low restitution
+		1.3  // low restitution
 	);
 	var cig = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry (1.5, 1.5, 10, 8),
@@ -749,7 +749,7 @@ function spawnBottlecap ()
 	var cap_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
 		.5, // high friction
-		1.25  // low restitution
+		1.3  // low restitution
 	);
 	cap = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry (3.5, 3, 1.5, 8),
