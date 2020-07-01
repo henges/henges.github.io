@@ -85,10 +85,12 @@ function initScene()
 window.onload = initScene();
 
 var redFog = 0xff2666;
+var crimsonFog=0xff3646;
+var platformFog= 0xff6666;
 var niceTurquoise = 0x6fc9af;
 var blackFog = 0x000000;
 
-scene.fog = new THREE.Fog( redFog, -30, 100 );
+scene.fog = new THREE.Fog( crimsonFog, 0, 100 );
 render();
 
 function render() 
@@ -289,18 +291,18 @@ function initLights()
 function initCamera()
 {
 	camera = new THREE.PerspectiveCamera(
-		70,
+		60,
 		window.innerWidth / window.innerHeight,
 		0.1,
 		1000
 	);
-	camera.position.set( 0, 0, 0 );
+	//camera.position.set( 0, 0, 0 );
 	//camera.lookAt( scene.position );
 	scene.add(camera);
 
 	//attach to the trolley
 	car.frame.add(camera);
-    camera.position.set(50, 50, 25);
+    camera.position.set(25, 10, 25);
 }
 
 function initSkybox()
@@ -655,10 +657,33 @@ function spawnSpray ()
 		.5  // low restitution
 	);
 	Spray = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 20, 45, 10 ),
+		new THREE.CubeGeometry( 20, 46, 10 ),
 		Spray_material,
 		10
 	);
+	Spray.othersides = new Physijs.BoxMesh(
+		new THREE.CubeGeometry(13, 46, 13 ),
+		Spray_material,
+		10
+	);
+	Spray.add (Spray.othersides);
+	Spray.side1 = new Physijs.CylinderMesh (
+		new THREE.CylinderGeometry(4, 4, 46, 8, 1),
+		Spray_material,
+		2
+	)
+	Spray.side1.position.set (11,0,0);
+	Spray.add (Spray.side1);
+
+	Spray.side2 = new Physijs.CylinderMesh (
+		new THREE.CylinderGeometry(4, 4, 55, 8, 1),
+		Spray_material,
+		2
+	)
+	Spray.side2.position.set (-8,4.5,0);
+	Spray.side2.rotation.z = -Math.PI/32
+	Spray.add (Spray.side2);
+
 	Spray.cone = new Physijs.CylinderMesh(
 		new THREE.CylinderGeometry( 6, 7, 12, 8 ),
 		Spray_material,
