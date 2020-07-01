@@ -291,7 +291,7 @@ function initLights()
 function initCamera()
 {
 	camera = new THREE.PerspectiveCamera(
-		60,
+		70,
 		window.innerWidth / window.innerHeight,
 		0.1,
 		1000
@@ -299,19 +299,20 @@ function initCamera()
 	//camera.position.set( 0, 0, 0 );
 	//camera.lookAt( scene.position );
 	scene.add(camera);
-	/*var resistBox;
-	var resistBoxMaterial = Physijs.createMaterial (new THREE.MeshLambertMaterial({ color: 0xff6666 }), 0.8, 1)
-	resistBox= new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 2, 2, 2 ),
-		resistBoxMaterial,
-		1
-	);
+	// var resistBox;
+	// var resistBoxMaterial = Physijs.createMaterial (new THREE.MeshLambertMaterial({ color: 0xff6666 }), 0.8, 1)
+	// resistBox= new Physijs.BoxMesh(
+	// 	new THREE.CubeGeometry( 2, 2, 2 ),
+	// 	resistBoxMaterial,
+	// 	1
+	// );
 	//attach to the trolley
 	car.frame.add(camera);
-	camera.add(resistBox);
-	resistBox.material.visible = false;
-	*/
-    camera.position.set(25, 10, 25);
+	// camera.add(resistBox);
+	// resistBox.material.visible = false;
+	// 
+	camera.position.set(50, 50, 25);
+	camera.lookAt(car.frame);
 }
 
 function initSkybox()
@@ -1117,7 +1118,7 @@ function forceRecheckCollision(trolleyTouches)
 	//if they have the same physijs id numbers, treat it like a new collision
 
 	var currentTouches = car.frame._physijs.touches.slice();
-	
+
 	if (currentTouches.length < 1) return;
 	if (currentTouches.length != trolleyTouches.length) return;
 
