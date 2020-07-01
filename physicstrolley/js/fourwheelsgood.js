@@ -60,6 +60,7 @@ function initScene()
 	initAudio();
 	// raycaster = new THREE.Raycaster();
 
+	spawnPen ();
 	spawnChair();
 	spawnVend();
 	spawnCup(1);
@@ -556,6 +557,7 @@ function spawnCup (scaleVar)
 	);
 	Cup.material.visible=showPhysicsBoxes;
 }
+
 function spawnCan (scaleVar)
 {
 	var Can;
@@ -655,6 +657,63 @@ function spawnBottle ()
 	}
 	);
 	Bottle.material.visible=showPhysicsBoxes;
+}
+function spawnPen ()
+{
+	var Pen;
+
+	//initialise master physics box
+	var Pen_material = Physijs.createMaterial(
+		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
+		.8, // high friction
+		.2  // low restitution
+	);
+	Pen = new Physijs.CylinderMesh(
+		new THREE.CylinderGeometry( 1, 1, 48, 8 ),
+		Pen_material,
+		100
+	);
+	
+	Pen.model = 'pen';
+	
+	Pen.position.set (0, 50, 0);
+	Pen.rotation.z= Math.PI/2;
+
+	var firstLoader = new THREE.GLTFLoader();
+	firstLoader.load ('/physicstrolley/models/transparentpen.glb', function (firstMesh)
+	{
+		var secondLoader = new THREE.GLTFLoader();
+		{
+			secondLoader.load ('/physicstrolley/models/opaquepen.glb', function (secondMesh)
+			{
+				Pen.case = firstMesh.scene;
+				Pen.ink = secondMesh.scene;
+				Pen.case.position.set (0, -21, 0);
+				Pen.ink.position.set (0, -21, 0);
+				
+				Pen.case.scale.set (1, 1, 1);
+				Pen.ink.scale.set (1,1, 1);
+				Pen.case.transparent = true;
+				Pen.ink.transparent=false;
+				firstMesh.scene.traverse( function ( child ) 
+				{
+					if ( child.isMesh ) 
+					{
+						child.material.opacity = 0.4;
+						child.material.transparent = true;
+						
+						child.castShadow = true;
+						child.receiveShadow = false;
+					}
+				});
+				Pen.add (Pen.case);
+				Pen.add (Pen.ink);
+				scene.add (Pen);
+				objectsArray.push(Pen);
+			});
+		}	
+	});
+	Pen.material.visible=showPhysicsBoxes;
 }
 function spawnSpray ()
 {
