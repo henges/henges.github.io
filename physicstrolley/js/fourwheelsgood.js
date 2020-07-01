@@ -90,7 +90,7 @@ var platformFog= 0xff6666;
 var niceTurquoise = 0x6fc9af;
 var blackFog = 0x000000;
 
-scene.fog = new THREE.Fog( crimsonFog, 0, 100 );
+scene.fog = new THREE.Fog( crimsonFog, 300, 350 );
 render();
 
 function render() 
@@ -299,21 +299,30 @@ function initCamera()
 	//camera.position.set( 0, 0, 0 );
 	//camera.lookAt( scene.position );
 	scene.add(camera);
-
+	/*var resistBox;
+	var resistBoxMaterial = Physijs.createMaterial (new THREE.MeshLambertMaterial({ color: 0xff6666 }), 0.8, 1)
+	resistBox= new Physijs.BoxMesh(
+		new THREE.CubeGeometry( 2, 2, 2 ),
+		resistBoxMaterial,
+		1
+	);
 	//attach to the trolley
 	car.frame.add(camera);
+	camera.add(resistBox);
+	resistBox.material.visible = false;
+	*/
     camera.position.set(25, 10, 25);
 }
 
 function initSkybox()
 {
 	var skyboxMaterials = [
-		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('img/skybox/torture_rt.jpg'), side: THREE.DoubleSide}),
-		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('img/skybox/torture_lf.jpg'), side: THREE.DoubleSide}),
-		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('img/skybox/torture_up.jpg'), side: THREE.DoubleSide}),
-		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('img/skybox/torture_dn.jpg'), side: THREE.DoubleSide}),
-		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('img/skybox/torture_bk.jpg'), side: THREE.DoubleSide}),
-		new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('img/skybox/torture_ft.jpg'), side: THREE.DoubleSide}),
+		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
+		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
+		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
+		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
+		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
+		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
 	];
 	var skyboxGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
 	var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
