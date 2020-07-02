@@ -30,6 +30,9 @@ var audioListener, hitSound;
 //raycaster for setting object transparency
 var raycaster;
 
+//for camera collision stuff
+var cameraFollower;
+
 //for duping OrbitControls into letting us rotate around the trolley
 var controls, fakeCamera, orbitControlsEnabled;
 
@@ -58,7 +61,7 @@ function initScene()
 	initSkybox();
 	initTextListeners();
 	initAudio();
-	raycaster = new THREE.Raycaster();
+	initRaycaster();
 
 	spawnPen ();
 	spawnChair();
@@ -110,19 +113,19 @@ function render()
 
 	
 	raycast();
-	if (typeof arrowHelper != 'undefined')
-	{
-		// if (arrowHelper.parent == scene) scene.remove(arrowHelper);
-		arrowHelper = new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 300, 0xff0000)
-		scene.add(arrowHelper);
-	}
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
 
+function initRaycaster()
+{
+	raycaster = new THREE.Raycaster();
+	raycaster.far = 150;
+}
+
 var intersects = {};
-var lastIntersected = {};
+var lastIntersected = [];
 
 function raycast()
 {
@@ -130,16 +133,18 @@ function raycast()
 	{
 		for (var i = 0; i < lastIntersected.length; i++)
 		{
-			lastIntersected[i].object.material.transparent = false;
-			lastIntersected[i].object.material.opacity = 1.0;
+			lastIntersected[i].material.transparent = false;
+			lastIntersected[i].material.opacity = 1.0;
 		}
 	}
 
-	var cameraPos = camera.getWorldPosition();
-	var direction = new THREE.Vector3();
-	direction.subVectors(car.frame.position, cameraPos)
+	lastIntersected = [];
 
-	raycaster.set(camera.getWorldPosition(), direction);
+	var cameraPos = cameraFollower.getWorldPosition();
+	var direction = new THREE.Vector3();
+	direction.subVectors(car.interior.getWorldPosition(), cameraPos)
+
+	raycaster.set(cameraPos, direction);
 
 	intersects = raycaster.intersectObjects(scene.children, true).slice();
 
@@ -149,10 +154,23 @@ function raycast()
 	{
 		if (typeof intersects[i] != 'undefined')
 		{
-			if (intersects[i].object.model != 'skybox')
+			if (intersects[i].object.model != 'skybox' && typeof intersects[i].object.parentReference != 'undefined')
 			{
-				intersects[i].object.material.transparent = true;
-				intersects[i].object.material.opacity = 0.5;
+				// intersects[i].object.material.transparent = true;
+				// intersects[i].object.material.opacity = 0.5;
+				var parent = intersects[i].object.parentReference;
+				parent.traverse(function(child)
+				{
+					if (child.isMesh)
+					{
+						if (!child.material.transparent)
+						{
+							child.material.transparent = true;
+							child.material.opacity = 0.5;
+							lastIntersected.push(child);
+						}
+					}
+				});
 				// if (intersects[i].object.parent != scene)
 				// {
 
@@ -160,7 +178,7 @@ function raycast()
 			}
 		}
 	}
-	lastIntersected = intersects.slice();
+	// lastIntersected = intersects.slice();
 };
 
 
@@ -332,6 +350,10 @@ function initCamera()
 	// 
 	camera.position.set(50, 50, 25);
 	camera.lookAt(car.frame);
+
+	cameraFollower = new THREE.Object3D();
+	camera.add(cameraFollower);
+	cameraFollower.position.set(0,0,-5);
 }
 
 function initSkybox()
@@ -573,7 +595,7 @@ function spawnCup (scaleVar)
                 child.castShadow = true;
                 child.receiveShadow = false;
 			}
-			child.parentReference = vBox;
+			child.parentReference = Cup;
         });
 		Cup.add (Cup.coffee);
 		scene.add (Cup);
