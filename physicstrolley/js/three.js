@@ -5725,7 +5725,7 @@
 
 			if ( target === undefined ) {
 
-				console.warn( 'THREE.Object3D: .getWorldPosition() target is now required' );
+				// console.warn( 'THREE.Object3D: .getWorldPosition() target is now required' );
 				target = new Vector3();
 
 			}

@@ -58,7 +58,7 @@ function initScene()
 	initSkybox();
 	initTextListeners();
 	initAudio();
-	// raycaster = new THREE.Raycaster();
+	raycaster = new THREE.Raycaster();
 
 	spawnChair();
 	spawnVend();
@@ -93,6 +93,8 @@ var blackFog = 0x000000;
 scene.fog = new THREE.Fog( crimsonFog, 300, 350 );
 render();
 
+var arrowHelper;
+
 function render() 
 {
 	scene.simulate(); // get state of physics simulation
@@ -105,44 +107,60 @@ function render()
 	//the real camera relative to the trolley.
 	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
-	// raycast();
+	
+	raycast();
+	if (typeof arrowHelper != 'undefined')
+	{
+		// if (arrowHelper.parent == scene) scene.remove(arrowHelper);
+		arrowHelper = new THREE.ArrowHelper(raycaster.ray.direction, raycaster.ray.origin, 300, 0xff0000)
+		scene.add(arrowHelper);
+	}
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
 
-// var intersects = {};
-// var lastIntersected = {};
+var intersects = {};
+var lastIntersected = {};
 
-// function raycast()
-// {
-// 	if (typeof lastIntersected != 'undefined')
-// 	{
-// 		for (var i = 0; i < lastIntersected.length; i++)
-// 		{
-// 			lastIntersected[i].object.material.transparent = false;
-// 			lastIntersected[i].object.material.opacity = 1.0;
-// 		}
-// 	}
+function raycast()
+{
+	if (typeof lastIntersected != 'undefined')
+	{
+		for (var i = 0; i < lastIntersected.length; i++)
+		{
+			lastIntersected[i].object.material.transparent = false;
+			lastIntersected[i].object.material.opacity = 1.0;
+		}
+	}
 
-// 	raycaster.set(camera.position, car.frame.position);
+	var cameraPos = camera.getWorldPosition();
+	var direction = new THREE.Vector3();
+	direction.subVectors(car.frame.position, cameraPos)
 
-// 	intersects = raycaster.intersectObjects(scene.children, true).slice();
+	raycaster.set(camera.getWorldPosition(), direction);
 
-// 	for (var i = 0; i < intersects.length; i++)
-// 	{
-// 		if (typeof intersects[i] != 'undefined')
-// 		{
-// 			intersects[i].object.material.transparent = true;
-// 			intersects[i].object.material.opacity = 0.5;
-// 			if (intersects[i].object.parent != scene)
-// 			{
+	intersects = raycaster.intersectObjects(scene.children, true).slice();
 
-// 			}
-// 		}
-// 	}
-// 	lastIntersected = intersects.slice();
-// };
+	// var currentObject;
+
+	for (var i = 0; i < intersects.length; i++)
+	{
+		if (typeof intersects[i] != 'undefined')
+		{
+			if (intersects[i].object.model != 'skybox')
+			{
+				intersects[i].object.material.transparent = true;
+				intersects[i].object.material.opacity = 0.5;
+				// if (intersects[i].object.parent != scene)
+				// {
+
+				// }
+			}
+		}
+	}
+	lastIntersected = intersects.slice();
+};
 
 
 function initOrbitControls()
@@ -327,6 +345,7 @@ function initSkybox()
 	];
 	var skyboxGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
 	var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
+	skybox.model = 'skybox';
 	scene.add(skybox);
 }
 
@@ -447,6 +466,7 @@ function spawnChair()
 	loader.load ('/physicstrolley/models/monobloc.glb', function (gltf)
 	{
 		box.monobloc = gltf.scene;
+		box.monobloc.parentReference = box;
 		box.monobloc.position.set (0.2, -9.9, -4);
 		box.monobloc.rotation.y = Math.PI / 2;
 		gltf.scene.traverse( function ( child ) 
@@ -454,7 +474,8 @@ function spawnChair()
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = box;
         });
 		box.add (box.monobloc)
 	}
@@ -499,6 +520,7 @@ function spawnVend()
 	loader.load ('/physicstrolley/models/vend3.glb', function (gltf)
 	{
 		vBox.vend = gltf.scene;
+		vBox.vend.parentReference = vBox;
 		vBox.vend.position.set (0.4, -15, 0);
 		vBox.vend.rotation.y = Math.PI / 2;
 		gltf.scene.traverse( function ( child ) 
@@ -506,7 +528,8 @@ function spawnVend()
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = vBox;
         });
 		vBox.add (vBox.vend);
 		scene.add (vBox);
@@ -539,6 +562,7 @@ function spawnCup (scaleVar)
 	loader.load ('/physicstrolley/models/coffeecup.glb', function (gltf)
 	{
 		Cup.coffee = gltf.scene;
+		Cup.coffee.parentReference = Cup;
 		Cup.coffee.position.set (0 * scaleVar, -11.8 * scaleVar, 0 * scaleVar);
 		Cup.coffee.rotation.y = Math.PI / 2;
 		Cup.coffee.scale.set (8 * scaleVar, 8 * scaleVar, 8 * scaleVar);
@@ -547,7 +571,8 @@ function spawnCup (scaleVar)
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = vBox;
         });
 		Cup.add (Cup.coffee);
 		scene.add (Cup);
@@ -580,6 +605,7 @@ function spawnCan (scaleVar)
 	loader.load ('/physicstrolley/models/can2.glb', function (gltf)
 	{
 		Can.coke = gltf.scene;
+		Can.coke.parentReference = Can;
 		Can.coke.position.set (0 * scaleVar, -7 * scaleVar, 0 * scaleVar);
 		Can.coke.rotation.y = Math.PI / 2;
 		Can.coke.scale.set (1 * scaleVar, 1 * scaleVar, 1 * scaleVar);
@@ -588,7 +614,8 @@ function spawnCan (scaleVar)
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = Can;
         });
 		Can.add (Can.coke);
 		scene.add (Can);
@@ -635,6 +662,7 @@ function spawnBottle ()
 	loader.load ('/physicstrolley/models/bottlething.glb', function (gltf)
 	{
 		Bottle.coke = gltf.scene;
+		Bottle.coke.parentReference = Bottle;
 		Bottle.coke.position.set (0, -11, 0);
 		Bottle.coke.rotation.y = Math.PI / 2;
 		Bottle.coke.scale.set (4.9, 4.9, 4.9);
@@ -647,7 +675,8 @@ function spawnBottle ()
 				
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = Bottle;
         });
 		Bottle.add (Bottle.coke);
 		scene.add (Bottle);
@@ -779,6 +808,7 @@ function spawnSpray ()
 	loader.load ('/physicstrolley/models/spraybottle.glb', function (gltf)
 	{
 		Spray.image = gltf.scene;
+		Spray.image.parentReference = Spray;
 		Spray.image.position.set (-2, -24, 0);
 		Spray.image.rotation.y = Math.PI / 2;
 		Spray.image.scale.set (4.9, 4.9, 4.9);
@@ -791,7 +821,8 @@ function spawnSpray ()
 				
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = Spray;
         });
 		Spray.add (Spray.image);
 		scene.add (Spray);
@@ -841,6 +872,7 @@ function spawnStraw ()
 	loader.load ('/physicstrolley/models/straw1.glb', function (gltf)
 	{
 		Straw.bend = gltf.scene;
+		Straw.bend.parentReference = Straw;
 		Straw.bend.position.set (0, -23, 0);
 		Straw.bend.rotation.y = Math.PI / 2;
 		Straw.bend.scale.set (0.5, 0.5, 0.5);
@@ -849,7 +881,8 @@ function spawnStraw ()
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = Straw;
         });
 		Straw.add (Straw.bend);
 		scene.add (Straw);
@@ -897,9 +930,18 @@ function spawnPill()
 			//misc setup
 			localPill.model = 'pill';
 			localPill.material.visible = showPhysicsBoxes;
+
+			var localGltf = gltf.scene.clone();
+			localGltf.traverse(function(child)
+			{
+				child.parentReference = localPill;
+			});
+
+			localPill.modelObject = localGltf;
+			localPill.modelObject.parentReference = localPill;
 			
 			//add a unique copy of the model to the physi mesh
-			localPill.add(gltf.scene.clone());
+			localPill.add(localGltf);
 
 			//add to scene and global array
 			scene.add(localPill);
@@ -936,6 +978,7 @@ function spawnCig ()
 	loader.load ('/physicstrolley/models/cig.glb', function (gltf)
 	{
 		cig.lid = gltf.scene;
+		cig.lid.parentReference = cig;
 		cig.lid.position.set (0, -5, 0);
 		cig.lid.rotation.y = Math.PI / 2;
 		cig.lid.scale.set (1.5, 1.5, 1.5);
@@ -944,7 +987,8 @@ function spawnCig ()
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = cig;
 		});
 		
 		cig.add (cig.lid);
@@ -986,6 +1030,7 @@ function spawnBottlecap ()
 	loader.load ('/physicstrolley/models/bottlecap.glb', function (gltf)
 	{
 		cap.top = gltf.scene;
+		cap.top.parentReference = cap;
 		cap.top.position.set (0, -0.75, 0);
 		cap.top.rotation.y = Math.PI / 2;
 		cap.top.scale.set (0.5, 0.5, 0.5);
@@ -994,7 +1039,8 @@ function spawnBottlecap ()
             if ( child.isMesh ) {
                 child.castShadow = true;
                 child.receiveShadow = false;
-            }
+			}
+			child.parentReference = cap;
 		});
 		cap.add (cap.top);
 		cap.material.visible=showPhysicsBoxes;
