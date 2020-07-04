@@ -16,6 +16,12 @@ var wheelsArr = [];
 var loadingAnimation = document.getElementById('loading_animation_page');
 var playButton = loadingAnimation.getElementsByClassName('btn')[0];
 var isLandingScreenOpen = true;
+var shadowMapSize = 1000;
+
+var shadowMapSelector = document.getElementById('shadow');
+shadowMapSelector.addEventListener ('change', function(){
+	shadowMapSize = parseInt(this.value);
+})
 
 //Static objects (physics-only interactions).
 var objectsArray = [];
@@ -65,7 +71,7 @@ function initScene()
 	initPlatform();
 	initTrolley();
 	initCamera();
-	initLights();
+	//initLights();
 	initSkybox();
 	initTextListeners();
 	initAudio();
@@ -131,8 +137,8 @@ function render()
 {
 	scene.simulate(); // get state of physics simulation
 	checkBoundary();
-	light.lightD1.position.x = car.frame.position.x-50;
-	light.lightD1.position.z = car.frame.position.z-50;
+	if (!isLandingScreenOpen) light.lightD1.position.x = car.frame.position.x-50;
+	if (!isLandingScreenOpen) light.lightD1.position.z = car.frame.position.z-50;
 
 	//fakeCamera is rotating around point 0,0,0. As such its values are already normalised,
 	//so we can copy its position/rotation/quaternion, which will automatically apply it to
@@ -148,9 +154,9 @@ function render()
 
 function closeLandingScreen()
 {
+	initLights();
 	loadingAnimation.style.visibility = "hidden"; 
 	playButton.style.visibility = "hidden";
-	// document.getElementById("loading_animation_page").style.visibility = "hidden";
 	startAudio();
 	isLandingScreenOpen = false;
 }
@@ -354,7 +360,7 @@ function initLights()
   	light.lightD1.shadow.camera.bottom = 100;
   	light.lightD1.shadow.camera.near = 1;
   	light.lightD1.shadow.camera.far = 500;
-	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = 1000;
+	light.lightD1.shadow.mapSize.height = light.lightD1.shadow.mapSize.width = shadowMapSize;
 	light.lightD1.target=car.frame;
 	scene.add( light.lightD1 );
 	// scene.add( new THREE.CameraHelper( light.lightD1.shadow.camera ));
