@@ -2,8 +2,8 @@
 
 'use strict';
 
-Physijs.scripts.worker = '/physicstrolley/js/physijs_worker.js';
-Physijs.scripts.ammo = '/physicstrolley/js/ammo.js';
+Physijs.scripts.worker = '/terminal/js/physijs_worker.js';
+Physijs.scripts.ammo = '/terminal/js/ammo.js';
 
 //Global constants for debugging.
 var planeSize = 1000;
@@ -535,7 +535,7 @@ function spawnChair(posx, posy, posz)
 
 	//load model and attach it to the physics boxes
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/monobloc.glb', function (gltf)
+	loader.load ('/terminal/models/monobloc.glb', function (gltf)
 	{
 		box.monobloc = gltf.scene;
 		box.monobloc.parentReference = box;
@@ -591,7 +591,7 @@ function spawnVend(posx, posy, posz)
 	else vBox.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/vend3.glb', function (gltf)
+	loader.load ('/terminal/models/vend3.glb', function (gltf)
 	{
 		vBox.vend = gltf.scene;
 		vBox.vend.parentReference = vBox;
@@ -637,7 +637,7 @@ function spawnCup (scaleVar, posx, posy, posz)
 	else Cup.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/coffeecup.glb', function (gltf)
+	loader.load ('/terminal/models/coffeecup.glb', function (gltf)
 	{
 		Cup.coffee = gltf.scene;
 		Cup.coffee.parentReference = Cup;
@@ -685,7 +685,7 @@ function spawnCan (scaleVar, posx, posy, posz)
 	else Can.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/can2.glb', function (gltf)
+	loader.load ('/terminal/models/can2.glb', function (gltf)
 	{
 		Can.coke = gltf.scene;
 		Can.coke.parentReference = Can;
@@ -744,7 +744,7 @@ function spawnBottle (posx, posy, posz)
 	else Bottle.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/bottlething.glb', function (gltf)
+	loader.load ('/terminal/models/bottlething.glb', function (gltf)
 	{
 		Bottle.coke = gltf.scene;
 		Bottle.coke.parentReference = Bottle;
@@ -794,11 +794,11 @@ function spawnPen (posx, posy, posz)
 	Pen.rotation.z= Math.PI/2;
 
 	var firstLoader = new THREE.GLTFLoader();
-	firstLoader.load ('/physicstrolley/models/transparentpen.glb', function (firstMesh)
+	firstLoader.load ('/terminal/models/transparentpen.glb', function (firstMesh)
 	{
 		var secondLoader = new THREE.GLTFLoader();
 		{
-			secondLoader.load ('/physicstrolley/models/opaquepen.glb', function (secondMesh)
+			secondLoader.load ('/terminal/models/opaquepen.glb', function (secondMesh)
 			{
 				Pen.case = firstMesh.scene;
 				Pen.ink = secondMesh.scene;
@@ -951,7 +951,7 @@ function spawnSpray(posx, posy, posz)
 	else Spray.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/spraybottle.glb', function (gltf)
+	loader.load ('/terminal/models/spraybottle.glb', function (gltf)
 	{
 		Spray.image = gltf.scene;
 		Spray.image.parentReference = Spray;
@@ -1019,7 +1019,7 @@ function spawnStraw(scaleVar, posx, posy, posz)
 	Straw.add (Lip);
 	var loader = new THREE.GLTFLoader();
 
-	loader.load ('/physicstrolley/models/straw1.glb', function (gltf)
+	loader.load ('/terminal/models/straw1.glb', function (gltf)
 	{
 		Straw.bend = gltf.scene;
 		Straw.bend.parentReference = Straw;
@@ -1046,7 +1046,7 @@ function spawnStraw(scaleVar, posx, posy, posz)
 function spawnPill()
 {
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/pillpill.glb', function (gltf)
+	loader.load ('/terminal/models/pillpill.glb', function (gltf)
 	{
 		//first setup shadow properties of the model, since this will be copied
 		//for every pill later on
@@ -1126,7 +1126,7 @@ function spawnCig ()
 		Math.random() * Math.PI * 2);
 		
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/cig.glb', function (gltf)
+	loader.load ('/terminal/models/cig.glb', function (gltf)
 	{
 		cig.lid = gltf.scene;
 		cig.lid.parentReference = cig;
@@ -1178,7 +1178,7 @@ function spawnBottlecap ()
 		Math.random() * Math.PI * 2);
 
 	var loader = new THREE.GLTFLoader();
-	loader.load ('/physicstrolley/models/bottlecap.glb', function (gltf)
+	loader.load ('/terminal/models/bottlecap.glb', function (gltf)
 	{
 		cap.top = gltf.scene;
 		cap.top.parentReference = cap;

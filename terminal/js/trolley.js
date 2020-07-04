@@ -35,7 +35,7 @@ var initTrolley = function ()
     //trolley
     var loader = new THREE.GLTFLoader();
         
-    loader.load('/physicstrolley/models/trolleythree.glb', function(gltf)
+    loader.load('/terminal/models/trolleythree.glb', function(gltf)
     {
         car.body = gltf.scene;
         car.body.castShadow = true;
