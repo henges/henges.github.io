@@ -218,6 +218,8 @@ function initOrbitControls()
 	controls.enablePan = false;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.07;
+	controls.minDistance = 10;
+	controls.maxDistance = 50;
 
 	orbitControlsEnabled = true;
 }
@@ -369,7 +371,7 @@ function initCamera()
 	// camera.add(resistBox);
 	// resistBox.material.visible = false;
 	// 
-	camera.position.set(50, 50, 25);
+	camera.position.set(25, 2, 0);
 	camera.lookAt(car.frame);
 
 	cameraFollower = new THREE.Object3D();
