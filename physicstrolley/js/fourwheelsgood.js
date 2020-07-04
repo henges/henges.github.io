@@ -13,7 +13,7 @@ var showPhysicsBoxes = false;
 //Scene constants, including player char.
 var initScene, scene, camera, goal, car={}, cap, pill ={}, cig, light={}, chair={};
 var wheelsArr = [];
-var loadingAnimation = document.getElementById('instructions');
+var loadingAnimation = document.getElementById('loading_animation_page');
 var playButton = loadingAnimation.getElementsByClassName('btn')[0];
 var isLandingScreenOpen = true;
 
@@ -150,7 +150,7 @@ function closeLandingScreen()
 {
 	loadingAnimation.style.visibility = "hidden"; 
 	playButton.style.visibility = "hidden";
-	document.getElementById("blocker").style.visibility = "hidden";
+	// document.getElementById("loading_animation_page").style.visibility = "hidden";
 	startAudio();
 	isLandingScreenOpen = false;
 }
@@ -1038,7 +1038,7 @@ function spawnPill()
 			//so we create these in the loop
 			var localPill = new Physijs.CylinderMesh(
 				new THREE.CylinderGeometry(0.9, 0.9, 4.25, 8), 
-				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, Math.random()), 1);
+				Physijs.createMaterial(new THREE.MeshLambertMaterial({ color: 0xff6666 }), .7, 1.3), 1);
 
 
 			//position, rotation, and scale setup
@@ -1228,7 +1228,7 @@ function initTextListeners()
 	{
 		switch (ev.keyCode)
 		{
-			case 32: if (textDisplaying) clearText(); break;
+			case 67: if (textDisplaying) clearText(); break;
 		}
 	})	
 }
