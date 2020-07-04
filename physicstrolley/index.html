@@ -10,6 +10,7 @@
   			border: 5px outset red;
   			background-color: lightblue;
   			text-align: center;
+			position:absolute;
 			}
 			.btn {
 			border: none;
@@ -18,24 +19,23 @@
   			font-size: 16px;
   			cursor: pointer;
   			display: inline-block;
+			position:absolute;
 			}
 			.btn:hover { 
-				background: #eee;
+			background: #eee;
 			}
 		</style>
 	</head>
 	<body>
 		<div id='loading_animation_page' class='display_page'>
-			
-				<h1>TERMINAL</h1>
-				<p> </p>
-				<p>Use arrow keys to move</p>
-				<p>Click and drag to orbit camera</p>
-				<p>Scroll to zoom in and out</p>
-				<button class = 'btn'>play</button>
-			
-		  </div>
-		  
+			<h1>TERMINAL</h1>
+			<p> </p>
+			<p>Use arrow keys to move</p>
+			<p>Click and drag to orbit camera</p>
+			<p>Scroll to zoom in and out</p>
+			<button class = 'btn' onclick="closeLandingScreen()">play</button>
+		</div>
+
 		<audio id="audio"><source src="./sound/music.ogg" type="audio/ogg"></audio>
         <script src="./js/three.js"></script>
         <script src="./js/OrbitControls.js"></script> 

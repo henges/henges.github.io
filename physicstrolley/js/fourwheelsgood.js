@@ -66,7 +66,6 @@ function initScene()
 	initTextListeners();
 	initAudio();
 	// initRaycaster();
-	playLoadingAnimationIfDocumentNotReady();
 	//little objects
 	spawnPill();
 	spawnBottlecap();
@@ -89,8 +88,6 @@ function initScene()
 	initOrbitControls();
 	audio = document.getElementById("audio");
 	document.addEventListener('keypress', startAudio);
-
-	// drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
 	requestAnimationFrame( render );
 };
@@ -127,26 +124,16 @@ function render()
 	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
 	
-<<<<<<< HEAD
-	//raycast();
-=======
 	// raycast();
->>>>>>> 823d8fd625424d6c0a277a22b49ac807f162fca1
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
-function playLoadingAnimationIfDocumentNotReady() {
-	loadingAnimation.style.visibility = "visible";
-	document.addEventListener('mousedown', function( ev ) 
-    {
-        switch( ev.keyCode ) 
-        {
-            case 1:
-	  	loadingAnimation.style.visibility = "hidden"; 
-		}
-	}
-	)}
+
+function closeLandingScreen()
+{
+	loadingAnimation.style.visibility = "hidden"; 
+}
 
 function initRaycaster()
 {
@@ -365,7 +352,7 @@ function initCamera()
 		0.1,
 		1000
 	);
-	
+
 	scene.add(camera);
 
 	car.frame.add(camera);
