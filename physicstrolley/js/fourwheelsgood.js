@@ -1228,7 +1228,17 @@ function initTextListeners()
 	{
 		switch (ev.keyCode)
 		{
-			case 67: if (textDisplaying) clearText(); break;
+			case 32: case 67: if (textDisplaying) clearText(); break;
+			case 77: if (hasAudioStarted && audio.muted === false) 
+					{
+						audio.muted = true; 
+						break;
+					}
+					else if (audio.muted === true) 
+					{
+						audio.muted = false; 
+						break;
+					}
 		}
 	})	
 }
