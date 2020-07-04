@@ -84,6 +84,7 @@ function initScene()
 	spawnCan(1);
 	spawnCan(0.5);
 	spawnStraw();
+	spawnStraw(0.1);
 	spawnBottle();
 	spawnSpray();
 
@@ -597,6 +598,8 @@ function spawnCup (scaleVar, posx, posy, posz)
 {
 	var Cup;
 
+	if (typeof scaleVar == 'undefined') scaleVar = 1;
+
 	//initialise master physics box
 	var Cup_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
@@ -642,6 +645,8 @@ function spawnCup (scaleVar, posx, posy, posz)
 function spawnCan (scaleVar, posx, posy, posz)
 {
 	var Can;
+
+	if (typeof scaleVar == 'undefined') scaleVar = 1;
 
 	//initialise master physics box
 	var Can_material = Physijs.createMaterial(
@@ -954,9 +959,11 @@ function spawnSpray(posx, posy, posz)
 	);
 	Spray.material.visible=showPhysicsBoxes;
 }
-function spawnStraw(posx, posy, posz)
+function spawnStraw(scaleVar, posx, posy, posz)
 {
 	var Straw, Bit, Lip;
+
+	if (typeof scaleVar == 'undefined') scaleVar = 1;
 
 	//initialise master physics box
 	var Straw_material = Physijs.createMaterial(
@@ -965,24 +972,24 @@ function spawnStraw(posx, posy, posz)
 		.5  // low restitution
 	);
 	Straw = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 0.5, 0.5, 46, 8 ),
+		new THREE.CylinderGeometry( 0.5 * scaleVar, 0.5 * scaleVar, 46 * scaleVar, 8 ),
 		Straw_material,
 		10
 	);
 	Straw.model = 'straw';
 	Bit = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 0.5, 0.5, 5, 8 ),
+		new THREE.CylinderGeometry( 0.5 * scaleVar, 0.5 * scaleVar, 5 * scaleVar, 8 ),
 		Straw_material,
 		10
 	);
 	Bit.model = 'straw';
 	Lip = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 0.5, 0.5,15, 8 ),
+		new THREE.CylinderGeometry( 0.5 * scaleVar, 0.5 * scaleVar, 15 * scaleVar, 8 ),
 		Straw_material,
 		10
 	);
 	Lip.model = 'straw';
-	if (typeof posx != 'undefined') straw.position.set(posx, posy, posz);
+	if (typeof posx != 'undefined') Straw.position.set(posx, posy, posz);
 	else Straw.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 	Straw.rotation.x=-Math.PI/2;
 	Bit.position.set (0, 26, -0.8);
@@ -997,9 +1004,9 @@ function spawnStraw(posx, posy, posz)
 	{
 		Straw.bend = gltf.scene;
 		Straw.bend.parentReference = Straw;
-		Straw.bend.position.set (0, -23, 0);
+		Straw.bend.position.set (0 * scaleVar, -23 * scaleVar, 0 * scaleVar);
 		Straw.bend.rotation.y = Math.PI / 2;
-		Straw.bend.scale.set (0.5, 0.5, 0.5);
+		Straw.bend.scale.set (0.5 * scaleVar, 0.5 * scaleVar, 0.5 * scaleVar);
 		gltf.scene.traverse( function ( child ) 
 		{
             if ( child.isMesh ) {
@@ -1183,20 +1190,6 @@ function spawnAcid ()
 		spawnBottlecap ();
 		spawnCig();
 	}
-}
-
-function spawnLarge()
-{
-	spawnPen();
-	spawnChair();
-	spawnVend();
-	spawnCup(1);
-	spawnCup(0.5);
-	spawnCan(1);
-	spawnCan(0.5);
-	spawnStraw();
-	spawnBottle();
-	spawnSpray();
 }
 
 function randomiseObjects()
