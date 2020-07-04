@@ -13,7 +13,9 @@ var showPhysicsBoxes = false;
 //Scene constants, including player char.
 var initScene, scene, camera, goal, car={}, cap, pill ={}, cig, light={}, chair={};
 var wheelsArr = [];
-var loadingAnimation = document.getElementById('loading_animation_page');
+var loadingAnimation = document.getElementById('instructions');
+var playButton = loadingAnimation.getElementsByClassName('btn')[0];
+var isLandingScreenOpen = true;
 
 //Static objects (physics-only interactions).
 var objectsArray = [];
@@ -55,6 +57,8 @@ var renderer = new THREE.WebGLRenderer({ antialias: true });
 
 function initScene() 
 {
+	waitForLoad();
+
 	scene = new Physijs.Scene;
 	scene.setGravity (new THREE.Vector3(0, -30, 0));
 
@@ -87,7 +91,7 @@ function initScene()
 
 	initOrbitControls();
 	audio = document.getElementById("audio");
-	document.addEventListener('keypress', startAudio);
+	// document.addEventListener('keypress', startAudio);
 
 	requestAnimationFrame( render );
 };
@@ -107,8 +111,20 @@ var arrowHelper;
 
 function startAudio()
 {
-	if (!hasAudioStarted) audio.play();
-	document.removeEventListener('keypress', startAudio);
+	if (!hasAudioStarted) audio.play(); hasAudioStarted = true;
+	// document.removeEventListener('keypress', startAudio);
+}
+
+function waitForLoad()
+{
+	playButton.style.visibility = "hidden";
+	document.onreadystatechange = () =>
+	{
+		if (document.readyState === "complete")
+		{
+			playButton.style.visibility = "visible";
+		}
+	}
 }
 
 function render() 
@@ -133,6 +149,10 @@ function render()
 function closeLandingScreen()
 {
 	loadingAnimation.style.visibility = "hidden"; 
+	playButton.style.visibility = "hidden";
+	document.getElementById("blocker").style.visibility = "hidden";
+	startAudio();
+	isLandingScreenOpen = false;
 }
 
 function initRaycaster()
@@ -1244,6 +1264,8 @@ function clearText()
 
 function handleCollision(collided_with)
 {
+	if (isLandingScreenOpen) return;
+	
 	if (typeof collided_with.model != 'undefined')
 	{
 		// console.log("" + collided_with.id);
