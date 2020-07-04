@@ -16,6 +16,7 @@ var wheelsArr = [];
 
 //Static objects (physics-only interactions).
 var objectsArray = [];
+var largeObjectsArray = [];
 
 //text stuff
 var textDisplaying = false;
@@ -61,8 +62,14 @@ function initScene()
 	initSkybox();
 	initTextListeners();
 	initAudio();
-	initRaycaster();
+	// initRaycaster();
 
+	//little objects
+	spawnPill();
+	spawnBottlecap();
+	spawnCig();
+
+	//bigga objects
 	spawnPen ();
 	spawnChair();
 	spawnVend();
@@ -71,9 +78,6 @@ function initScene()
 	spawnCan(1);
 	spawnCan(0.5);
 	spawnStraw();
-	spawnPill();
-	spawnBottlecap();
-	spawnCig();
 	spawnBottle();
 	spawnSpray();
 
@@ -117,11 +121,18 @@ function render()
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
-
+/*function playLoadingAnimationIfDocumentNotReady() {
+	loadingAnimation.style.visibility = "visible";
+	document.onreadystatechange = () => {
+	  if (document.readyState === "complete") { 
+		loadingAnimation.style.visibility = "hidden"; 
+	  }
+	}
+  }*/
 function initRaycaster()
 {
-	raycaster = new THREE.Raycaster();
-	raycaster.far = 150;
+	// raycaster = new THREE.Raycaster();
+	// raycaster.far = 150;
 }
 
 var intersects = {};
@@ -372,7 +383,7 @@ function initSkybox()
 	scene.add(skybox);
 }
 
-function spawnChair()
+function spawnChair(posx, posy, posz)
 {
 	var box, legfl, legfr, legbr, legbl, arml, armll, armr, armrr, back;
 
@@ -388,7 +399,8 @@ function spawnChair()
 		10
 	);
 	box.model = 'chair';
-	box.position.set (-10, 15, -10);
+	if (typeof posx != 'undefined') box.position.set(posx, posy, posz);
+	else box.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	//legs (front & back, left & right)
 	legfl = new Physijs.BoxMesh(
@@ -518,10 +530,11 @@ function spawnChair()
 
 	chair = box;
 	objectsArray.push(chair);
+	largeObjectsArray.push(chair);
 	scene.add (chair);	
 }
 
-function spawnVend()
+function spawnVend(posx, posy, posz)
 {
 	var vBox;
 
@@ -537,7 +550,8 @@ function spawnVend()
 		10
 	);
 	vBox.model = 'vending';
-	vBox.position.set (50, 25, 50);
+	if (typeof posx != 'undefined') vBox.position.set(posx, posy, posz);
+	else vBox.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/vend3.glb', function (gltf)
@@ -557,11 +571,12 @@ function spawnVend()
 		vBox.add (vBox.vend);
 		scene.add (vBox);
 		objectsArray.push(vBox);
+		largeObjectsArray.push(vBox);
 	}
 	);
 	vBox.material.visible = showPhysicsBoxes;
 }
-function spawnCup (scaleVar)
+function spawnCup (scaleVar, posx, posy, posz)
 {
 	var Cup;
 
@@ -579,7 +594,8 @@ function spawnCup (scaleVar)
 	
 	Cup.model = 'cup';
 
-	Cup.position.set (25 * Math.random(), 25, -25 * Math.random());
+	if (typeof posx != 'undefined') Cup.position.set(posx, posy, posz);
+	else Cup.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/coffeecup.glb', function (gltf)
@@ -600,12 +616,13 @@ function spawnCup (scaleVar)
 		Cup.add (Cup.coffee);
 		scene.add (Cup);
 		objectsArray.push(Cup);
+		largeObjectsArray.push(Cup);
 	}
 	);
 	Cup.material.visible=showPhysicsBoxes;
 }
 
-function spawnCan (scaleVar)
+function spawnCan (scaleVar, posx, posy, posz)
 {
 	var Can;
 
@@ -623,7 +640,8 @@ function spawnCan (scaleVar)
 
 	Can.model = 'can';
 	
-	Can.position.set (-50 * Math.random(), 25, 70 * Math.random());
+	if (typeof posx != 'undefined') Can.position.set(posx, posy, posz);
+	else Can.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/can2.glb', function (gltf)
@@ -644,11 +662,12 @@ function spawnCan (scaleVar)
 		Can.add (Can.coke);
 		scene.add (Can);
 		objectsArray.push(Can);
+		largeObjectsArray.push(Can);
 	}
 	);
 	Can.material.visible=showPhysicsBoxes;
 }
-function spawnBottle ()
+function spawnBottle (posx, posy, posz)
 {
 	var Bottle;
 
@@ -680,7 +699,8 @@ function spawnBottle ()
 	Bottle.add (Bottle.spout);
 	Bottle.model = 'bottle';
 	
-	Bottle.position.set (-70, 25, 20);
+	if (typeof posx != 'undefined') Bottle.position.set(posx, posy, posz);
+	else Bottle.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/bottlething.glb', function (gltf)
@@ -705,11 +725,12 @@ function spawnBottle ()
 		Bottle.add (Bottle.coke);
 		scene.add (Bottle);
 		objectsArray.push(Bottle);
+		largeObjectsArray.push(Bottle);
 	}
 	);
 	Bottle.material.visible=showPhysicsBoxes;
 }
-function spawnPen ()
+function spawnPen (posx, posy, posz)
 {
 	var Pen;
 
@@ -727,7 +748,8 @@ function spawnPen ()
 	
 	Pen.model = 'pen';
 	
-	Pen.position.set (0, 50, 0);
+	if (typeof posx != 'undefined') Pen.position.set(posx, posy, posz);
+	else Pen.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 	Pen.rotation.z= Math.PI/2;
 
 	var firstLoader = new THREE.GLTFLoader();
@@ -761,12 +783,13 @@ function spawnPen ()
 				Pen.add (Pen.ink);
 				scene.add (Pen);
 				objectsArray.push(Pen);
+				largeObjectsArray.push(Pen);
 			});
 		}	
 	});
 	Pen.material.visible=showPhysicsBoxes;
 }
-function spawnSpray ()
+function spawnSpray(posx, posy, posz)
 {
 	var Spray;
 
@@ -883,7 +906,8 @@ function spawnSpray ()
 
 	Spray.model = 'spray';
 	
-	Spray.position.set (-20, 25, 20);
+	if (typeof posx != 'undefined') Spray.position.set(posx, posy, posz);
+	else Spray.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/physicstrolley/models/spraybottle.glb', function (gltf)
@@ -908,11 +932,12 @@ function spawnSpray ()
 		Spray.add (Spray.image);
 		scene.add (Spray);
 		objectsArray.push(Spray);
+		largeObjectsArray.push(Spray);
 	}
 	);
 	Spray.material.visible=showPhysicsBoxes;
 }
-function spawnStraw ()
+function spawnStraw(posx, posy, posz)
 {
 	var Straw, Bit, Lip;
 
@@ -940,7 +965,8 @@ function spawnStraw ()
 		10
 	);
 	Lip.model = 'straw';
-	Straw.position.set (75, 27, 0);
+	if (typeof posx != 'undefined') straw.position.set(posx, posy, posz);
+	else Straw.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 	Straw.rotation.x=-Math.PI/2;
 	Bit.position.set (0, 26, -0.8);
 	Bit.rotation.x=-Math.PI/9;
@@ -968,6 +994,7 @@ function spawnStraw ()
 		Straw.add (Straw.bend);
 		scene.add (Straw);
 		objectsArray.push(Straw);
+		largeObjectsArray.push(Straw);
 	}
 	);
 	Straw.material.visible=showPhysicsBoxes;
@@ -999,8 +1026,8 @@ function spawnPill()
 
 			//position, rotation, and scale setup
 			localPill.position.y = Math.random() * 50 + 25;
-			localPill.position.x = (Math.random() - 0.5 )* planeSize ;
-			localPill.position.z = (Math.random() - 0.5 )* planeSize ;
+			localPill.position.x = randomWithinBoundary();
+			localPill.position.z = randomWithinBoundary();
 
 			localPill.rotation.set(
 					Math.random() * Math.PI * 2,
@@ -1130,14 +1157,29 @@ function spawnBottlecap ()
 	}
 	);
 }
+
 function spawnAcid ()
 {
-	for (var i = 0; i < 10; i++){
+	for (var i = 0; i < 10; i++)
+	{
 		// spawnPill ();
 		spawnBottlecap ();
 		spawnCig();
-		
 	}
+}
+
+function spawnLarge()
+{
+	spawnPen();
+	spawnChair();
+	spawnVend();
+	spawnCup(1);
+	spawnCup(0.5);
+	spawnCan(1);
+	spawnCan(0.5);
+	spawnStraw();
+	spawnBottle();
+	spawnSpray();
 }
 
 function randomiseObjects()
@@ -1311,4 +1353,9 @@ function initAudio()
 	// 	hitSound.setBuffer(audioBuffer);
 	// 	hitSound.setVolume(0.5);
 	// });
+}
+
+function randomWithinBoundary()
+{
+	return (Math.random() - 0.5) * planeSize * 0.9;
 }
