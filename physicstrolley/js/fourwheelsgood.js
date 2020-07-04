@@ -356,21 +356,10 @@ function initCamera()
 		0.1,
 		1000
 	);
-	//camera.position.set( 0, 0, 0 );
-	//camera.lookAt( scene.position );
+	
 	scene.add(camera);
-	// var resistBox;
-	// var resistBoxMaterial = Physijs.createMaterial (new THREE.MeshLambertMaterial({ color: 0xff6666 }), 0.8, 1)
-	// resistBox= new Physijs.BoxMesh(
-	// 	new THREE.CubeGeometry( 2, 2, 2 ),
-	// 	resistBoxMaterial,
-	// 	1
-	// );
-	//attach to the trolley
+
 	car.frame.add(camera);
-	// camera.add(resistBox);
-	// resistBox.material.visible = false;
-	// 
 	camera.position.set(25, 2, 0);
 	camera.lookAt(car.frame);
 
