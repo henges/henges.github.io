@@ -356,7 +356,7 @@ function initPlatform()
 	var oldColour = 0xff6666;
 
 	var visiblePlatform = new THREE.Mesh( bigger, new THREE.MeshStandardMaterial({ color: 0xff6666 }) );
-  	visiblePlatform.name = "visiblePlatform"
+  	visiblePlatform.name = "visiblePlatform";
   	visiblePlatform.position.set(0, -0.5, 0);
   	//visiblePlatform.rotation.y = .4;
   	visiblePlatform.receiveShadow = true;
