@@ -1215,10 +1215,10 @@ function handleCollision(collided_with)
 
 		switch (collided_with.model)
 		{
-			case 'spray': drawText("me am spray bottel"); break;
+			case 'spray': iterativeScript('graham'); break;
 			case 'bottle': drawText("i am glaas bottalle"); break;
 			case 'chair': drawText("chair"); break;
-			case 'pill': iterativeScript(); break;
+			case 'pill': iterativeScript('graham'); break;
 			case 'cap': drawText("i am the cap"); break;
 			case 'vending': drawText("i am the vending machine"); break;
 			case 'cig': randomFragments(); break;
@@ -1260,12 +1260,8 @@ function forceRecheckCollision(trolleyTouches)
 //isn't this wacky lookin syntax? it's called a 'self-invoking function'
 //it's run when the program launches, and it outputs another function, which iterativeScript() becomes
 var iterativeScript = (function() 
-{
-	var scriptIterator = 0;
-	var script = ["in this approach", "text displays in a linear", 
-				  "and furthermore looping", "fashion", "and also",
-				  "you can fill in the script array like this and it still works, which is nice"];
-
+{	
+	var ajPillIterator = 0;
 	var ajPill = ['patron of the concealment that hides vacuity', 
 	'materials in states whose forms betray nothing',
 	'in the garb of ash or as something ash-like', 
@@ -1279,11 +1275,61 @@ var iterativeScript = (function()
 	'and puncture-struck and supine monitored', 
 	'chemister\'s ballast to prevent a capsize']
 
+	var grahamTextIterator = 0;
+	var grahamText = ['In the distance he thought he spied a different part of the beach. Some enormous shape seen from a distance. As he approached the next day, he saw it was an enormous wreck, a vast vessel made of steel, and all along the shore were a hundred more such things, vast hulking ruins in the shallows of the concrete sea.', 
+	'The doors reaching out to meet one another in their exclusive embrace. There was an embrace he would not feel again, the security of a group, of some semblance of a community, hidden by the wall before the concrete desert.',
+	'The desert was a faint concrete incline, made so that the rain – when it did fall – slowly drifted down it and into the horizon where supposedly – somewhere – there was an ocean.',
+	'And on that day, the day after the execution, he was led to the city gates and summarily exiled.',
+	'Exiled as some defective limb that requires amputation…',
+	'Though in the scope of the city perhaps the exile was more like a mole that made the mistake of growing too near a tumour.',
+	'And the exile; swept out like so much dust in a spring clean for the rains to wash away.',
+	'He wore no plastic zip ties on his wrists, and sneakers on his feet and they led him to the wall.',
+	'Beyond those high walls was the desert, and it was into the desert that he would go.',
+	'Into the desert that he would be exiled.',
+	'Guilty of what? Too little conviction to form either condemnation or support?',
+	'He would be free. Free to persh in the empty concrete plain, surrounded by his delirium of memories and dreams.',
+	'But really, he was twice exiled: from the city, and the confidence of his friends.',
+	'Why was their trust not placed in him? For the same reason trust was not given him now?',
+	'Was he too traitorous or not traitorous enough to be part of a conspiracy?',
+	'They watched, for even an exile, while not an execution, is still something to see.',
+	'Perhaps this was his fault, he speculated, his tendency towards the downward glance, to avoid the potential for other eyes to see the truth of his own.',
+	'The system was designed with the kind of precision that induced terror.',
+	'Whatever it had been built for in the past, now, It was an absolutely elegant guillotine blade.',
+	'He remembered: two lines slowly parting in a surface to reveal a third infinitely more devastating line.',
+	'There is no escape from this line.',
+	'This was the horizon of his life now. The horizon of his life and his death.',
+	'From its infinitely distant and slightly curved aspect there would be less chance of escape than his prison cell.',
+	'This was the fate that was supposedly kinder than execution.',
+	'Let the knife of the horizon slit his throat instead, and being a coward, he had accepted.',
+	'Perhaps even in this plain he could find a rock to hide under.',
+	'He was in front of the wall now, and looking up he saw the plane of the concrete landscape turn vertically and rise up into the sky.',
+	'Even the monstrous wall, so large when before it, disappeared into the distance.',
+	'It was as if his life up to this point were a dream, and now, in the midst of his visions, he was really awake.',
+	'He wished, strangely, for death on the basis of a desire for communality. To share something with those he admired and loved.',
+	'Yet he thought, what else do soldiers do but formulate hysteria to the point of sacrifice. All noble warriors fall to the delusion of nobility.',
+	'He set his cowardice against the line of the horizon, and let his eyes dip to the ground around his feet. He would not meet the gaze of his chosen executioner.',
+	];
+
 	//the bit iterativeScript() actually runs is in this second function
-	return function() 
+	return function(selector) 
 	{
-		drawText(ajPill[scriptIterator]);
-		scriptIterator = (scriptIterator+1)%ajPill.length;
+		var thisIterator;
+		var script;
+
+		switch (selector)
+		{
+			case 'graham': thisIterator = grahamTextIterator; script = grahamText; break;
+			case 'aj': thisIterator = ajPillIterator; script = ajPill; break;
+		}
+
+		drawText(script[thisIterator]);
+		thisIterator = (thisIterator+1)%script.length;
+
+		switch (selector)
+		{
+			case 'graham': grahamTextIterator = thisIterator; break;
+			case 'aj': ajPillIterator = thisIterator; break;
+		}
 	}
 })();
 
