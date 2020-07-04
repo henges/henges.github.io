@@ -74,21 +74,34 @@ function initScene()
 	spawnPill();
 	spawnBottlecap();
 	spawnCig();
+	spawnAcid();
 
 	//bigga objects
 	spawnPen ();
+
 	spawnChair();
+
 	spawnVend();
+
 	spawnCup(1);
-	spawnCup(0.5);
+	spawnCup(Math.random());
+	spawnCup(Math.random());
+	spawnCup(Math.random());
+
 	spawnCan(1);
-	spawnCan(0.5);
+	spawnCan(Math.random());
+	spawnCan(Math.random());
+	spawnCan(Math.random());
+
 	spawnStraw();
-	spawnStraw(0.1);
+	spawnStraw(Math.random());
+	spawnStraw(Math.random());
+	spawnStraw(Math.random());
+
 	spawnBottle();
+
 	spawnSpray();
 
-	spawnAcid();
 
 	initOrbitControls();
 	audio = document.getElementById("audio");
@@ -371,7 +384,7 @@ function initCamera()
 		70,
 		window.innerWidth / window.innerHeight,
 		0.1,
-		1000
+		planeSize * 1.5,
 	);
 
 	scene.add(camera);
@@ -395,7 +408,7 @@ function initSkybox()
 		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
 		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
 	];
-	var skyboxGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
+	var skyboxGeometry = new THREE.CubeGeometry(planeSize*1.5, planeSize*1.5, planeSize*1.5);
 	var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
 	skybox.model = 'skybox';
 	scene.add(skybox);
@@ -1298,7 +1311,7 @@ function handleCollision(collided_with)
 		last_collided = collided_with;
 
 		setTimeout(forceRecheckCollision, 5000, trolleyTouches);
-		setTimeout(function(){allowNewModelTalk = true;}, 2000);
+		setTimeout(function(){allowNewModelTalk = true;}, 5000);
 	}
 }
 
