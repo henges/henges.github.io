@@ -126,7 +126,7 @@ function render()
 	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
 	
-	raycast();
+	// raycast();
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
