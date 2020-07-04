@@ -1318,7 +1318,7 @@ function handleCollision(collided_with)
 		var trolleyTouches = car.frame._physijs.touches.slice();
 		last_collided = collided_with;
 
-		setTimeout(forceRecheckCollision, 5000, trolleyTouches);
+		setTimeout(forceRecheckCollision, 7000, trolleyTouches);
 		// setTimeout(function(){allowNewModelTalk = true;}, 5000);
 	}
 }
