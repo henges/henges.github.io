@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080/physicstrolley/index.html",
+            "url": "http://localhost:8080/terminal/",
             "webRoot": "/Users/arjones/Documents/GitHub/henges.github.io/"
         }
     ]

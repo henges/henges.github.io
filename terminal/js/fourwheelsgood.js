@@ -1294,7 +1294,7 @@ function handleCollision(collided_with)
 	{
 		// console.log("" + collided_with.id);
 		if (!allowSameModelTalk && collided_with.model === last_collided.model) return;
-		if (!allowNewModelTalk) return;
+		// if (!allowNewModelTalk) return;
 
 		// hitSound.play();
 
@@ -1313,13 +1313,13 @@ function handleCollision(collided_with)
 			default: iterativeScript('graham'); break;
 		}
 		allowSameModelTalk = false;
-		allowNewModelTalk = false;
+		// allowNewModelTalk = false;
 
 		var trolleyTouches = car.frame._physijs.touches.slice();
 		last_collided = collided_with;
 
 		setTimeout(forceRecheckCollision, 5000, trolleyTouches);
-		setTimeout(function(){allowNewModelTalk = true;}, 5000);
+		// setTimeout(function(){allowNewModelTalk = true;}, 5000);
 	}
 }
 
