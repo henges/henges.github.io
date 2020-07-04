@@ -27,6 +27,7 @@ var last_collided = "nothing";
 //audio
 var audioListener, hitSound;
 var audio;
+var hasAudioStarted = false;
 
 //raycaster for setting object transparency
 var raycaster;
@@ -82,7 +83,7 @@ function initScene()
 
 	initOrbitControls();
 	audio = document.getElementById("audio");
-	audio.play();
+	document.addEventListener('keypress', startAudio);
 
 	// drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
@@ -101,6 +102,12 @@ scene.fog = new THREE.Fog( crimsonFog, 300, 350 );
 render();
 
 var arrowHelper;
+
+function startAudio()
+{
+	if (!hasAudioStarted) audio.play();
+	document.removeEventListener('keypress', startAudio);
+}
 
 function render() 
 {
