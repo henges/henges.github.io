@@ -80,20 +80,34 @@ function initScene()
 	spawnPill();
 	spawnBottlecap();
 	spawnCig();
+	spawnAcid();
 
 	//bigga objects
 	spawnPen ();
+
 	spawnChair();
+
 	spawnVend();
+
 	spawnCup(1);
-	spawnCup(0.5);
+	spawnCup(Math.random());
+	spawnCup(Math.random());
+	spawnCup(Math.random());
+
 	spawnCan(1);
-	spawnCan(0.5);
+	spawnCan(Math.random());
+	spawnCan(Math.random());
+	spawnCan(Math.random());
+
 	spawnStraw();
+	spawnStraw(Math.random());
+	spawnStraw(Math.random());
+	spawnStraw(Math.random());
+
 	spawnBottle();
+
 	spawnSpray();
 
-	spawnAcid();
 
 	initOrbitControls();
 	audio = document.getElementById("audio");
@@ -376,7 +390,7 @@ function initCamera()
 		70,
 		window.innerWidth / window.innerHeight,
 		0.1,
-		1000
+		planeSize * 1.5,
 	);
 
 	scene.add(camera);
@@ -400,7 +414,7 @@ function initSkybox()
 		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
 		new THREE.MeshBasicMaterial({ color: 0xff3646 , side: THREE.DoubleSide}),
 	];
-	var skyboxGeometry = new THREE.CubeGeometry(1000, 1000, 1000);
+	var skyboxGeometry = new THREE.CubeGeometry(planeSize*1.5, planeSize*1.5, planeSize*1.5);
 	var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
 	skybox.model = 'skybox';
 	scene.add(skybox);
@@ -603,6 +617,8 @@ function spawnCup (scaleVar, posx, posy, posz)
 {
 	var Cup;
 
+	if (typeof scaleVar == 'undefined') scaleVar = 1;
+
 	//initialise master physics box
 	var Cup_material = Physijs.createMaterial(
 		new THREE.MeshLambertMaterial({ color: 0xff6666 }),
@@ -648,6 +664,8 @@ function spawnCup (scaleVar, posx, posy, posz)
 function spawnCan (scaleVar, posx, posy, posz)
 {
 	var Can;
+
+	if (typeof scaleVar == 'undefined') scaleVar = 1;
 
 	//initialise master physics box
 	var Can_material = Physijs.createMaterial(
@@ -960,9 +978,11 @@ function spawnSpray(posx, posy, posz)
 	);
 	Spray.material.visible=showPhysicsBoxes;
 }
-function spawnStraw(posx, posy, posz)
+function spawnStraw(scaleVar, posx, posy, posz)
 {
 	var Straw, Bit, Lip;
+
+	if (typeof scaleVar == 'undefined') scaleVar = 1;
 
 	//initialise master physics box
 	var Straw_material = Physijs.createMaterial(
@@ -971,24 +991,24 @@ function spawnStraw(posx, posy, posz)
 		.5  // low restitution
 	);
 	Straw = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 0.5, 0.5, 46, 8 ),
+		new THREE.CylinderGeometry( 0.5 * scaleVar, 0.5 * scaleVar, 46 * scaleVar, 8 ),
 		Straw_material,
 		10
 	);
 	Straw.model = 'straw';
 	Bit = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 0.5, 0.5, 5, 8 ),
+		new THREE.CylinderGeometry( 0.5 * scaleVar, 0.5 * scaleVar, 5 * scaleVar, 8 ),
 		Straw_material,
 		10
 	);
 	Bit.model = 'straw';
 	Lip = new Physijs.CylinderMesh(
-		new THREE.CylinderGeometry( 0.5, 0.5,15, 8 ),
+		new THREE.CylinderGeometry( 0.5 * scaleVar, 0.5 * scaleVar, 15 * scaleVar, 8 ),
 		Straw_material,
 		10
 	);
 	Lip.model = 'straw';
-	if (typeof posx != 'undefined') straw.position.set(posx, posy, posz);
+	if (typeof posx != 'undefined') Straw.position.set(posx, posy, posz);
 	else Straw.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 	Straw.rotation.x=-Math.PI/2;
 	Bit.position.set (0, 26, -0.8);
@@ -1003,9 +1023,9 @@ function spawnStraw(posx, posy, posz)
 	{
 		Straw.bend = gltf.scene;
 		Straw.bend.parentReference = Straw;
-		Straw.bend.position.set (0, -23, 0);
+		Straw.bend.position.set (0 * scaleVar, -23 * scaleVar, 0 * scaleVar);
 		Straw.bend.rotation.y = Math.PI / 2;
-		Straw.bend.scale.set (0.5, 0.5, 0.5);
+		Straw.bend.scale.set (0.5 * scaleVar, 0.5 * scaleVar, 0.5 * scaleVar);
 		gltf.scene.traverse( function ( child ) 
 		{
             if ( child.isMesh ) {
@@ -1191,20 +1211,6 @@ function spawnAcid ()
 	}
 }
 
-function spawnLarge()
-{
-	spawnPen();
-	spawnChair();
-	spawnVend();
-	spawnCup(1);
-	spawnCup(0.5);
-	spawnCan(1);
-	spawnCan(0.5);
-	spawnStraw();
-	spawnBottle();
-	spawnSpray();
-}
-
 function randomiseObjects()
 {
 	//called when the user travels past the edge of our infinite plane,
@@ -1234,7 +1240,17 @@ function initTextListeners()
 	{
 		switch (ev.keyCode)
 		{
-			case 67: if (textDisplaying) clearText(); break;
+			case 32: case 67: if (textDisplaying) clearText(); break;
+			case 77: if (hasAudioStarted && audio.muted === false) 
+					{
+						audio.muted = true; 
+						break;
+					}
+					else if (audio.muted === true) 
+					{
+						audio.muted = false; 
+						break;
+					}
 		}
 	})	
 }
@@ -1301,7 +1317,7 @@ function handleCollision(collided_with)
 		last_collided = collided_with;
 
 		setTimeout(forceRecheckCollision, 5000, trolleyTouches);
-		setTimeout(function(){allowNewModelTalk = true;}, 2000);
+		setTimeout(function(){allowNewModelTalk = true;}, 5000);
 	}
 }
 

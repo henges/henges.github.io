@@ -9,7 +9,7 @@
 			.display_page {
   			background-color: #ff3646;
   			text-align: center;
-			padding: 10% 0;
+			/* padding-top: 10%; */
 			position:absolute;
 			font-size: 12px;
 			height: 100%; width: 100%; 
@@ -35,6 +35,7 @@
 			color: white;
   			cursor: pointer;
 			}
+
 			.btn:hover { 
 			background: #eee;
 			} 
@@ -42,13 +43,14 @@
 	</head>
 	<body>
 		<div id='loading_animation_page' class='display_page'>
-			<h1 style='font-size:100px;'>TERMINAL</h1>
-			<p> </p>
+			<!-- <br><br><br><br><br><br><br> -->
+			<h1 style='font-size:100px;'><br>TERMINAL</h1>
+			<!-- <p> </p> -->
 			<p>USE ARROW KEYS TO MOVE</p>
 			<p>CLICK AND DRAG TO ORBIT CAMERA</p>
 			<p>SCROLL TO ZOOM IN AND OUT</p>
-			<p>PRESS C TO CLEAR TEXT</p>
-			
+			<p>SPACE TO CLEAR TEXT</p>
+			<p>M TO MUTE</p>
 
 			<select class = 'customselect' id="shadow" name="shadow">
 			<option value ="1024"> SHADOW QUALITY</option>
@@ -60,18 +62,19 @@
 			</select>
 		
 
+			
 			<P></P>
 			<button class = 'btn' onclick="closeLandingScreen()">CLICK HERE TO START</button>
 		</div>
 		
 		
 
-		<audio id="audio"><source src="./sound/music.ogg" type="audio/ogg"></audio>
-        <script src="./js/three.js"></script>
-        <script src="./js/OrbitControls.js"></script> 
-		<script src="./js/GLTFLoader.js"></script>     
-		<script src="./js/physi.js"></script>
-		<script src="./js/trolley.js"></script>
-		<script src="./js/fourwheelsgood.js"></script>
+		<audio id="audio"><source src="/physicstrolley/sound/music.ogg" type="audio/ogg"></audio>
+        <script src="/physicstrolley/js/three.js"></script>
+        <script src="/physicstrolley/js/OrbitControls.js"></script> 
+		<script src="/physicstrolley/js/GLTFLoader.js"></script>     
+		<script src="/physicstrolley/js/physi.js"></script>
+		<script src="/physicstrolley/js/trolley.js"></script>
+		<script src="/physicstrolley/js/fourwheelsgood.js"></script>
 	</body>
 </html>
