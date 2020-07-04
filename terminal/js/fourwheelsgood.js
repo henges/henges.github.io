@@ -87,7 +87,7 @@ function initScene()
 
 	spawnChair();
 
-	spawnVend();
+	spawnVend(-25,20,0);
 
 	spawnCup(1);
 	spawnCup(Math.random());
@@ -582,7 +582,7 @@ function spawnVend(posx, posy, posz)
 		.5  // low restitution
 	);
 	vBox = new Physijs.BoxMesh(
-		new THREE.CubeGeometry( 14.8, 23.4, 14.8 ),
+		new THREE.CubeGeometry( 14.8, 26.5, 14.8 ),
 		vBox_material,
 		10
 	);
@@ -590,12 +590,14 @@ function spawnVend(posx, posy, posz)
 	if (typeof posx != 'undefined') vBox.position.set(posx, posy, posz);
 	else vBox.position.set(randomWithinBoundary(), 15, randomWithinBoundary());
 
+	vBox.rotation.y = -Math.PI/4;
+
 	var loader = new THREE.GLTFLoader();
 	loader.load ('/terminal/models/vend3.glb', function (gltf)
 	{
 		vBox.vend = gltf.scene;
 		vBox.vend.parentReference = vBox;
-		vBox.vend.position.set (0.4, -15, 0);
+		vBox.vend.position.set (0.4, -13.5, 0);
 		vBox.vend.rotation.y = Math.PI / 2;
 		gltf.scene.traverse( function ( child ) 
 		{
