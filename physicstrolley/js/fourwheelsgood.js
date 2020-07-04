@@ -13,6 +13,7 @@ var showPhysicsBoxes = false;
 //Scene constants, including player char.
 var initScene, scene, camera, goal, car={}, cap, pill ={}, cig, light={}, chair={};
 var wheelsArr = [];
+var loadingAnimation = document.getElementById('loading_animation_page');
 
 //Static objects (physics-only interactions).
 var objectsArray = [];
@@ -64,7 +65,7 @@ function initScene()
 	initTextListeners();
 	initAudio();
 	// initRaycaster();
-
+	playLoadingAnimationIfDocumentNotReady();
 	//little objects
 	spawnPill();
 	spawnBottlecap();
@@ -119,19 +120,23 @@ function render()
 	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
 	
-	raycast();
+	//raycast();
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
 };
-/*function playLoadingAnimationIfDocumentNotReady() {
+function playLoadingAnimationIfDocumentNotReady() {
 	loadingAnimation.style.visibility = "visible";
-	document.onreadystatechange = () => {
-	  if (document.readyState === "complete") { 
-		loadingAnimation.style.visibility = "hidden"; 
-	  }
+	document.addEventListener('mousedown', function( ev ) 
+    {
+        switch( ev.keyCode ) 
+        {
+            case 1:
+	  	loadingAnimation.style.visibility = "hidden"; 
+		}
 	}
-  }*/
+	)}
+
 function initRaycaster()
 {
 	// raycaster = new THREE.Raycaster();
