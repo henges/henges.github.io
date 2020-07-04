@@ -26,6 +26,7 @@ var last_collided = "nothing";
 
 //audio
 var audioListener, hitSound;
+var audio;
 
 //raycaster for setting object transparency
 var raycaster;
@@ -79,7 +80,9 @@ function initScene()
 
 	spawnAcid();
 
-	initOrbitControls()
+	initOrbitControls();
+	audio = document.getElementById("audio");
+	audio.play();
 
 	// drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
