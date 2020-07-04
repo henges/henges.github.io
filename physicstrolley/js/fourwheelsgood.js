@@ -29,6 +29,7 @@ var last_collided = "nothing";
 //audio
 var audioListener, hitSound;
 var audio;
+var hasAudioStarted = false;
 
 //raycaster for setting object transparency
 var raycaster;
@@ -87,7 +88,7 @@ function initScene()
 
 	initOrbitControls();
 	audio = document.getElementById("audio");
-	audio.play();
+	document.addEventListener('keypress', startAudio);
 
 	// drawText("no peace can be had<br>if nothing as such remains<br>with which to peacemake");
 
@@ -107,6 +108,12 @@ render();
 
 var arrowHelper;
 
+function startAudio()
+{
+	if (!hasAudioStarted) audio.play();
+	document.removeEventListener('keypress', startAudio);
+}
+
 function render() 
 {
 	scene.simulate(); // get state of physics simulation
@@ -120,7 +127,11 @@ function render()
 	if (orbitControlsEnabled) controls.update(); camera.copy(fakeCamera);
 
 	
+<<<<<<< HEAD
 	//raycast();
+=======
+	// raycast();
+>>>>>>> 823d8fd625424d6c0a277a22b49ac807f162fca1
 
 	renderer.render(scene, camera); // render the scene
 	requestAnimationFrame( render );
@@ -216,6 +227,8 @@ function initOrbitControls()
 	controls.enablePan = false;
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.07;
+	controls.minDistance = 10;
+	controls.maxDistance = 50;
 
 	orbitControlsEnabled = true;
 }
@@ -352,22 +365,11 @@ function initCamera()
 		0.1,
 		1000
 	);
-	//camera.position.set( 0, 0, 0 );
-	//camera.lookAt( scene.position );
+	
 	scene.add(camera);
-	// var resistBox;
-	// var resistBoxMaterial = Physijs.createMaterial (new THREE.MeshLambertMaterial({ color: 0xff6666 }), 0.8, 1)
-	// resistBox= new Physijs.BoxMesh(
-	// 	new THREE.CubeGeometry( 2, 2, 2 ),
-	// 	resistBoxMaterial,
-	// 	1
-	// );
-	//attach to the trolley
+
 	car.frame.add(camera);
-	// camera.add(resistBox);
-	// resistBox.material.visible = false;
-	// 
-	camera.position.set(50, 50, 25);
+	camera.position.set(25, 2, 0);
 	camera.lookAt(car.frame);
 
 	cameraFollower = new THREE.Object3D();
