@@ -2,6 +2,8 @@
 <html>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <style src="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"></style>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
         <script src="./frantic-search.js"></script>
     </head>
     <body>
@@ -10,6 +12,29 @@
             placeholder="Enter cardnames here in the form &quot;4 Snapcaster Mage&quot;"></textarea>
             <button id="send-input" name="send-input"></button>
         </div>
-        <div id="response"></div>
+        <div id="response">
+            <table id="example" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Card Name</th>
+                        <th>Price</th>
+                        <th>Set</th>
+                        <th>Price Rank</th>
+                        <th>Foil</th>
+                        <th>Vendor</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Card Name</th>
+                        <th>Price</th>
+                        <th>Set</th>
+                        <th>Price Rank</th>
+                        <th>Foil</th>
+                        <th>Vendor</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </body>
 </html>
