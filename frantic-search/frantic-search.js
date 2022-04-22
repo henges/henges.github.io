@@ -58,7 +58,30 @@ function doQuery() {
 
 function createTable(data) {
 
-    console.log(data);
+    const flattenedData = [];
+    for (const vendor of data["vendors"]) {
+        console.log(vendor);
 
-    
+        for (const card of vendor["cardDetails"]) {
+            flattenedData.push(card);
+        }
+    }
+
+    console.log(flattenedData);
+
+    $('#example').DataTable( {
+        "processing": true,
+        "data": flattenedData,
+        "columns": [
+            { "data": "name" },
+            { "data": "price" },
+            { "data": "availableQuantity" },
+            { "data": "setName" },
+            { "data": "priceRank" },
+            { "data": "foil" },
+            { "data": "vendorName" }
+        ]
+    } );
+
+    $('#example').css("visibility", "visible");
 }
