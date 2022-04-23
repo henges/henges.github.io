@@ -15,6 +15,8 @@ var waitForJQuery = setInterval(function () {
 
 function doQuery() {
 
+    $("#working").css("visibility", "visible");
+
     var input = $("#input").val().split("\n");
     var requestMap = [];
 
@@ -39,6 +41,7 @@ function doQuery() {
         contentType: "application/json",
         dataType: "json"
     }).done(function (r) {
+        $("#working").css("visibility", "hidden");
         createOrUpdateTable(r);
     })
 }
