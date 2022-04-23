@@ -6,11 +6,28 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
         <script src="./frantic-search.js"></script>
         <style>
+
+            body {
+                background-color: bisque;
+            }
+
+            h1 {
+                text-align: center;
+                font-style: italic;
+                margin-bottom: 0%;
+            }
+
+            h4 {
+                text-align: center;
+                margin-top: auto;
+            }
+
             textarea {
                 width: 50%;
                 display: block;
                 margin-left: auto;
                 margin-right: auto;
+                background-color: beige;
             }
 
             #send-input {
@@ -23,6 +40,8 @@
     </head>
     <body>
         <div id="main">
+            <h1>Frantic Search</h1>
+            <h4>Search Australian MTG vendors</h2>
             <textarea id="input" name="input" 
             placeholder="Enter cardnames here in the form &quot;4 Snapcaster Mage&quot;"></textarea>
             <button id="send-input" name="send-input">Go</button>

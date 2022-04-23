@@ -48,6 +48,7 @@ function createOrUpdateTable(data) {
     const flattenedData = [];
     for (const vendor of data["vendors"]) {
         for (const card of vendor["cardDetails"]) {
+            card["foil"] = card["foil"] == true ? "Yes" : "No";
             flattenedData.push(card);
         }
     }
