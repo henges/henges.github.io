@@ -21,7 +21,12 @@ function doQuery() {
     for (const line of input) {
         var quantity, cardName;
         quantity = line.match(/\b[0-9]*/)[0];
-        cardName = line.substring(line.indexOf(quantity) + quantity.length + 1, line.length);
+        if (!quantity) {
+            quantity = "1";
+            cardName = line;
+        } else {
+            cardName = line.substring(line.indexOf(quantity) + quantity.length + 1, line.length);
+        }
         requestMap.push({"name": cardName, "quantity": quantity});
     }
 
