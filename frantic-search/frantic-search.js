@@ -52,6 +52,8 @@ function createOrUpdateTable(data) {
     for (const vendor of data["vendors"]) {
         for (const card of vendor["cardDetails"]) {
             card["foil"] = card["foil"] == true ? "Yes" : "No";
+            //currency formatting - toFixed() adds decimal places
+            card["price"] = `$${card["price"].toFixed(2)}`;
             flattenedData.push(card);
         }
     }
