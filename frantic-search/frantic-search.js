@@ -1,6 +1,8 @@
 var waitForJQuery = setInterval(function () {
     if (typeof $ != 'undefined') {
 
+        wakeUp();
+
         $("#send-input").on("click", function(e) {
     
             e.preventDefault();
@@ -25,49 +27,29 @@ function doQuery() {
 
     var request = {cards: requestMap};
 
-    // $('#example').DataTable( {
-    //     "processing": true,
-    //     "ajax": {
-    //         "url": "https://i89sxzytwe.execute-api.us-east-1.amazonaws.com/Prod/search",
-    //         "type": "POST",
-    //         "data": JSON.stringify(request),
-    //         "contentType": "application/json",
-    //         "dataType": "json"
-    //     },
-    //     "columns": [
-    //         { "data": "name" },
-    //         { "data": "hr.position" },
-    //         { "data": "contact.0" },
-    //         { "data": "contact.1" },
-    //         { "data": "hr.start_date" },
-    //         { "data": "hr.salary" }
-    //     ]
-    // } );
-
     $.ajax({
         type: 'POST',
         url: "https://i89sxzytwe.execute-api.us-east-1.amazonaws.com/Prod/search",
         data: JSON.stringify(request),
         contentType: "application/json",
         dataType: "json"
-        
     }).done(function (r) {
-        createTable(r);
+        createOrUpdateTable(r);
     })
 }
 
-function createTable(data) {
+function createOrUpdateTable(data) {
 
     const flattenedData = [];
     for (const vendor of data["vendors"]) {
-        console.log(vendor);
-
         for (const card of vendor["cardDetails"]) {
             flattenedData.push(card);
         }
     }
 
-    console.log(flattenedData);
+    if ($.fn.dataTable.isDataTable('#example')) {
+        $('#example').DataTable().destroy();
+    }
 
     $('#example').DataTable( {
         "processing": true,
@@ -84,4 +66,14 @@ function createTable(data) {
     } );
 
     $('#example').css("visibility", "visible");
+}
+
+function wakeUp() {
+    $.ajax({
+        type: 'POST',
+        url: "https://i89sxzytwe.execute-api.us-east-1.amazonaws.com/Prod/search",
+        data: JSON.stringify([]),
+        contentType: "application/json",
+        dataType: "json"
+    })
 }
