@@ -46,7 +46,7 @@ var waitForJQuery = setInterval(function () {
 
 function doQuery() {
 
-    $("#working").css("visibility", "visible");
+    spinnerShow();
 
     var input = $("#input").val().split("\n");
     var requestList = parseInput(input);
@@ -69,12 +69,12 @@ function doQuery() {
 
     Promise.all(binderPosPromises).then((vendors) => {
 
-        $("#working").css("visibility", "hidden");
-
         var binderPosMap = processBinderPosResponses(vendors);
         deduplicateEntries(binderPosMap);
         rankPrices(binderPosMap);
         createOrUpdateTable(Object.values(binderPosMap).flat());
+
+        spinnerHide();
     });
 }
 
@@ -99,6 +99,7 @@ function parseInput(input) {
     return requestList;
 }
 
+
 async function createBinderPosPromise(requestList, host) {
 
     return $.ajax({
@@ -120,13 +121,8 @@ function processBinderPosResponses(responses) {
     //<String, List<Card>>, with card names as keys
     var cardsMap = {};
 
-    _.chain(responses)
-        .flatMap()
+    _.chain(responses.flat())
         .flatMap((entry) => _.map(entry["products"], (card) => {
-            card["vendorName"] = entry["vendorName"];
-            return card;
-        }))
-        .map((card) => {
             //variants is always a single-element array
             var variants = card["variants"][0];
 
@@ -136,11 +132,11 @@ function processBinderPosResponses(responses) {
                 "price": `$${variants["price"].toFixed(2)}`,
                 "setName": card["setName"],
                 "foil": variants["title"].toLowerCase().match(/foil/) ? "Yes" : "No",
-                "vendorName": card["vendorName"],
+                "vendorName": entry["vendorName"],
                 "priceRank": 0,
                 "internalPrice": variants["price"]
             };
-        })
+        }))
         .value()
         .forEach(card => {
             if (!cardsMap.hasOwnProperty(card["name"])){
@@ -158,6 +154,8 @@ function rankPrices(cardsMap) {
         arr.sort(function (a, b) { 
             if (a["internalPrice"] < b["internalPrice"])
                 return -1;
+            if (a["internalPrice"] == b["internalPrice"])
+                return 0;
             else return 1;
         });
         var lastRank = 0;
@@ -218,4 +216,15 @@ function createOrUpdateTable(data) {
     } );
 
     $('#fs-table').css("visibility", "visible");
+}
+
+function spinnerShow() {
+    $("#working").css("animation-play-state", "running");
+    $("#working").css("visibility", "visible");
+}
+
+function spinnerHide() {
+    $("#working").css("animation-play-state", "paused");
+    $("#working").css("opacity", "0");
+    $("#working").css("visibility", "hidden");
 }

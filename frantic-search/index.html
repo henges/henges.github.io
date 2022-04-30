@@ -68,6 +68,20 @@
                 font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             }
 
+            #working {
+                opacity: 0;
+                animation-play-state: paused;
+                animation-name: fadeInOut;
+                animation-duration: 1.5s;
+                animation-iteration-count: infinite;
+            }
+
+            @keyframes fadeInOut {
+                0% {opacity: 0;}
+                60% {opacity: 100;}
+                100% {opacity: 0;}
+            }
+
         </style>
     </head>
     <body>
@@ -83,7 +97,7 @@
             placeholder="Enter cardnames here in the form &quot;4 Snapcaster Mage&quot;. 
 Spelling, capitalisation, and punctuation must be an exact match for the printed card."></textarea>
             <button id="send-input" name="send-input">Go</button>
-            <h4 id="working" style="visibility: hidden;">Working...</h4>
+            <h4 id="working">Working...</h4>
         </div>
         <div id="response">
             <table id="fs-table" class="display" style="width:100%; visibility:hidden">
