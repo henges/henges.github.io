@@ -51,9 +51,13 @@ function doQuery() {
 
         $("#working").css("visibility", "hidden");
 
-        var binderPosMap = processBinderPosResponsesTwo(vendors);
+        console.log(vendors);
+
+        var binderPosMap = processBinderPosResponses(vendors);
+        deduplicateEntries(binderPosMap);
         rankPrices(binderPosMap);
         createOrUpdateTable(Object.values(binderPosMap).flat());
+        console.log(binderPosMap);
     });
 }
 
@@ -66,13 +70,16 @@ function createBinderPosPromise(requestList, host) {
         contentType: "application/json",
         dataType: "json"
     }).then(function (r) {
+        //Nothing in the response tells us about the vendor, so embed this info while we still can
+        //Saves having to use a map later
         r.forEach((v) => v["vendorName"] = binderPosHostsMap[host]);
         return r;
     });
 }
 
-function processBinderPosResponsesTwo(responses) {
+function processBinderPosResponses(responses) {
 
+    //<String, List<Card>>, with card names as keys
     var cardsMap = {};
 
     _.chain(responses)
@@ -82,6 +89,7 @@ function processBinderPosResponsesTwo(responses) {
             return card;
         }))
         .map((card) => {
+            //variants is always a single-element array
             var variants = card["variants"][0];
 
             return {
@@ -106,41 +114,8 @@ function processBinderPosResponsesTwo(responses) {
     return cardsMap; 
 }
 
-function processBinderPosResponses(responses) {
-
-    var cardsMap = {};
-
-    console.log(responses);
-
-    for (var vendorList of responses) {
-        for (var results of vendorList) {
-            for (var card of results["products"]) {
-                if (!cardsMap.hasOwnProperty(card["name"])){
-                    cardsMap[card["name"]] = [];
-                }
-
-                var variants = card["variants"][0];
-
-                var formattedCard = {
-                    "name": card["name"],
-                    "availableQuantity": variants["quantity"],
-                    "price": `$${variants["price"].toFixed(2)}`,
-                    "setName": card["setName"],
-                    "foil": variants["title"].toLowerCase().match(/foil/) ? "Yes" : "No",
-                    "vendorName": results["vendorName"],
-                    "priceRank": 0,
-                    "internalPrice": variants["price"]
-                };
-
-                cardsMap[card["name"]].push(formattedCard);
-            }
-        }
-    }
-
-    return cardsMap;
-}
-
 function rankPrices(cardsMap) {
+    //Mutates in place
     Object.values(cardsMap).forEach(function(arr) {
         arr.sort(function (a, b) { 
             if (a["internalPrice"] < b["internalPrice"])
@@ -157,6 +132,27 @@ function rankPrices(cardsMap) {
             arr[i]["priceRank"] = priceRank;
         }
     })
+}
+
+//Helps with shops like Guf that have multiple identical entries
+function deduplicateEntries(cardsMap) {
+    
+    for (var [cardName, cards] of Object.entries(cardsMap)) {
+        for (var i = 0; i < cards.length - 1; i++) {
+            for (var j = i + 1; j < cards.length; j++) {
+                if (cards[i] && cards[j] &&
+                cards[i]["setName"] == cards[j]["setName"] &&
+                cards[i]["price"] == cards[j]["price"] &&
+                cards[i]["foil"] == cards[j]["foil"] &&
+                cards[i]["vendorName"] == cards[j]["vendorName"]) {
+                        
+                    cards[i]["availableQuantity"] += cards[j]["availableQuantity"];
+                    cards[j] = undefined;
+                }
+            }
+        }
+        cardsMap[cardName] = _.compact(cards);
+    }
 }
 
 function createOrUpdateTable(data) {
