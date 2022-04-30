@@ -26,8 +26,7 @@ function doQuery() {
     $("#working").css("visibility", "visible");
 
     var input = $("#input").val().split("\n");
-    var requestMap = [];
-    var binderPosRequest = [];
+    var requestList = [];
 
     for (const line of input) {
         var quantity, cardName;
@@ -38,23 +37,37 @@ function doQuery() {
         } else {
             cardName = line.substring(line.indexOf(quantity) + quantity.length + 1, line.length);
         }
-        requestMap.push({"name": cardName, "quantity": quantity});
-        binderPosRequest.push({"card": cardName, "quantity": quantity});
+        requestList.push({"card": cardName, "quantity": quantity});
     }
 
     var binderPosPromises = [];
 
     for (var vendorUrl of Object.keys(binderPosHostsMap)) {
-        binderPosPromises.push(createBinderPosPromise(binderPosRequest, vendorUrl));
+        binderPosPromises.push(createBinderPosPromise(requestList, vendorUrl));
     }
 
     Promise.all(binderPosPromises).then((vendors) => {
 
         $("#working").css("visibility", "hidden");
 
-        var cardsList = processBinderPosResponses(vendors);
+        var binderPosMap = processBinderPosResponses(vendors);
+        var cardsList = rankPrices(binderPosMap);
 
         createOrUpdateTable(cardsList);
+    });
+}
+
+function createBinderPosPromise(requestList, host) {
+
+    return $.ajax({
+        type: 'POST',
+        url: `https://portal.binderpos.com/external/shopify/decklist?storeUrl=${host}&type=mtg`,
+        data: JSON.stringify(requestList),
+        contentType: "application/json",
+        dataType: "json"
+    }).then(function (r) {
+        r.forEach((v) => v["vendorName"] = binderPosHostsMap[host]);
+        return r;
     });
 }
 
@@ -87,6 +100,10 @@ function processBinderPosResponses(responses) {
         }
     }
 
+    return cardsMap;
+}
+
+function rankPrices(cardsMap) {
     var cardsList = [];
 
     Object.values(cardsMap).forEach(function(arr) {
@@ -104,20 +121,6 @@ function processBinderPosResponses(responses) {
     })
 
     return cardsList;
-}
-
-function createBinderPosPromise(request, host) {
-
-    return $.ajax({
-        type: 'POST',
-        url: `https://portal.binderpos.com/external/shopify/decklist?storeUrl=${host}&type=mtg`,
-        data: JSON.stringify(request),
-        contentType: "application/json",
-        dataType: "json"
-    }).then(function (r) {
-        r.forEach((v) => v["vendorName"] = binderPosHostsMap[host]);
-        return r;
-    });
 }
 
 function createOrUpdateTable(data) {
