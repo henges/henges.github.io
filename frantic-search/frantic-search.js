@@ -58,7 +58,7 @@ function doQuery() {
     });
 }
 
-function createBinderPosPromise(requestList, host) {
+async function createBinderPosPromise(requestList, host) {
 
     return $.ajax({
         type: 'POST',
