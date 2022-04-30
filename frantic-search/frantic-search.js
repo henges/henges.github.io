@@ -119,14 +119,16 @@ function rankPrices(cardsMap) {
                 return -1;
             else return 1;
         });
+        var lastRank = 0;
         for (var i = 0; i < arr.length; i++) {
             var priceRank;
             if (i > 0 && arr[i]["internalPrice"] == arr[i - 1]["internalPrice"]) {
-                priceRank = i;
+                priceRank = lastRank;
             } else {
-                priceRank = i + 1;
+                priceRank = lastRank + 1;
             }
             arr[i]["priceRank"] = priceRank;
+            lastRank = priceRank;
         }
     })
 }
@@ -137,11 +139,13 @@ function deduplicateEntries(cardsMap) {
     for (var [cardName, cards] of Object.entries(cardsMap)) {
         for (var i = 0; i < cards.length - 1; i++) {
             for (var j = i + 1; j < cards.length; j++) {
-                if (cards[i] && cards[j] &&
-                cards[i]["setName"] == cards[j]["setName"] &&
-                cards[i]["price"] == cards[j]["price"] &&
-                cards[i]["foil"] == cards[j]["foil"] &&
-                cards[i]["vendorName"] == cards[j]["vendorName"]) {
+                if (!cards[i] || !cards[j] || cards[i]["internalPrice"] != cards[j]["internalPrice"]) {
+                    break;
+                }
+
+                if (cards[i]["setName"] == cards[j]["setName"] &&
+                        cards[i]["foil"] == cards[j]["foil"] &&
+                        cards[i]["vendorName"] == cards[j]["vendorName"]) {
                         
                     cards[i]["availableQuantity"] += cards[j]["availableQuantity"];
                     cards[j] = undefined;
