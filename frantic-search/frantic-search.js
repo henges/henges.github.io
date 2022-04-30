@@ -8,6 +8,25 @@ const binderPosHostsMap = {
     "good-games-cannington.myshopify.com": "Good Games Cannington"
 }
 
+window.addEventListener('load', function() {
+    var checkboxDiv = document.getElementById("checkboxes-list");
+    for (const [url, name] of Object.entries(binderPosHostsMap)) {
+        var li = this.document.createElement("li");
+        li.className = "checkbox-list-member";
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = url;
+        checkbox.checked = true;
+
+        var label = document.createElement("label");
+        label.htmlFor = checkbox.id;
+        label.appendChild(document.createTextNode(name));
+        li.appendChild(checkbox);
+        li.appendChild(label);
+        checkboxDiv.appendChild(li);
+    }
+});
+
 var waitForJQuery = setInterval(function () {
     if (typeof $ != 'undefined') {
 
@@ -41,10 +60,18 @@ function doQuery() {
         requestList.push({"card": cardName, "quantity": quantity});
     }
 
+    var toggles = [];
+
+    for (var li of $("#checkboxes-list").children()) {
+        toggles[`${li.firstElementChild.id}`] = li.firstElementChild.checked;
+    }
+
     var binderPosPromises = [];
 
     for (var vendorUrl of Object.keys(binderPosHostsMap)) {
-        binderPosPromises.push(createBinderPosPromise(requestList, vendorUrl));
+        if (toggles[vendorUrl]) {
+            binderPosPromises.push(createBinderPosPromise(requestList, vendorUrl));
+        }
     }
 
     Promise.all(binderPosPromises).then((vendors) => {
