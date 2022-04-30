@@ -1,7 +1,15 @@
+const binderPosHostsMap = {
+    "gufgames.myshopify.com": "Guf",
+    "the-hall-of-heroes.myshopify.com": "The Hall of Heroes",
+    "cracking-singles.myshopify.com": "Cracking Singles",
+    "next-level-games-ringwood.myshopify.com": "Games Portal",
+    "good-games-townhall.myshopify.com": "Good Games National",
+    "good-games-morley.myshopify.com": "Good Games Morley",
+    "good-games-cannington.myshopify.com": "Good Games Cannington"
+}
+
 var waitForJQuery = setInterval(function () {
     if (typeof $ != 'undefined') {
-
-        wakeUp();
 
         $("#send-input").on("click", function(e) {
     
@@ -19,6 +27,7 @@ function doQuery() {
 
     var input = $("#input").val().split("\n");
     var requestMap = [];
+    var binderPosRequest = [];
 
     for (const line of input) {
         var quantity, cardName;
@@ -30,33 +39,88 @@ function doQuery() {
             cardName = line.substring(line.indexOf(quantity) + quantity.length + 1, line.length);
         }
         requestMap.push({"name": cardName, "quantity": quantity});
+        binderPosRequest.push({"card": cardName, "quantity": quantity});
     }
 
-    var request = {cards: requestMap};
+    var binderPosPromises = [];
 
-    $.ajax({
+    for (var vendorUrl of Object.keys(binderPosHostsMap)) {
+        binderPosPromises.push(createBinderPosPromise(binderPosRequest, vendorUrl));
+    }
+
+    Promise.all(binderPosPromises).then((vendors) => {
+
+        $("#working").css("visibility", "hidden");
+
+        var cardsList = processBinderPosResponses(vendors);
+
+        createOrUpdateTable(cardsList);
+    });
+}
+
+function processBinderPosResponses(responses) {
+
+    var cardsMap = {};
+
+    for (var vendorList of responses) {
+        var vendorResponse = vendorList;
+        for (var results of vendorResponse) {
+            for (var card of results["products"]) {
+                if (!cardsMap.hasOwnProperty(card["name"])){
+                    cardsMap[card["name"]] = [];
+                }
+
+                var variants = card["variants"][0];
+
+                var formattedCard = {
+                    "name": card["name"],
+                    "availableQuantity": variants["quantity"],
+                    "price": `$${variants["price"].toFixed(2)}`,
+                    "setName": card["setName"],
+                    "foil": variants["title"].toLowerCase().match(/foil/) ? "Yes" : "No",
+                    "vendorName": results["vendorName"],
+                    "priceRank": 0
+                };
+
+                cardsMap[card["name"]].push(formattedCard);
+            }
+        }
+    }
+
+    var cardsList = [];
+
+    Object.values(cardsMap).forEach(function(arr) {
+        arr.sort(function (a, b) { 
+            var aVal = parseFloat(a["price"].substring(1));
+            var bVal = parseFloat(b["price"].substring(1));
+            if (aVal < bVal)
+                return -1;
+            else return 1;
+        });
+        for (var i = 0; i < arr.length; i++) {
+            arr[i]["priceRank"] = i + 1; 
+        }
+        cardsList.push(...arr);
+    })
+
+    return cardsList;
+}
+
+function createBinderPosPromise(request, host) {
+
+    return $.ajax({
         type: 'POST',
-        url: "https://i89sxzytwe.execute-api.us-east-1.amazonaws.com/Prod/search",
+        url: `https://portal.binderpos.com/external/shopify/decklist?storeUrl=${host}&type=mtg`,
         data: JSON.stringify(request),
         contentType: "application/json",
         dataType: "json"
-    }).done(function (r) {
-        $("#working").css("visibility", "hidden");
-        createOrUpdateTable(r);
-    })
+    }).then(function (r) {
+        r.forEach((v) => v["vendorName"] = binderPosHostsMap[host]);
+        return r;
+    });
 }
 
 function createOrUpdateTable(data) {
-
-    const flattenedData = [];
-    for (const vendor of data["vendors"]) {
-        for (const card of vendor["cardDetails"]) {
-            card["foil"] = card["foil"] == true ? "Yes" : "No";
-            //currency formatting - toFixed() adds decimal places
-            card["price"] = `$${card["price"].toFixed(2)}`;
-            flattenedData.push(card);
-        }
-    }
 
     if ($.fn.dataTable.isDataTable('#example')) {
         $('#example').DataTable().destroy();
@@ -64,7 +128,7 @@ function createOrUpdateTable(data) {
 
     $('#example').DataTable( {
         "processing": true,
-        "data": flattenedData,
+        "data": data,
         "columns": [
             { "data": "name" },
             { "data": "price" },
@@ -77,14 +141,4 @@ function createOrUpdateTable(data) {
     } );
 
     $('#example').css("visibility", "visible");
-}
-
-function wakeUp() {
-    $.ajax({
-        type: 'POST',
-        url: "https://i89sxzytwe.execute-api.us-east-1.amazonaws.com/Prod/search",
-        data: JSON.stringify([]),
-        contentType: "application/json",
-        dataType: "json"
-    })
 }
