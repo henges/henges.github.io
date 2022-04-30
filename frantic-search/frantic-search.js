@@ -5,18 +5,22 @@ const binderPosHostsMap = {
     "next-level-games-ringwood.myshopify.com": "Games Portal",
     "good-games-townhall.myshopify.com": "Good Games National",
     "good-games-morley.myshopify.com": "Good Games Morley",
-    "good-games-cannington.myshopify.com": "Good Games Cannington"
+    "good-games-cannington.myshopify.com": "Good Games Cannington",
+    "good-games-adelaide-sa.myshopify.com": "Good Games Adelaide",
+    "unplugged-games.myshopify.com": "Unplugged Games"
 }
 
 window.addEventListener('load', function() {
     var checkboxDiv = document.getElementById("checkboxes-list");
+    var savedToggles = JSON.parse(localStorage.getItem("frantic-search-toggles"));
+    var useToggles = savedToggles && (Object.keys(savedToggles).length === Object.keys(binderPosHostsMap).length);
     for (const [url, name] of Object.entries(binderPosHostsMap)) {
         var li = this.document.createElement("li");
         li.className = "checkbox-list-member";
         var checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.id = url;
-        checkbox.checked = true;
+        checkbox.checked = useToggles ? savedToggles[url] : true;
 
         var label = document.createElement("label");
         label.htmlFor = checkbox.id;
@@ -45,26 +49,15 @@ function doQuery() {
     $("#working").css("visibility", "visible");
 
     var input = $("#input").val().split("\n");
-    var requestList = [];
+    var requestList = parseInput(input);
 
-    for (const line of input) {
-        var quantity, cardName;
-        quantity = line.match(/\b[0-9]*/)[0];
-        if (!quantity) {
-            quantity = "1";
-            cardName = line;
-        } else {
-            cardName = line.substring(line.indexOf(quantity) + quantity.length + 1, line.length);
-        }
-        cardName.trim();
-        requestList.push({"card": cardName, "quantity": quantity});
-    }
-
-    var toggles = [];
+    var toggles = {};
 
     for (var li of $("#checkboxes-list").children()) {
         toggles[`${li.firstElementChild.id}`] = li.firstElementChild.checked;
     }
+
+    localStorage.setItem("frantic-search-toggles", JSON.stringify(toggles));
 
     var binderPosPromises = [];
 
@@ -83,6 +76,27 @@ function doQuery() {
         rankPrices(binderPosMap);
         createOrUpdateTable(Object.values(binderPosMap).flat());
     });
+}
+
+function parseInput(input) {
+    var requestList = [];
+    
+    for (const line of input) {
+        if (!line || line.length === 0)
+            continue;
+        var quantity, cardName;
+        quantity = line.match(/\b[0-9]*/)[0];
+        if (!quantity) {
+            quantity = "1";
+            cardName = line;
+        } else {
+            cardName = line.substring(line.indexOf(quantity) + quantity.length + 1, line.length);
+        }
+        cardName.trim();
+        requestList.push({"card": cardName, "quantity": quantity});
+    }
+
+    return requestList;
 }
 
 async function createBinderPosPromise(requestList, host) {
@@ -193,7 +207,7 @@ function createOrUpdateTable(data) {
         "processing": true,
         "data": data,
         "columns": [
-            { "data": "name" },
+            { "data": "name", "width": "20%" },
             { "data": "price" },
             { "data": "availableQuantity" },
             { "data": "setName" },
