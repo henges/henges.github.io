@@ -51,13 +51,10 @@ function doQuery() {
 
         $("#working").css("visibility", "hidden");
 
-        console.log(vendors);
-
         var binderPosMap = processBinderPosResponses(vendors);
         deduplicateEntries(binderPosMap);
         rankPrices(binderPosMap);
         createOrUpdateTable(Object.values(binderPosMap).flat());
-        console.log(binderPosMap);
     });
 }
 
@@ -157,11 +154,11 @@ function deduplicateEntries(cardsMap) {
 
 function createOrUpdateTable(data) {
 
-    if ($.fn.dataTable.isDataTable('#example')) {
-        $('#example').DataTable().destroy();
+    if ($.fn.dataTable.isDataTable('#fs-table')) {
+        $('#fs-table').DataTable().destroy();
     }
 
-    $('#example').DataTable( {
+    $('#fs-table').DataTable( {
         "processing": true,
         "data": data,
         "columns": [
@@ -175,5 +172,5 @@ function createOrUpdateTable(data) {
         ]
     } );
 
-    $('#example').css("visibility", "visible");
+    $('#fs-table').css("visibility", "visible");
 }
