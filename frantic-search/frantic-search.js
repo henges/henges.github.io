@@ -139,9 +139,14 @@ async function processMtgMateResponse(response) {
     $(response).find("tbody").last()
         //For each child elem that's a table row - i.e., for each row
         .children("tr").each(function () { 
+            var name = $(this).find("td.card-name").find("a").text().trim();
+            if (name.indexOf("(") > 0) {
+                name = name.substring(0, name.indexOf("(") - 1);
+            }
+
             list.push({
-                "name": $(this).find("td.card-name").find("a").text().trim(),
-                "availableQuantity": $(this).find("td.available-quantity").text().trim(),
+                "name": name,
+                "availableQuantity": parseInt($(this).find("td.available-quantity").text().trim()),
                 "price": $(this).find("td.price").text().trim(),
                 "setName": $(this).find("td.magic-set-name").find("a").text().trim(),
                 "foil": $(this).find("td.card-name").find("span.finish").text().trim() == "Nonfoil" ? "No" : "Yes",
