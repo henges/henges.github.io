@@ -57,7 +57,7 @@ function compareLists(listA, listB) {
             })
             .pickBy(v => !(v == 0))
             .map((v, k) => {
-                return {"name": applyCapitalisation(k), "quantity": v > 0 ? `+${v}` : `${v}`};
+                return {"name": applyCapitalisation(k), "quantity": `${v}`};
             })
             .value();
 }
@@ -73,16 +73,16 @@ function applyCapitalisation(name) {
 
 function finalMapToString(map) {
 
-    console.log(map);
-
     return _.chain(_.clone(map))
+            .filter((value) => value["quantity"] > 0)
             .map((value) => `${value["quantity"]} ${value["name"]}`)
             .reduce((v1, v2) => `${v1}\n${v2}`)
             .value();
 }
 
 function copyToClipboard() {
-    navigator.clipboard.writeText(lastOutput);
+    if (lastOutput)
+        navigator.clipboard.writeText(lastOutput);
 }
 
 function createOrUpdateTable(data) {
@@ -98,7 +98,8 @@ function createOrUpdateTable(data) {
         "columns": [
             { "data": "name"},
             { "data": "quantity" },
-        ]
+        ],
+        "order": [[1, "desc"]]
     } );
 
     $('#response').css("visibility", "visible");

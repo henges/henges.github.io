@@ -46,39 +46,44 @@
                 size: 10em;
             }
 
-            label {
-                bottom: 100%;
+            #copy-clipboard {
+                margin-bottom: 1%;
+            }
+
+            .nav-to-other {
+                position: absolute;
+                top: 10px;
+                left: 10px;
             }
         </style>
     </head>
     <body>
+        <h4><a href="../" class="nav-to-other">Go to Frantic Search...</a></h4>
         <div id="main">
             <h1>Compare lists</h1>
-            <h4>Given two lists, list A and list B, return the list of all cards in B and not A and all cards in A and not B</h4>
+            <h4>Given two lists, list A and list B, return the list of additions and removals required to transform A into B</h4>
             <div id="inputs">
-                <!-- <label for="listA" class="top">List A</label> -->
-                <textarea id="listA" name="listA"></textarea>
-                <!-- <label for="listB" class="top">List B</label> -->
-                <textarea id="listB" name="listB"></textarea>
+                <textarea id="listA" name="listA" placeholder="List A..."></textarea>
+                <textarea id="listB" name="listB" placeholder="List B..."></textarea>
             </div>
             <button id="send-input" name="send-input">Go</button>
         </div>
         <div id="response" style="visibility:hidden">
+            <button id="copy-clipboard">Copy positive diffs to clipboard</button>
             <table id="comparator-table" class="display" style="width:50%">
                 <thead>
                     <tr>
-                        <th>Card Name</th>
+                        <th>Name</th>
                         <th>Quantity</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Card Name</th>
+                        <th>Name</th>
                         <th>Quantity</th>
                     </tr>
                 </tfoot>
             </table>
-            <button id="copy-clipboard">Copy results to clipboard</button>
         </div>
     </body>
 </html>

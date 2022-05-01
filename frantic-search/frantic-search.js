@@ -135,17 +135,20 @@ async function processMtgMateResponse(response) {
 
     var list = [];
 
-    $(response).find("tbody").last().children("tr").each(function () { 
-        list.push({
-            "name": $(this).find("td.card-name").find("a").text().trim(),
-            "availableQuantity": $(this).find("td.available-quantity").text().trim(),
-            "price": $(this).find("td.price").text().trim(),
-            "setName": $(this).find("td.magic-set-name").find("a").text().trim(),
-            "foil": $(this).find("td.card-name").find("span.finish").text().trim() == "Nonfoil" ? "No" : "Yes",
-            "vendorName": "MTGMate",
-            "priceRank": 0,
-            "internalPrice": parseFloat($(this).find("td.price").text().trim().slice(1))
-        });
+    //There are two tbodys in the response for some reason, #2 has our data
+    $(response).find("tbody").last()
+        //For each child elem that's a table row - i.e., for each row
+        .children("tr").each(function () { 
+            list.push({
+                "name": $(this).find("td.card-name").find("a").text().trim(),
+                "availableQuantity": $(this).find("td.available-quantity").text().trim(),
+                "price": $(this).find("td.price").text().trim(),
+                "setName": $(this).find("td.magic-set-name").find("a").text().trim(),
+                "foil": $(this).find("td.card-name").find("span.finish").text().trim() == "Nonfoil" ? "No" : "Yes",
+                "vendorName": "MTGMate",
+                "priceRank": 0,
+                "internalPrice": parseFloat($(this).find("td.price").text().trim().slice(1))
+            });
     })
 
     return list;
