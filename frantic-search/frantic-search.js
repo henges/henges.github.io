@@ -10,11 +10,16 @@ const binderPosHostsMap = {
     "unplugged-games.myshopify.com": "Unplugged Games"
 }
 
+const mtgMateMap = {
+    "mtgmate.com.au": "MTGMate"
+}
+
 window.addEventListener('load', function() {
+    var hosts = {...mtgMateMap, ...binderPosHostsMap};
     var checkboxDiv = document.getElementById("checkboxes-list");
     var savedToggles = JSON.parse(localStorage.getItem("frantic-search-toggles"));
-    var useToggles = savedToggles && (Object.keys(savedToggles).length === Object.keys(binderPosHostsMap).length);
-    for (const [url, name] of Object.entries(binderPosHostsMap)) {
+    var useToggles = savedToggles && (Object.keys(savedToggles).length === Object.keys(hosts).length);
+    for (const [url, name] of Object.entries(hosts)) {
         var li = this.document.createElement("li");
         li.className = "checkbox-list-member";
         var checkbox = document.createElement("input");
@@ -59,20 +64,33 @@ function doQuery() {
 
     localStorage.setItem("frantic-search-toggles", JSON.stringify(toggles));
 
-    var binderPosPromises = [];
+    var promises = [];
 
     for (var vendorUrl of Object.keys(binderPosHostsMap)) {
         if (toggles[vendorUrl]) {
-            binderPosPromises.push(createBinderPosPromise(requestList, vendorUrl));
+            promises.push(createBinderPosPromise(requestList, vendorUrl));
         }
     }
 
-    Promise.all(binderPosPromises).then((vendors) => {
+    if (toggles["mtgmate.com.au"]) {
+        promises.push(createMtgMatePromise(requestList));
+    }
 
-        var binderPosMap = processBinderPosResponses(vendors);
-        deduplicateEntries(binderPosMap);
-        rankPrices(binderPosMap);
-        createOrUpdateTable(Object.values(binderPosMap).flat());
+    Promise.all(promises).then((results) => {
+
+        //<String, List<Card>>, with card names as keys
+        var cardsMap = {};
+
+        results.flat().forEach(card => {
+            if (!cardsMap.hasOwnProperty(card["name"])){
+                cardsMap[card["name"]] = [];
+            }
+            cardsMap[card["name"]].push(card);
+        });
+
+        deduplicateEntries(cardsMap);
+        rankPrices(cardsMap);
+        createOrUpdateTable(Object.values(cardsMap).flat());
 
         spinnerHide();
     });
@@ -99,6 +117,40 @@ function parseInput(input) {
     return requestList;
 }
 
+async function createMtgMatePromise(requestList) {
+
+    var requestString = _.chain(requestList)
+                            .map((card) => `${card["quantity"]} ${card["card"]}`)
+                            .reduce((s1, s2) => `${s1}\n${s2}`)
+                            .value();
+
+    return $.get("https://fs-cors-anywhere.herokuapp.com/https://www.mtgmate.com.au/cards/decklist_results?utf8=✓&decklist=" +
+                encodeURIComponent(requestString))
+            .then(r => {
+                return processMtgMateResponse(r);
+            });
+}
+
+async function processMtgMateResponse(response) {
+
+    var list = [];
+
+    $(response).find("tbody").last().children("tr").each(function () { 
+        list.push({
+            "name": $(this).find("td.card-name").find("a").text().trim(),
+            "availableQuantity": $(this).find("td.available-quantity").text().trim(),
+            "price": $(this).find("td.price").text().trim(),
+            "setName": $(this).find("td.magic-set-name").find("a").text().trim(),
+            "foil": $(this).find("td.card-name").find("span.finish").text().trim() == "Nonfoil" ? "No" : "Yes",
+            "vendorName": "MTGMate",
+            "priceRank": 0,
+            "internalPrice": parseFloat($(this).find("td.price").text().trim().slice(1))
+        });
+    })
+
+    return list;
+}
+
 async function createBinderPosPromise(requestList, host) {
 
     return $.ajax({
@@ -111,40 +163,28 @@ async function createBinderPosPromise(requestList, host) {
         //Nothing in the response tells us about the vendor, so embed this info while we still can
         //Saves having to use a map later
         r.forEach((v) => v["vendorName"] = binderPosHostsMap[host]);
-        return r;
+        return processBinderPosResponse(r);
     });
 }
 
-function processBinderPosResponses(responses) {
+async function processBinderPosResponse(response) {
+    return _.chain(response)
+            .flatMap((entry) => _.map(entry["products"], (card) => {
+                //variants is always a single-element array
+                var variants = card["variants"][0];
 
-    //<String, List<Card>>, with card names as keys
-    var cardsMap = {};
-
-    _.chain(responses.flat())
-        .flatMap((entry) => _.map(entry["products"], (card) => {
-            //variants is always a single-element array
-            var variants = card["variants"][0];
-
-            return {
-                "name": card["name"],
-                "availableQuantity": variants["quantity"],
-                "price": `$${variants["price"].toFixed(2)}`,
-                "setName": card["setName"],
-                "foil": variants["title"].toLowerCase().match(/foil/) ? "Yes" : "No",
-                "vendorName": entry["vendorName"],
-                "priceRank": 0,
-                "internalPrice": variants["price"]
-            };
-        }))
-        .value()
-        .forEach(card => {
-            if (!cardsMap.hasOwnProperty(card["name"])){
-                cardsMap[card["name"]] = [];
-            }
-            cardsMap[card["name"]].push(card);
-        });
-    
-    return cardsMap; 
+                return {
+                    "name": card["name"],
+                    "availableQuantity": variants["quantity"],
+                    "price": `$${variants["price"].toFixed(2)}`,
+                    "setName": card["setName"],
+                    "foil": variants["title"].toLowerCase().match(/foil/) ? "Yes" : "No",
+                    "vendorName": entry["vendorName"],
+                    "priceRank": 0,
+                    "internalPrice": variants["price"]
+                };
+            }))
+            .value();
 }
 
 function rankPrices(cardsMap) {
