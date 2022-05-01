@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Compare Lists</title>
+        <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+        <script src="./compare.js"></script>
+        <style>
+
+            body {
+                background-color: aqua;
+            }
+
+            h1 {
+                text-align: center;
+                font-style: italic;
+                margin-bottom: 0%;
+            }
+
+            h4 {
+                text-align: center;
+                margin-top: auto;
+            }
+
+            #inputs {
+                margin: auto;
+                width: auto;
+                text-align: center;
+            }
+
+            textarea {
+                min-height: 150px;
+                width: 30%;
+                display: inline-block;
+                margin: auto;
+                background-color: beige;
+            }
+
+            #send-input {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                size: 10em;
+            }
+
+            label {
+                bottom: 100%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <h1>Compare lists</h1>
+            <h4>Given two lists, list A and list B, return the list of all cards in B and not A and all cards in A and not B</h4>
+            <div id="inputs">
+                <!-- <label for="listA" class="top">List A</label> -->
+                <textarea id="listA" name="listA"></textarea>
+                <!-- <label for="listB" class="top">List B</label> -->
+                <textarea id="listB" name="listB"></textarea>
+            </div>
+            <button id="send-input" name="send-input">Go</button>
+        </div>
+        <div id="response" style="visibility:hidden">
+            <table id="comparator-table" class="display" style="width:50%">
+                <thead>
+                    <tr>
+                        <th>Card Name</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Card Name</th>
+                        <th>Quantity</th>
+                    </tr>
+                </tfoot>
+            </table>
+            <button id="copy-clipboard">Copy results to clipboard</button>
+        </div>
+    </body>
+</html>

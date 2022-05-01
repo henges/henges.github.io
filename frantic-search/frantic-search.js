@@ -99,7 +99,6 @@ function parseInput(input) {
     return requestList;
 }
 
-
 async function createBinderPosPromise(requestList, host) {
 
     return $.ajax({
