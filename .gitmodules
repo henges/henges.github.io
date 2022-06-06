@@ -1,0 +1,3 @@
+[submodule "frantic-search"]
+	path = frantic-search
+	url = https://github.com/henges/frantic-search.git
