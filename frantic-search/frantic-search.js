@@ -288,7 +288,8 @@ function getResultStatistics(requestList, cardsMultimap) {
                     "cards": {},                    //A map of card names to card lists for this vendor
                     "fulfillableQuantityCount": 0,  //How many individual items the vendor can fulfil
                     "fulfillableCardsCount": 0,     //How many cards this vendor can fulfil in the full requested quantity, regardless of edition
-                    "averagePriceRank": 0           //The average price rank across this vendor's relevant inventory
+                    "averagePriceRank": 0,          //The average price rank across this vendor's relevant inventory
+                    "totalOrderPrice": 0.00         //The total price of the order (obviously)
                 };
             }
             //Init the card for this vendor if not initialised
@@ -321,9 +322,19 @@ function getResultStatistics(requestList, cardsMultimap) {
             //If the vendor has more copies than we requested, don't incorporate that into our metric. We just want to see
             //if they can fulfil some part of the order.
             vendor["fulfillableQuantityCount"] += Math.min(vendorCardObj["availableQuantity"], card.quantity);
+            //Calculate the total price if we were to buy all the cheapest copies we need that the vendor has.
+            for (var i = card.quantity, j = 0; i > 0 && j < vendorCardObj["entries"].length; j++) {
+                var cardEditionEntity = vendorCardObj["entries"][j];
+                //Ensure we only account for what we need if vendor has extra copies
+                var numCopies = Math.min(i, cardEditionEntity.availableQuantity);
+                vendor["totalOrderPrice"] += (cardEditionEntity.internalPrice * numCopies);
+                console.log(vendor["totalOrderPrice"]);
+                i -= numCopies;
+            }
         }
     }
 
+    //Calculate average price rank across all cards and vendors
     for (var vendor of Object.values(vendorMultimap)) {
         var vendorCardEntries = _.flatMap(Object.values(vendor.cards), (card) => card.entries);
         vendor.averagePriceRank = _.chain(vendorCardEntries)
@@ -332,17 +343,20 @@ function getResultStatistics(requestList, cardsMultimap) {
                                     .value() / vendorCardEntries.length;
     }
 
+    //Flatmap of all entries across all vendors
     var totalEntriesList = _.chain(Object.values(vendorMultimap))
                             .flatMap(vendor => vendor.cards)
                             .flatMap(card => Object.values(card))
                             .flatMap(card => card.entries)
                             .value();
 
+    //Average price rank across all vendors
     var totalAveragePriceRank = _.chain(totalEntriesList)
                                     .map(entry => entry.priceRank)
                                     .reduce((e1, e2) => e1 + e2)
                                     .value() / totalEntriesList.length;
 
+    //The overall quantity of cards requested
     var totalRequestedCardCount = _.chain(requestList)
                                     .flatMap((card) => card.quantity)
                                     .reduce((c1, c2) => c1 + c2)
@@ -363,13 +377,10 @@ function getResultStatistics(requestList, cardsMultimap) {
             return -1;
         if (v1.totalScore == v2.totalScore)
             return 0;
-        else return 1;
+        return 1;
     }).reverse();
 
     console.log(sortedVendorMultimap);
-
-
-
 }
 
 function averagePrice(cardList) {
